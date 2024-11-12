@@ -1,0 +1,677 @@
+---
+title: "Opal workflow"
+author: "Lars van der Burg"
+date: "2024-02-27"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(opalr)
+library(tidyverse)
+library(diffdf)
+library(openxlsx)
+
+
+files = list.files(path = "Functions", pattern = "*.R", full.names = TRUE)
+files = files[!str_detect(files, "_Function_template.Rmd")]
+
+sapply(files, source)
+```
+
+
+
+Here a Rmarkdown to show all the steps in a general workflow for working with Opal. So from creating a table, moving it, adjusting it and deleting it. Everything will be explained via one of two datasets (you can specify dataset = 1 or 2 below)
+
+# Initializations
+```{r}
+dataset = 1  # With which dataset do you want to run everything? 1 or 2?
+projname = "TEST_LARS"
+
+path_diffdf = paste0(getwd(), "/Functions/Diffdf/")
+if(!dir.exists(path_diffdf)){
+  dir.create(path_diffdf)
+}
+
+opal_test <- opalr::opal.login(url = "https://dw-test.clinicalresearch.nl/repo",
+                               token = keyring::key_get("token_opal_testclinicalresearch"))
+```
+
+
+# Dataset
+```{r}
+if(dataset == 1){
+  # Random data test file:
+  load("Dataset/FAKE_datafile_20240902.RData") |> as_tibble()
+  load("Dataset/FAKE_var_20240902.RData") |> as_tibble()
+  load("Dataset/FAKE_cat_20240902.RData") |> as_tibble()
+  
+
+  tablename = "TESTTABLE1"
+  ent = "R"
+  
+  
+  datafiles = list("first" = datafile, "second" = datafile, "third" = datafile) 
+  vars = list("first" = var, "second" = var, "third" = var) 
+  cats = list("first" = cat, "second" = cat, "third" = cat)
+  
+  tablenames = c("TESTTABLE1", "TESTTABLE1", "TESTTABLE1")
+  tablenames2 = c("TESTTABLE1_copy1", "TESTTABLE1_copy2", "TESTTABLE1_copy3")
+  
+  
+} else if(dataset == 2){
+
+  # Random data test file:
+  load(file = "Dataset\\randomdata_removed-parts-importscript_datafile.Rdata")
+  load(file = "Dataset\\randomdata_removed-parts-importscript_datafile.Rdata")
+  datafile = datafile |> as_tibble()
+  
+  # Load dictionary file(s) into R. At least include a variables dictionary. categories dict is optional.
+  load(file = "Dataset\\randomdata_removed-parts-importscript_var.Rdata")
+  load(file = "Dataset\\randomdata_removed-parts-importscript_cat.Rdata")
+  
+  var = var |> as_tibble()
+  cat = cat |> as_tibble()
+  
+  
+  ## Can't use datafile_conform_var because there are purposely made mistakes in the datafile
+  # datafile = datafile_conform_var(datafile = datafile, var = var)$datafile
+  # datafile = opalr::dictionary.apply(tibble = datafile, variables = var, cat = cat)
+  
+
+  tablename = "TESTTABLE2"
+  ent = "L"
+
+  
+  datafiles = list("first" = datafile, "second" = datafile, "third" = datafile) 
+  vars = list("first" = var, "second" = var, "third" = var) 
+  cats = list("first" = cat, "second" = cat, "third" = cat)
+  
+  tablenames = c("TESTTABLE2", "TESTTABLE2", "TESTTABLE2")
+  tablenames2 = c("TESTTABLE2_copy1", "TESTTABLE2_copy2", "TESTTABLE2_copy3")
+
+  
+} else {
+  stop("Choose dataset 1 or 2, or supply elsewhere")
+}
+```
+
+
+
+# Write table
+Basis function just to write a table from R to opal.
+```{r}
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
+                   datafile = datafile, var = var, cat = cat, ent = ent, 
+                   action = "write", id.name = "id", max_tries = 2)
+```
+
+# Read table
+Basis function just to read in a table from opal and make it R ready by discarding some of the attributes
+```{r}
+imported_table = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+```
+
+
+# diffdf report
+Function to obtain the differences between the datafiles and dictionaries. There are many different ways this function can be used, check the function documentation.
+```{r}
+datafile2 = imported_table$datafile
+var2 = imported_table$var
+cat2 = imported_table$cat
+
+
+datafile2[1, "text1"] = " 4RRnDdnOBEYa8qDTrNSjvMyu0"
+datafile2[2, "text1"] = "KfQs5tyxEsgGeuMqfCFgXZR66 "
+datafile2[3, "text1"] = " T8uIXL8xc8ZjeX2VvVksUvr "
+  
+report_diffdf = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, 
+                                          comparison = "mod", comp_key = "id", date_time_format = c("Ymd", "Ymd HMS"), suppress_warnings = TRUE, 
+                                          report_path = path_diffdf, report_name = "Report_diffdf", report_title = "This is a trial run",
+                                          opt_repl_castor = TRUE, opt_rm_VarDiff_null = FALSE, aggregate_VarDiff = TRUE, 
+                                          opt_calc_VarDiff_spaces  = TRUE, opt_calc_VarDiff_diff = TRUE, opt_rm_VarDiff_diff_0 = FALSE) 
+
+
+report_diffdf$VarDiff
+report_diffdf$VarDiff |> filter(difference == 0)
+# report_diffdf$VarDiff_aggregated
+```
+
+
+# Create table
+Function to import a table into opal. 
+
+An optional diffdf report will be made if report_path != FALSE. if report_path = NULL, it will not be saved, just outputted by the function
+```{r create}
+report_import1 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+                                           datafile = datafile, var = var, cat = cat, action = "write", id.name = "id", comparison = "mod",
+                                           report_path = path_diffdf, report_name = paste("Report_import", tablename, sep = "_"))
+
+
+report_import2 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+                                           datafile = datafile, var = var, cat = cat, action = "update", id.name = "id", comparison = "mod",
+                                           report_path = path_diffdf, report_name = paste("Report_import_update", tablename, sep = "_"))
+
+
+report_import3 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+                                           datafile = datafile, var = var, cat = cat, action = "overwrite", id.name = "id", comparison = "mod",
+                                           report_path = path_diffdf, report_name = paste("Report_import_overwrite", tablename, sep = "_"))
+```
+
+
+
+# Move/copy table
+Function to move a table in opal.
+
+An optional diffdf report will be made if report_path != FALSE. if report_path = NULL, it will not be saved, just outputted by the function
+```{r copy}
+report_copy <- import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent,
+                                      opal2 = opal_test, projname2 = projname, tablename2 = paste0(tablename, "_copy"), 
+                                      report_path = path_diffdf, report_name = paste("Report_copy", tablename, sep = "_"))
+```
+
+Possible to move more than table at once, with a wrapper around `import_copy_table_opal`.
+```{r multi copy}
+report_copy = import_copy_table_opal_many(opal = opal_test, projnames = projname, tablenames = tablenames, ent = ent,
+                                          opal2 = opal_test, projnames2 = projname, tablenames2 = tablenames2,
+                                          report_path = path_diffdf, report_name = "Report_copy")
+```
+
+
+# Checks
+## All checks
+There is a single function to run all checks that we currently want to run. It does not change the data, but just gives you an indication whether or not something MIGHT be wrong. Sometimes things are missing for a reason and is a reported issue not a real problem. Always be alert.
+```{r}
+report_checks = checks_opal_R(datafile = datafile, var = var, cat = NULL, key = "id", min_max = TRUE, silent = FALSE)
+```
+
+
+### min/max check
+One of the checks that is done in the `checks_opal_R` function is check_categoriesminmax_generic. It is also possible to run this check separately and to run it for multiple datasets at once (that is not possible with the `checks_opal_R` function, that can only handle a single datafile/dictionary)
+```{r}
+report_minmax = check_categoriesminmax_generic(datafiles = list("test" = datafile), vars = list("test" = var), cats = list("test" = cat), report_path = NULL)
+
+report_minmax_mult = check_categoriesminmax_generic(datafiles = datafiles, vars = vars, cats = cats, report_path = NULL)
+```
+
+#### Conditional
+With the optional conditional argument one can indicate that min/max should only be checked if a specific condition is met. In the simple example below, there are in variable `Cond2` two variables that are outside the min-max range (id 2 and 4). However, only id 2 meets the required `Cond1 = 1`. If one wants to have this, you can use the `conditional` argument.
+```{r}
+datafile_cond = bind_cols(id = 1:5, Cond1 = c(1, 1, 1, 0, 0), Cond2 = c(4, 12, NA, 14, NA))
+var_cond = bind_cols(name = c("Cond1", "Cond2"), valueType = "integer", `label:en` = c("Cond1 label", "Cond2 label"), index = c(6, 7), min = "0", max = "10")
+
+
+report_minmax = check_categoriesminmax_generic(datafiles = list("test" = datafile_cond), vars = list("test" = var_cond), report_path = NULL, 
+                                               conditional = NULL, includeNA = TRUE)
+
+report_minmax_CondF = check_categoriesminmax_generic(datafiles = list("test" = datafile_cond), vars = list("test" = var_cond), report_path = NULL, 
+                                                     conditional = list("Cond2 ~ Cond1 == 1"), includeNA = FALSE)
+report_minmax_CondT = check_categoriesminmax_generic(datafiles = list("test" = datafile_cond), vars = list("test" = var_cond), report_path = NULL, 
+                                                     conditional = list("Cond2 ~ Cond1 == 1"), includeNA = TRUE)
+```
+
+
+### Datafile conform var
+The `checks_opal_R` function also checks if the specified valueTypes are in concordance with the datafile types. Two functions are of interest here: 
+1) datafile_conform_var_check, which just signals whether or not a mismatch is detected (this is run inside `checks_opal_R`) 
+2) datafile_conform_var_change, which actually changes the data classes of the datafile for such a mismatch (this is NOT run inside `checks_opal_R`). 
+
+So if you want to actually change data classes, you have to run `datafile_conform_var_change` separately. 
+
+#### Check
+This function will check two things and give a report with the findings
+1) whether the valueTypes are named as Opal wants them
+2) whether the class of datafile are compatible with the specified valueType. Conversions can be performed with `datafile_conform_var_change`
+```{r}
+valueType_check = datafile_conform_var_check(datafile, var)
+```
+
+
+#### Change
+This function will convert the datafile class to match with the valueType. If datafile class is a character and valueType is a date or datetime, there is no permanant conversion performed, but we will check the conversion that will be done in opal via the function `lubridate::parse_date_time`. With date_time_format you can specify the formats that are observed in the datafile. 
+
+For dataset == 2: when "Ymd HM" is not supplied, there will be loss of data.
+```{r}
+datafile_conversion = datafile_conform_var_change(datafile = datafile, var = var2, date_time_format = c("Ymd", "Ymd HMS", "Ymd HM"))
+datafile = datafile_conversion$datafile
+
+
+opaltable = opalr::dictionary.apply(tibble = datafile, variables = var, cat = cat)
+```
+
+
+# Views
+The idea behind opal is that instead of sharing your actual datafile, you can share a view with others. With `make_opal_view` you can make a view.
+```{r}
+view_report = make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
+                             opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view"),
+                             var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent, 
+                             report_path = FALSE)
+```
+
+
+## View update
+The idea is that you can simply change the directory, and than update the view. That is also possible with `make_opal_view`.
+
+Currently, instead of updating, we replace the view. Because with an update it is not yet possible to downsize the view.
+```{r}
+make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
+               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view2"),
+               var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent)
+
+
+var_adj = var; var_adj[var_adj$name == "integer2", "label:en"] = "integer with categories; but with a more fancy label"
+cat_adj = cat; cat_adj[cat_adj$variable == "integer2" & cat_adj$`label:en` == "level 1", "label:en"] = "level 1; but fancier"
+
+view_report_update = make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
+                                    opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view2"),
+                                    var = var_adj, cat = cat_adj, update = TRUE, comp_key = "id", ent = ent, report_path = NULL)
+```
+
+### Deprecate view
+When we discard a variable that is in the view from the table, the view is not accessable anymore
+```{r}
+report_import4 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+                                           datafile = datafile|> select(-integer1), 
+                                           var = var |> filter(name != "integer1"), 
+                                           cat = cat, action = "overwrite", id.name = "id", comparison = "mod",
+                                           report_path = path_diffdf, report_name = paste("Report_import_overwrite", tablename, sep = "_"))
+
+## Is there an easy way to see if this view is still usable?
+```
+
+
+### Less variables
+```{r, eval = FALSE, echo = FALSE}
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
+                   datafile = datafile, var = var, cat = cat, ent = ent, force = FALSE)
+
+make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
+               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view"),
+               var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent)
+opalr::opal.table_perm_add(opal_test, projname, paste0(tablename, "_basis2_view"), subject = "rmwissels", type = "user", permission = "view")
+opalr::opal.table_perm(opal_test, projname, paste0(tablename, "_basis2_view"))
+
+
+var_adj = var; var_adj = var_adj[var_adj$name != "var5", ]
+cat_adj = cat; cat_adj = cat_adj[cat_adj$variable != "var5", ]
+
+
+make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
+               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view2"),
+               var = var_adj, cat = cat_adj, update = FALSE, comp_key = "id", ent = ent)
+opalr::opal.table_perm(opal_test, projname, paste0(tablename, "_basis2_view2"))
+
+
+make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
+               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view"),
+               var = var_adj, cat = cat_adj, update = TRUE, comp_key = "id", ent = ent)
+opalr::opal.table_perm(opal_test, projname, paste0(tablename, "_basis2_view"))
+```
+
+
+## Different $('script')
+It is also possible to give more difficult entity Filters to your view, to alter your data or to just give a subset of your data. 
+
+They are not really investigated and (at the moment) cannot be added to `make_opal_view`.
+
+### Setting up data
+```{r}
+datafile_adj = datafile; var_adj = var; cat_adj = cat
+
+
+## 4 decimals
+datafile_adj[1, 3] = 8.36545894584682
+datafile_adj$var2 = as.character(datafile_adj$var2); var_adj[2, "valueType"] = "text"
+
+## No NULL
+datafile_adj[3, 3] = "34"; datafile_adj[4, 3] = "99"
+
+## Date same
+# datafile_adj[4, 5] = as.character(as.Date(parse_date_time("20230712", "Ymd")))
+
+
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_EntFilt"),
+                   datafile = datafile_adj, var = var_adj, cat = cat_adj, ent = ent)
+
+
+make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_EntFilt"), 
+               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_EntFilt_view"),
+               var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent)
+```
+
+### Adjustments
+```{r}
+if(dataset == 1){
+  
+} else if(dataset == 2){
+  
+  ## More difficicult sources
+  ## https://opaldoc.obiba.org/en/latest/magma-user-guide/methods.html
+  new_rows = tribble(
+    ~name, ~valueType, ~`label:en`, ~unit, ~index, ~min, ~max, ~script,
+    "var6", "integer", "duplicate of var1", "", 6, "", "", "$('var1')",
+    "var7", "integer", "var1 + 10", "", 7, "", "", "$('var1').plus(10)",
+    "var8", "decimal", "var1 * var1", "", 8, "", "", "$('var1').multiply($('var1'))",
+    # "var9", "integer", "var7 / var1", "", 9, "", "", "$('var7').div($('var1'))",  ## ERROR IN OPAL: No such variable var7 --> Dus waarschijnlijk kan die alleen berekeningen doen op datafile variabele die bestaan? Of er is een volgorde? Can't get the view to R anymore
+    "var10", "text", "var3 not", "", 10, "", "", "$('var3').not('test')",
+    "var11", "text", "var1 vs var2", "", 11, "", "", "if($('var1').lt($('var2')).value()){true}else{false}",
+    "var12", "integer", "var1 vs var2", "", 13, "", "", "if($('var1').lt($('var2')).value()){1}else{0}",
+    "var13", "text", "var1 vs var2", "", 14, "", "", "if($('var1').lt($('var2')).value()){$('var2')}else if($('var1').gt($('var2')).value()){$('var1')}",  ## Var1 < var2 --> var2; var1 > var2 --> var1
+    "var14", "text", "isNumeric", "", 15, "", "", "$var('var1').isNumeric()",  # without var --> ERROR IN OPAL: Cannot find function isNumeric
+    "var15", "decimal", "type", "", 16, "", "", "$('var2').type('decimal')",
+    "var16", "decimal", "type + 10", "", 17, "", "", "$('var2').type('decimal').plus(10)",
+    "var17", "text", "Date diff", "", 18, "", "", "$('var4').eq($('var5'))"
+  )
+}
+
+var_adj2 = var |>
+  mutate(script = paste0("$('", name, "')")) |> 
+  bind_rows(new_rows)
+
+cat_adj2 = cat
+
+
+view_report_update = make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_EntFilt"), 
+                                    opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_EntFilt_view2"),
+                                    var = var_adj2, cat = cat_adj2, update = TRUE, comp_key = "id", ent = ent, report_path = NULL)
+
+
+imported_datafile2 <- import_table_opal2R(opal_test, projname, paste0(tablename, "_EntFilt_view2"))
+imported_datafile2$datafile
+```
+
+
+
+# Delete table
+Function to easily delete a table from opal
+```{r}
+delete_table_opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_copy"))
+```
+
+
+
+# Adjust script
+It can happen that you just want to adjust your table or dictionary, and do not want to completely re-do everything. Here is a script exploring some options.
+
+It is not a function. Because the possible adjustments are infinite, it is very difficult to build a comprehensive function for that. But you can simply use the `import_table_opal2R` and `write_table_R2opal` functions. Example is only run with dataset = 2.
+
+
+Hier bevindingen:
+- Rijen kunnen gemakkelijk los toegevoegd worden, een var dictionary is wel essentieel
+- Overwrite vs Force. Als dataset al bestaat en wil updaten met nieuwe rij:
+  - Overwrite = FALSE & Force = FALSE: error and nothing happens (`Destination table will be updated. There could be data dictionary conflicts. Use 'force' parameter to proceed.`)
+  - Overwrite = TRUE & Force = FALSE: error and nothing happens (`Destination table needs to be deleted or truncated. Use 'force' parameter to proceed.`)
+  - Overwrite = FALSE & Force = TRUE: updated table: example dataset including the extra row
+  - Overwrite = TRUE & Force = TRUE: first delete table and make new table: example dataset only containing the extra row)
+  - Conclusie is dus als volgt: overwrite bepaalt wat er gebeurt (FALSE = update; TRUE = overwrite), maar de overwrite actie wordt alleen uitgevoerd als de force parameter = TRUE. Wanneer force = FALSE kan je niet updaten of overwriten.
+- Kolommen kunnen ook toegevoegd worden, de var dictionary mag dan wel alleen informatie over de nieuwe kolom bevatten
+- Waardes kunnen dan weer wel los aanpepast worden, alleen id en kolom met waarde nodig
+- Dictionary kan upgedate worden, entityType in var dictionary is essentieel (anders error (als entityType niet de default `Participant` is))
+
+## Data from opal
+```{r}
+## To make a separate table for each setting
+report_start <- import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename,
+                                       projname2 = projname, tablename2 = paste0(tablename, "_adjust"))
+
+import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+                       projname2 = projname, tablename2 = paste0(tablename, "_adjust_row"))
+import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+                       projname2 = projname, tablename2 = paste0(tablename, "_adjust_col"))
+import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+                       projname2 = projname, tablename2 = paste0(tablename, "_adjust_val"))
+import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+                       projname2 = projname, tablename2 = paste0(tablename, "_remove_val"))
+import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+                       projname2 = projname, tablename2 = paste0(tablename, "_adjust_cat"))
+
+
+
+imported_table = import_table_opal2R(opal = opal_test, projname, paste0(tablename, "_adjust"))
+
+datafile = imported_table$datafile
+var = imported_table$var
+cat = imported_table$cat
+
+datafile4copy = imported_table$datafile4copy
+var4copy = imported_table$var4copy
+cat4copy = imported_table$cat4copy
+
+
+if(dataset == 1){
+
+## Add a new row
+  
+## Add a new column
+  
+## Due to checking labjournal a missing value can be replaced
+  datafile4copy = datafile4copy |> mutate(InjuryHx.InjuryHxID = if_else(id == "Sample1", 418, InjuryHx.InjuryHxID))
+  datafile4copy = datafile4copy |> mutate(InjuryHx.GCSPreHospBestEyes = if_else(id == "Sample10", "UN", InjuryHx.GCSPreHospBestEyes))
+
+## New row to cat dictionary  
+  
+  
+} else if(dataset == 2){
+  
+## Add a new row 
+  new_row = tibble::tribble(
+    ~id, ~var1, ~var2, ~var3,          ~var4,        ~var5,
+    "6", -12L,  -98,   "hypothyroïde", "2002-09-13", "2018-10-01 23:59"
+  )
+  datafile4copy = datafile4copy |> bind_rows(new_row)
+  
+  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_row"), ent = ent,
+                     datafile = new_row, var = imported_table$var4copy, cat = imported_table$cat4copy, force = TRUE)
+  imported_table2_R = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_row"))
+
+
+    
+  ## Add a new column
+  new_col = matrix(c(18.0, 22.5, 23.0, 21.3, 21.2, 28.0) , ncol = 1, dimnames = list(NULL, "var6")) |> as_tibble()
+  datafile4copy = datafile4copy |> bind_cols(new_col)
+  
+  new_col_var = cbind.data.frame("var6", "decimal", NA, FALSE, 6, "BMI", "10", "100") |> as_tibble() |> rename_with(~ colnames(var4copy))
+  var4copy = var4copy |> bind_rows(new_col_var)
+  
+  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_col"), ent = ent,
+                     datafile = datafile4copy |> filter(id < "6") |> select(id, var6), 
+                     var = var4copy |> filter(name == "var6"), cat = imported_table$cat4copy, force = TRUE)
+  imported_table2_C = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_col"))
+  
+  
+  
+  ## Due to checking labjournal a missing value can be replaced
+  datafile4copy = datafile4copy |> mutate(var2 = if_else(id == 4, 79, var2))
+  datafile4copy = datafile4copy |> mutate(var3 = if_else(id == 2, NA, var3))
+  
+  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_val"), ent = ent,
+                     datafile = datafile4copy |> mutate(var2 = if_else(id == 4, 79, var2)) |> filter(id == "4") |> select(id, var2),
+                     var = var4copy |> filter(name != "var6"), cat = imported_table$cat4copy, force = TRUE)
+  imported_table2_V1 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_val"))
+  
+  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_remove_val"), ent = ent,
+                     datafile = datafile4copy |> mutate(var3 = if_else(id == 3, NA, var3)) |> filter(id == "3") |> select(id, var3),
+                     var = var4copy |> filter(name != "var6"), cat = imported_table$cat4copy, force = TRUE)
+  imported_table2_V2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_remove_val"))
+  
+  
+  
+  ## New row to cat dictionary  
+  new_cat_row = cbind.data.frame(variable = "var1", name = "-98", missing = TRUE, `label:en` = "Not applicable") |> as_tibble()
+  cat4copy = cat4copy |> bind_rows(new_cat_row)
+  
+  opal.table_dictionary_update(opal = opal_test, project = projname, table = paste0(tablename, "_adjust_cat"), 
+                               variables = var4copy |> filter(name != "var6") |> mutate(entityType = "L"), categories = cat4copy)
+} 
+
+
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust"), ent = ent,
+                   datafile = datafile4copy, var = var4copy, cat = cat4copy, force = TRUE)
+
+imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust"))
+
+datafile2 = imported_table2$datafile
+var2 = imported_table2$var
+cat2 = imported_table2$cat
+
+
+report_adjust_opal = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, 
+                                               comparison = "mod", 
+                                               report_path = NULL, suppress_warnings = TRUE)
+
+
+# delete_table_opal(opal = opal_test, projname, paste0(tablename, "_adjust"))
+```
+
+
+## Data from file
+```{r}
+## To make a separete table on opal that I can adjust
+report_start <- import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename,
+                                       projname2 = projname, tablename2 = paste0(tablename, "_adjust2"))
+
+
+imported_table = import_table_opal2R(opal = opal_test, projname, paste0(tablename, "_adjust2"))
+
+datafile = imported_table$datafile
+var = imported_table$var
+cat = imported_table$cat
+
+
+if(dataset == 1){
+
+  
+  
+} else if(dataset == 2){
+## TODO: what are the differences between read in via csv and import_table$datafile4copy. Would say that those should be the same.
+
+path = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\"
+
+datafile4copy = read_csv(paste0(path, "randomdata_removed-parts-importscript_datafile_adjust.csv"), col_names = TRUE, guess_max = 99999, show_col_types = FALSE)
+var4copy = read_csv(paste0(path, "randomdata_removed-parts-importscript_var_adjust.csv"), col_names = TRUE, guess_max = 99999, show_col_types = FALSE)
+cat4copy = read_csv(paste0(path, "randomdata_removed-parts-importscript_cat_adjust.csv"), col_names = TRUE, guess_max = 99999, show_col_types = FALSE)
+
+
+datafile_conform_var_check(datafile4copy, var4copy)
+
+datafile4copy_conversion = datafile_conform_var_change(datafile = datafile4copy, var = var4copy, date_time_format = c("Ymd HMS", "Ymd"))
+datafile4copy = datafile4copy_conversion$datafile
+}
+
+
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust2"), ent = ent,
+                   datafile = datafile4copy, var = var4copy, cat = cat4copy, force = TRUE)
+imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust2"))
+
+datafile2 = imported_table2$datafile
+var2 = imported_table2$var
+cat2 = imported_table2$cat
+
+
+report_adjust_file = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, 
+                                               report_path = NULL, suppress_warnings = TRUE)
+
+
+## To delete the separately made table on opal
+# delete_table_opal(opal = opal_test, projname, paste0(tablename, "_adjust2"))
+```
+
+
+
+
+
+
+
+
+# End
+Below are some things maybe for later
+
+
+## ADM testdataset2
+```{r, eval = FALSE, echo = TRUE}
+datafile <- tibble::tribble(
+  ~id, ~var1, ~var2, ~var3,          ~var4,        ~var5,                 
+  "1", 24L,    8.3,  "test",         "2024-01-01", "2020-01-01 12:00",   
+  "2", 0L,     7.9,  "test2",        NA,           NA,                   
+  "3", 1L,     NA,   "test?3",       "2995-01-01", "2995-01-01 01:01:01",
+  "4", 3L,     79,   NA,             "1923-07-12", "2023-07-12",          
+  "5", -99L,   120,  "test$5",       "2021-02-05", "1980-05-02 12:02")
+
+
+var <- tibble::tribble(
+  ~name,  ~valueType, ~`label:en`,  ~unit,    ~index, ~min,         ~max,
+  "var1", "integer",  "var1 label", "",       1,      "",           "",
+  "var2", "decimal",  "var2 label", "mmol/l", 2,      "0",          "100",
+  "var3", "text",     "var3 label", "",       3,      "" ,          "" ,
+  "var4", "date",     "var4 label", "",       4,      "1980-01-01", "2023-01-01",
+  "var5", "datetime", "var5 label", "",       5,      "",           "2000-01-01 00:00:00")
+
+
+cat <- tibble::tribble(
+  ~variable, ~name,                 ~missing, ~`label:en`,
+  "var1",     "1",                  0,        "Option1",
+  "var1",     "0",                  0,        "Option0",
+  "var1",    "-99",                 1,        "Unknown",
+  "var1",    "-98",                 1,        "Not applicable",
+  "var2",    "-99",                 1,        "Unknown",
+  "var2",    "-98",                 1,        "Not applicable",
+  "var4",    "2995-01-01",          1,        "Unknown",
+  "var5",    "2995-01-01 01:01:01", 1,        "Unknown",
+  "var5",    "2998-01-01 00:00:00", 1,        "Not applicable")
+  
+# save(datafile, file = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\randomdata_removed-parts-importscript_datafile.Rdata")
+# save(var, file = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\randomdata_removed-parts-importscript_var.Rdata")
+# save(cat, file = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\randomdata_removed-parts-importscript_cat.Rdata")
+```
+
+
+## ADM testdataset2_adjust
+```{r, eval = FALSE, echo = TRUE}
+datafile <- tibble::tribble(
+  ~id, ~var1, ~var2, ~var3,          ~var4,        ~var5,                 ~var6,
+  "1", 24L,    8.3,  "test",         "2024-01-01", "2020-01-01 12:00",    18.0,
+  "2", 0L,     7.9,  "test2",        NA,           NA,                    22.5,
+  "3", 1L,     NA,   "test?3",       "2995-01-01", "2995-01-01 01:01:01", 23.0,
+  "4", 3L,     79,   NA,             "1923-07-12", "2023-07-12",          21.3, 
+  "5", -99L,   120,  "test$5",       "2021-02-05", "1980-05-02 12:02",    21.2, 
+  "6", -12L,   -98,  "hypothyroïde", "2002-09-13", "2018-10-01 23:59",    28.0)
+  
+var <- tibble::tribble(
+  ~name,  ~valueType, ~`label:en`,  ~unit,    ~index, ~min,         ~max,
+  "var1", "integer",  "var1 label", "",       1,      "",           "",
+  "var2", "decimal",  "var2 label", "mmol/l", 2,      "0",          "100",
+  "var3", "text",     "var3 label", "",       3,      "" ,          "" ,
+  "var4", "date",     "var4 label", "",       4,      "1980-01-01", "2023-01-01",
+  "var5", "datetime", "var5 label", "",       5,      "",           "2000-01-01 00:00:00",
+  "var6", "decimal",  "BMI",        "",       6,      "10",         "100")
+  
+cat <- tibble::tribble(
+  ~variable, ~name,                 ~missing, ~`label:en`,
+  "var1",     "1",                  0,        "Option1",
+  "var1",     "0",                  0,        "Option0",
+  "var1",    "-99",                 1,        "Unknown",
+  "var1",    "-98",                 1,        "Not applicable",
+  "var2",    "-99",                 1,        "Unknown",
+  "var2",    "-98",                 1,        "Not applicable",
+  "var4",    "2995-01-01",          1,        "Unknown",
+  "var5",    "2995-01-01 01:01:01", 1,        "Unknown",
+  "var5",    "2998-01-01 00:00:00", 1,        "Not applicable")
+  
+# write.csv(datafile, file = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\randomdata_removed-parts-importscript_datafile_adjust.csv", quote = TRUE, row.names = FALSE)
+# write.csv(var, file = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\randomdata_removed-parts-importscript_var_adjust.csv", quote = TRUE, row.names = FALSE)
+# write.csv(cat, file = "I:\\ADM\\_UITVOER\\OPAL\\Development standard scripts opal\\randomdata_removed-parts-importscript_cat_adjust.csv", quote = TRUE, row.names = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
