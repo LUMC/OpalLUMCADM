@@ -46,9 +46,9 @@ source("R/func_write_table_R2opal.R")
 
 
 # Fake dataset ------------------------------------------------------------
-load("Processing/Dataset/FAKE_datafile.RData")
-load("Processing/Dataset/FAKE_var.RData")
-load("Processing/Dataset/FAKE_cat.RData")
+load("example/FAKE_datafile.RData")
+load("example/FAKE_var.RData")
+load("example/FAKE_cat.RData")
 
 
 
@@ -103,7 +103,7 @@ report_diffdf7 = fakedata_new$report_diffdf7
 
 
 # Expected results --------------------------------------------------------
-load("Processing/CI_CD/fakedata_exp.RData")
+load("CI_CD/fakedata_exp.RData")
 
 exp_output_checks = fakedata_exp$exp_output_checks
 exp_report_checks = fakedata_exp$exp_report_checks
