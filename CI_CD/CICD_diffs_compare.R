@@ -8,8 +8,8 @@
 
 
 # Read-in results ---------------------------------------------------------
-load("Processing/CI_CD/fakedata_CICD_diffs.Rdata")
-load("Processing/CI_CD/fakedata_exp.RData")
+load("CI_CD/fakedata_CICD_diffs.Rdata")
+load("CI_CD/fakedata_exp.RData")
 
 
 
