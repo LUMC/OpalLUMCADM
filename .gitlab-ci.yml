@@ -1,0 +1,26 @@
+image: rocker/tidyverse:latest
+
+stages:
+  - test
+
+Comparison:
+  stage: test
+  script:
+    - |
+      R -e '
+        install.packages("opalr", repos = "http://cran.rstudio.com/")
+        install.packages("diffdf", repos = "http://cran.rstudio.com/")
+      '
+
+    - |
+      R -e '
+        ## Read in initializations
+        source("Processing/CI_CD/CICD_procedure.R")
+
+        ## Run the tests
+        source("Processing/CI_CD/CICD_check.R")
+      '
+  artifacts:
+    paths:
+      - fakedata_CICD_diffs.Rdata
+    when: always
