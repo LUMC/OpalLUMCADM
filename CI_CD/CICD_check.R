@@ -29,19 +29,19 @@ library(diffdf)
 
 
 # Functions ---------------------------------------------------------------
-## If not called separately, the functions cannot be found in the CI/CD
-source("Processing/Functions/func_check_categoriesminmax_generic.R");
-source("Processing/Functions/func_check_diffdf_opal_generic.R");
-source("Processing/Functions/func_checks_opal_R.R");
-source("Processing/Functions/func_datafile_conform_var_change.R");
-source("Processing/Functions/func_datafile_conform_var_check.R");
-source("Processing/Functions/func_delete_table_opal.R");
-source("Processing/Functions/func_import_copy_table_opal_many.R");
-source("Processing/Functions/func_import_copy_table_opal.R");
-source("Processing/Functions/func_import_create_table_opal.R");
-source("Processing/Functions/func_import_table_opal2R.R");
-source("Processing/Functions/func_make_opal_view.R");
-source("Processing/Functions/func_write_table_R2opal.R")
+## cannot use package, because that has the functions of the official version, not containing the most recent updates
+source("R/func_check_categoriesminmax_generic.R");
+source("R/func_check_diffdf_opal_generic.R");
+source("R/func_checks_opal_R.R");
+source("R/func_datafile_conform_var_change.R");
+source("R/func_datafile_conform_var_check.R");
+source("R/func_delete_table_opal.R");
+source("R/func_import_copy_table_opal_many.R");
+source("R/func_import_copy_table_opal.R");
+source("R/func_import_create_table_opal.R");
+source("R/func_import_table_opal2R.R");
+source("R/func_make_opal_view.R");
+source("R/func_write_table_R2opal.R")
 
 
 
