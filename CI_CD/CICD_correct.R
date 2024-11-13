@@ -27,34 +27,17 @@ library(tidyverse)
 library(diffdf)
 library(openxlsx)
 
-
-
-# Functions ---------------------------------------------------------------
-## If not called separately, the functions cannot be found in the CI/CD
-# source("Processing/Functions/func_check_categoriesminmax_generic.R");
-# source("Processing/Functions/func_check_diffdf_opal_generic.R");
-# source("Processing/Functions/func_checks_opal_R.R");
-# source("Processing/Functions/func_datafile_conform_var_change.R");
-# source("Processing/Functions/func_datafile_conform_var_check.R");
-# source("Processing/Functions/func_delete_table_opal.R");
-# source("Processing/Functions/func_import_copy_table_opal_many.R");
-# source("Processing/Functions/func_import_copy_table_opal.R");
-# source("Processing/Functions/func_import_create_table_opal.R");
-# source("Processing/Functions/func_import_table_opal2R.R");
-# source("Processing/Functions/func_make_opal_view.R");
-# source("Processing/Functions/func_write_table_R2opal.R")
-
 library(OpalLUMCADM)
 
 
-source("Processing/CI_CD/CICD_procedure.R")
+source("CI_CD/CICD_procedure.R")
 
 
 
 # Fake dataset ------------------------------------------------------------
-load("Processing/Dataset/FAKE_datafile.RData")
-load("Processing/Dataset/FAKE_var.RData")
-load("Processing/Dataset/FAKE_cat.RData")
+load("example/FAKE_datafile.RData")
+load("example/FAKE_var.RData")
+load("example/FAKE_cat.RData")
 
 
 
@@ -72,5 +55,5 @@ fakedata_exp = CICD_procedure(opal_url = opal_url, opal_username = opal_username
 
 # Expected outcome --------------------------------------------------------
 names(fakedata_exp) = paste0("exp_", names(fakedata_exp))
-save(fakedata_exp, file = "Processing/CI_CD/fakedata_exp.RData")
+save(fakedata_exp, file = "CI_CD/fakedata_exp.RData")
 

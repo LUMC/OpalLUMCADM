@@ -212,11 +212,10 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   report_import3 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
   datafile4copy = report_import3$datafile4copy; var4copy = report_import3$var4copy; cat4copy = report_import3$cat4copy
 
+  delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
+
 
   output_checks4 = capture.output(report_checks4 <<- checks_opal_R(datafile = datafile4copy, var = var4copy, cat = cat4copy, key = "id", min_max = TRUE, silent = FALSE))
-
-
-  delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
 
 
   report_diffdf7 = check_diffdf_opal_generic(datafile, datafile4copy, var, var4copy, cat, cat4copy, comparison = "both", comp_key = c("id", "integer1"), suppress_warnings = TRUE,
