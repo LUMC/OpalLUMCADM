@@ -14,11 +14,7 @@ library(tidyverse)
 library(diffdf)
 library(openxlsx)
 
-
-files = list.files(path = "Functions", pattern = "*.R", full.names = TRUE)
-files = files[!str_detect(files, "_Function_template.Rmd")]
-
-sapply(files, source)
+library(OpalLUMCADM)
 ```
 
 
