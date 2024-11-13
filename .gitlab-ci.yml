@@ -8,8 +8,8 @@ Comparison:
   script:
     - |
       R -e '
-        install.version("opalr", version = "3.4.2", repos = "http://cran.rstudio.com/")
-        install.version("diffdf", version = "1.1.1", repos = "http://cran.rstudio.com/")
+        install.packages("opalr", repos = "http://cran.rstudio.com/")
+        install.packages("diffdf", repos = "http://cran.rstudio.com/")
       '
 
     - |
