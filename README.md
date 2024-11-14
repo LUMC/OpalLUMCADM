@@ -8,7 +8,7 @@ R package to interact between opal and R.
 install.packages("remotes")
 install.packages("git2r")
 ```
-2. Install the "CastorLUMCADM" package:
+2. Install the "OpalLUMCADM" package:
   ```R
 ## Install package
 remotes::install_git(
@@ -24,7 +24,7 @@ remotes::install_git(
 )
 
 ## Load package
-library(opalLUMCADM)
+library(OpalLUMCADM)
 ```
 
 ## Usage
