@@ -575,6 +575,14 @@ report_adjust_file = check_diffdf_opal_generic(datafile = datafile, datafile2 = 
 ```
 
 
+# Number of data points
+```{r}
+var1 = number_datapoints(datafile, var, cat, count_Missings = FALSE)
+var2 = number_datapoints(datafile, var, cat, count_Missings = TRUE)
+
+var1$`Mlstr_area::nr_data_points`
+var2$`Mlstr_area::nr_data_points`
+```
 
 
 
