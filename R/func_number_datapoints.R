@@ -1,13 +1,13 @@
 #' @title Function to count number of datapoints for every column
 #'
-#' @description
+#' @description For MICA we can indicate the number of actual datapoints for every column in the dataset, can be calculated with this function. Whether or not values that in the cat dictionary are indicated as missing in this calculation can be indicated
 #'
-#' @param datafile
-#' @param var
-#' @param cat
-#' @param count_Missings Boolean. Whether or not to to count the missings indicated in the cat dictionary as a datapoint (FALSE is default).
+#' @param datafile tibble. Containing the datafile with for each column the variables described by \code{var}. The datafile that will be supplied to \code{opalr::dictionary.apply()}.
+#' @param var tibble. Containing the variable dictionary for datafile. The dictionary that will be supplied to \code{opalr::dictionary.apply()}.
+#' @param cat tibble. Containing the category dictionary for datafile. The dictionary that will be supplied to \code{opalr::dictionary.apply()}.
+#' @param count_Missings Boolean. Whether or not to count the missings indicated in the cat dictionary as a datapoint (FALSE is default).
 #'
-#' @return
+#' @return vector called `Mlstr_area::nr_data_points` (name required by MICA) that indicates the number of datapoints per column
 #'
 #' @import dplyr
 #'
