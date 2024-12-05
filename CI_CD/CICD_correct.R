@@ -19,7 +19,6 @@
 
 
 
-
 # Packages ----------------------------------------------------------------
 ## Packages need to be included in the docker image
 library(opalr)
@@ -42,9 +41,7 @@ source("R/func_import_table_opal2R.R");
 source("R/func_make_opal_view.R");
 source("R/func_write_table_R2opal.R")
 
-
 source("CI_CD/CICD_procedure.R")
-
 
 
 # Fake dataset ------------------------------------------------------------
@@ -53,20 +50,35 @@ load("example/FAKE_var.RData")
 load("example/FAKE_cat.RData")
 
 
+server = "test"  # c("demo", "test", "new")
 
 # Datafiles ---------------------------------------------------------------
-# opal_url = "https://opal-test.obiba.org"; opal_username = "administrator"; opal_password = "password"
-opal_url = "https://opal-demo.obiba.org"; opal_username = "administrator"; opal_password = "password"
+if(server == "demo"){
+## Demo server of Yannick
+  opal_url = "https://opal-demo.obiba.org"; opal_username = "administrator"; opal_password = "password"; projname = "TESTING"
+  opal_token = NULL
 
+} else if(server == "test"){
+## Current test server
+  opal_url = "https://dw-test.clinicalresearch.nl/repo"; opal_token = keyring::key_get("token_opal_testclinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
+
+} else if(server == "new"){
+## Future prod server
+  opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_TOM"
+  opal_token = NULL
+
+}
 
 
 # Procedure ---------------------------------------------------------------
-fakedata_exp = CICD_procedure(opal_url = opal_url, opal_username = opal_username, opal_password = opal_password,
-                              datafile = datafile, var = var, cat = cat)
-
+fakedata_exp = CICD_procedure(opal_url = opal_url, opal_username = opal_username, opal_password = opal_password, opal_token = opal_token,
+                              projname = projname, datafile = datafile, var = var, cat = cat)
 
 
 # Expected outcome --------------------------------------------------------
 names(fakedata_exp) = paste0("exp_", names(fakedata_exp))
 save(fakedata_exp, file = "CI_CD/fakedata_exp.RData")
+
+save(fakedata_exp, file = paste0("CI_CD/", server, "_fakedata_exp_", format(Sys.Date()), ".RData"))
 

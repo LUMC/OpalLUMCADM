@@ -20,13 +20,18 @@
 #'
 #'
 #'
-CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_username = "administrator", opal_password = "password", datafile, var, cat){
+CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_username = "administrator", opal_password = "password", opal_token = NULL,
+                          projname = "TESTING", datafile, var, cat){
 
 # Initializations ---------------------------------------------------------
-  projname = "TESTING"; tablename = "fakedata"; tablename_temp = "fakedata_copy"; tablename_view = "fakedata_view"
+  tablename = "fakedata"; tablename_temp = "fakedata_copy"; tablename_view = "fakedata_view"
   tablenames = rep(tablename, 3); tablenames_temp = c("fakedata_copy1", "fakedata_copy2", "fakedata_copy3")
 
-  opal = opal.login(url = opal_url, username = opal_username, password = opal_password)
+  if(!is.null(opal_token)){
+    opal = opal.login(url = opal_url, token = opal_token)
+  } else {
+    opal = opal.login(url = opal_url, username = opal_username, password = opal_password)
+  }
 
 
   # cat = cat |> filter(!(variable %in% c("date2", "date4", "datetime2", "datetime4")))

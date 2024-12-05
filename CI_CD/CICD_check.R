@@ -52,14 +52,31 @@ load("example/FAKE_cat.RData")
 
 
 
+server = "test"  # c("demo", "test", "new")
+
 # Datafiles ---------------------------------------------------------------
-opal_url = "https://opal-demo.obiba.org"; opal_username = "administrator"; opal_password = "password"
+if(server == "demo"){
+  ## Demo server of Yannick
+  opal_url = "https://opal-demo.obiba.org"; opal_username = "administrator"; opal_password = "password"; projname = "TESTING"
+  opal_token = NULL
+
+} else if(server == "test"){
+  ## Current test server
+  opal_url = "https://dw-test.clinicalresearch.nl/repo"; opal_token = keyring::key_get("token_opal_testclinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
+
+} else if(server == "new"){
+  ## Future prod server
+  opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_TOM"
+  opal_token = NULL
+
+}
 
 
 
 # Procedure ---------------------------------------------------------------
-fakedata_new = CICD_procedure(opal_url = opal_url, opal_username = opal_username, opal_password = opal_password,
-                              datafile = datafile, var = var, cat = cat)
+fakedata_new = CICD_procedure(opal_url = opal_url, opal_username = opal_username, opal_password = opal_password, opal_token = opal_token,
+                              projname = projname, datafile = datafile, var = var, cat = cat)
 
 output_checks = fakedata_new$output_checks
 report_checks = fakedata_new$report_checks
