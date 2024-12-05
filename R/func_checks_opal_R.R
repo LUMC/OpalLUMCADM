@@ -268,14 +268,14 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
 
 
 
-## Encryption -------------------------------------------------------------
-  if(isFALSE(TRUE %in% str_detect(cnames_var, "encryption"))){
+## Encrypted --------------------------------------------------------------
+  if(isFALSE(TRUE %in% str_detect(cnames_var, "encrypted"))){
     problems = problems |>
-      bind_rows(bind_cols(check = "encryption", issue = "missing", info = NA))
+      bind_rows(bind_cols(check = "encrypted", issue = "missing", info = NA))
 
-    if(isFALSE(silent)){cat("There is no encryption variable in your var dictionary, watch out!\n")}
+    if(isFALSE(silent)){cat("There is no encrypted variable in your var dictionary, watch out!\n")}
   } else {
-    if(isFALSE(silent)){cat("Encryption information detected\n")}
+    if(isFALSE(silent)){cat("Encrypted information detected\n")}
   }
 
 
