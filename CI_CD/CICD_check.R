@@ -25,6 +25,7 @@ library(tibble); library(dplyr); library(stringr)
 
 library(opalr)
 library(diffdf)
+library(keyring)
 
 
 
@@ -52,7 +53,7 @@ load("example/FAKE_cat.RData")
 
 
 
-server = "test"  # c("demo", "test", "new")
+server = "demo"  # c("demo", "test", "new")
 
 # Datafiles ---------------------------------------------------------------
 if(server == "demo"){
