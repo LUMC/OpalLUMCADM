@@ -31,7 +31,7 @@ datafile_conform_var_change = function(datafile, var, date_time_format = c("Ymd"
   if(isFALSE(is_tibble(var))){stop("The var dictionary is not a tibble, provide datafile, var and cat as tibble.")}
 
 
-  dnames = colnames(datafile)
+  dnames = colnames(datafile); dnames = dnames[dnames != "id"]
   vnames = var$name
 
 # Initializations ---------------------------------------------------------
@@ -96,10 +96,17 @@ datafile_conform_var_change = function(datafile, var, date_time_format = c("Ymd"
 
       datafile_i = datafile |> pull(all_of(var_i_name))
 
-      tab_before = sum(!is.na(datafile_i) & (datafile_i != ""))
+      tab_before_DT = sum(!is.na(datafile_i) & (datafile_i != ""))
       datafile_i_converted = parse_date_time2(datafile_i, date_time_format)
-      tab_after = sum(!is.na(datafile_i_converted))
+      tab_after_DT = sum(!is.na(datafile_i_converted))
 
+
+      if(!identical(tab_before_DT, tab_after_DT)){
+        cat("Variable", var_i_name, "with index", i, "has conversion", conversion, "but not all date(time)s will be converted with the selected date_time_format (no convertion here)\n")
+
+        problems = problems |>
+          bind_rows(bind_cols(check = var_i_name, issue = "Data loss", info = conversion))
+      }
 
 
 ## To text ----------------------------------------------------------------
