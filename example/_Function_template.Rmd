@@ -248,7 +248,7 @@ This function will convert the datafile class to match with the valueType. If da
 
 For dataset == 2: when "Ymd HM" is not supplied, there will be loss of data.
 ```{r}
-datafile_conversion = datafile_conform_var_change(datafile = datafile, var = var2, date_time_format = c("Ymd", "Ymd HMS", "Ymd HM"))
+datafile_conversion = datafile_conform_var_change(datafile = datafile, var = var, date_time_format = c("Ymd", "Ymd HMS", "Ymd HM"))
 datafile = datafile_conversion$datafile
 
 
@@ -773,6 +773,8 @@ datafile123_decr3 = decrypt_data(con3, datafile123_encr, vars_to_decrypt); ident
 
 # Number of data points
 ```{r}
+source("C:\\Working projects\\ADM\\C_OpalLUMCADM\\R\\func_number_datapoints.R")
+
 var1 = number_datapoints(datafile, var, cat, count_Missings = FALSE)
 var2 = number_datapoints(datafile, var, cat, count_Missings = TRUE)
 
