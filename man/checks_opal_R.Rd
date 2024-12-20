@@ -43,13 +43,15 @@ The following checks are executed:
 7. If all valueTypes are opal-compatible.
 8. If all repeatable values are valid
 9. If there is a label or description in the var dictionary.
-10. If all essential cat columns are present
-10.5 If all missing values are valid
-11. If there are values with more than decimals, currently not possible with opal
-12. If all observed values adhere to the min/max in the var dictionary (optional).
-13. If all date and datetimes have a format that is accepted by opal.
+10. If there is an encrypted column in the var dictionary
+10.5 If the column exist, check if "yes" and "SI" are actually encrypted
+11. If all essential cat columns are present
+12.5 If all missing values are valid
+13. If there are values with more than decimals, currently not possible with opal
+14. If all observed values adhere to the min/max in the var dictionary (optional).
+15. If all date and datetimes have a format that is accepted by opal.
 
-The last check (13. if the date and datetimes are opal-compatible) is sub-optimal. It is very difficult to get a simple but complete check for all date(times) formats in opal. So interpret this with caution. Issues might be not a problem and no detected issues doesn't mean that everything is perfect.
+The last check (15. if the date and datetimes are opal-compatible) is sub-optimal. It is very difficult to get a simple but complete check for all date(times) formats in opal. So interpret this with caution. Issues might be not a problem and no detected issues doesn't mean that everything is perfect.
 }
 \author{
 Lars van der Burg
