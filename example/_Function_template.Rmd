@@ -198,7 +198,7 @@ report_copy = import_copy_table_opal_many(opal = opal_test, projnames = projname
 ## All checks
 There is a single function to run all checks that we currently want to run. It does not change the data, but just gives you an indication whether or not something MIGHT be wrong. Sometimes things are missing for a reason and is a reported issue not a real problem. Always be alert.
 ```{r}
-report_checks = checks_opal_R(datafile = datafile, var = var, cat = NULL, key = "id", min_max = TRUE, silent = FALSE)
+report_checks = checks_opal_R(datafile = datafile, var = var, cat = cat, key = "id", min_max = TRUE, silent = FALSE)
 ```
 
 
@@ -604,6 +604,15 @@ source("C:/Working projects/ADM/C_OpalLUMCADM/R/func_decrypt_data.R")
 vars_to_encrypt = vars_to_decrypt = c("integer1", "text2", "date4")
 
 con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+
+
+TEST = encrypt_data(con = con, data = datafile$id, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile$integer1, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+
+
+TEST = encrypt_data(con = con, data = datafile, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
 
 
 ## No search_image
