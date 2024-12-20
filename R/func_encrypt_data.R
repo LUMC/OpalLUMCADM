@@ -20,6 +20,10 @@
 #' @import rtres
 #'
 #' @author Lars van der Burg
+#'
+#' @note When encrypt_data is used inside a dplyr::mutate call the summary of the warnings will be cumulative. Unclear how to reset dplyr::last_dplyr_warnings
+#'
+#' @export
 encrypt_data = function(con, data, vars_to_encrypt = NULL, search_image = FALSE, salted_encryption = FALSE){
 
   test_connection = tryCatch({
@@ -30,13 +34,18 @@ encrypt_data = function(con, data, vars_to_encrypt = NULL, search_image = FALSE,
   }
 
 
+  ## Unknown how to clear dplyr::last_dplyr_warnings()...
+  ## So run a manual warning that ensures that later works correctly...
+  foo <- function(){warning("foo")}; df <- tibble(x = 1); suppressWarnings(df <- mutate(df, x = foo()))
+
+
   if(is.vector(data)){
-    data_encr = suppressWarnings(tres_encrypt(data, con, search_image = search_image, salted_encryption = salted_encryption))
-    warning_list = dplyr::last_dplyr_warnings(n = Inf)
+    # data_encr = suppressWarnings(tres_encrypt(data, con, search_image = search_image, salted_encryption = salted_encryption))
+    data_encr = suppressWarnings(tibble(x = data) |> mutate(y = tres_encrypt(x, con, search_image = search_image, salted_encryption = salted_encryption)) |> pull(y))
+    warning_list <<- dplyr::last_dplyr_warnings(n = Inf)
 
     if(search_image){
       data_encr = vec_extract_search_image(data_encr)
-      # cat("To get the search_image, use the function vec_extract_search_image(...) on the encrypted data:\n  `vec_extract_search_image(data_encr)`")
     }
 
   } else if(tibble::is_tibble(data) | is.data.frame(data)){
@@ -50,15 +59,17 @@ encrypt_data = function(con, data, vars_to_encrypt = NULL, search_image = FALSE,
 
     }
 
-    data_encr = suppressWarnings(data |> mutate(across(all_of(vars_to_encrypt), ~tres_encrypt(.x, con, search_image = search_image))))
-    warning_list = dplyr::last_dplyr_warnings(n = Inf)
+    data_encr = suppressWarnings(data |> mutate(across(all_of(vars_to_encrypt), ~tres_encrypt(.x, con, search_image = search_image, salted_encryption = salted_encryption))))
+    warning_list <- dplyr::last_dplyr_warnings(n = Inf)
+
 
     if(search_image){
       data_encr = data_encr |> mutate(across(all_of(vars_to_encrypt), ~vec_extract_search_image(.x), .names = "{.col}"))
-      # cat('To get the search_image, use the function vec_extract_search_image(...) on the encrypted data:\n  `data_encr |> mutate(across(all_of(vars_to_encrypt), ~vec_extract_search_image(.x), .names = "{.col}_SI"))`')
     }
   }
 
+
+  warning_list = warning_list[unlist(lapply(warning_list, \(x){paste0(x$parent) != "simpleWarning in foo(): foo\n"}))]
 
   if(length(warning_list) != 0){
     all_warnings = matrix(unlist(lapply(warning_list, \(x){str_match(x$parent$message, "\\[\\d+\\]\\s*(.+?)\\.\\s*\\((E\\d+)\\)")[1, c(2, 3)]})),

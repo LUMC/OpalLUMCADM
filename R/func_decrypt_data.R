@@ -16,6 +16,10 @@
 #' @import rtres
 #'
 #' @author Lars van der Burg
+#'
+#' @note When decrypt_data is used inside a dplyr::mutate call the summary of the warnings will be cumulative. Unclear how to reset dplyr::last_dplyr_warnings
+#'
+#' @export
 decrypt_data = function(con, data, vars_to_decrypt = NULL){
 
   test_connection = tryCatch({
@@ -26,10 +30,16 @@ decrypt_data = function(con, data, vars_to_decrypt = NULL){
   }
 
 
+  ## Unknown how to clear dplyr::last_dplyr_warnings()...
+  ## So run a manual warning that ensures that later works correctly...
+  foo <- function(){warning("foo")}; df <- tibble(x = 1); suppressWarnings(df <- mutate(df, x = foo()))
+
+
   if(is.vector(data)){
 
     if(!(FALSE %in% str_starts(data, "3::"))){
-      data_decr = suppressWarnings(tres_decrypt(data, con))
+      # data_decr = suppressWarnings(tres_decrypt(data, con))
+      data_decr = suppressWarnings(tibble(x = data) |> mutate(y = tres_decrypt(x, con)) |> pull(y))
       warning_list = dplyr::last_dplyr_warnings(n = Inf)
     } else {
       stop("Data is not (completely) decrypted because haven't detected encryption\n")
@@ -58,6 +68,8 @@ decrypt_data = function(con, data, vars_to_decrypt = NULL){
     warning_list = dplyr::last_dplyr_warnings(n = Inf)
   }
 
+
+  warning_list = warning_list[unlist(lapply(warning_list, \(x){paste0(x$parent) != "simpleWarning in foo(): foo\n"}))]
 
   if(length(warning_list) != 0){
     all_warnings = matrix(unlist(lapply(warning_list, \(x){str_match(x$parent$message, "\\[\\d+\\]\\s*(.+?)\\.\\s*\\((E\\d+)\\)")[1, c(2, 3)]})),
