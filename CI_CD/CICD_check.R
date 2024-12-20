@@ -25,7 +25,7 @@ library(tibble); library(dplyr); library(stringr)
 
 library(opalr)
 library(diffdf)
-library(keyring)
+# library(keyring)
 
 
 
