@@ -29,13 +29,15 @@
 #' 7. If all valueTypes are opal-compatible.
 #' 8. If all repeatable values are valid
 #' 9. If there is a label or description in the var dictionary.
-#' 10. If all essential cat columns are present
-#' 10.5 If all missing values are valid
-#' 11. If there are values with more than decimals, currently not possible with opal
-#' 12. If all observed values adhere to the min/max in the var dictionary (optional).
-#' 13. If all date and datetimes have a format that is accepted by opal.
+#' 10. If there is an encrypted column in the var dictionary
+#' 10.5 If the column exist, check if "yes" and "SI" are actually encrypted
+#' 11. If all essential cat columns are present
+#' 12.5 If all missing values are valid
+#' 13. If there are values with more than decimals, currently not possible with opal
+#' 14. If all observed values adhere to the min/max in the var dictionary (optional).
+#' 15. If all date and datetimes have a format that is accepted by opal.
 #'
-#' The last check (13. if the date and datetimes are opal-compatible) is sub-optimal. It is very difficult to get a simple but complete check for all date(times) formats in opal. So interpret this with caution. Issues might be not a problem and no detected issues doesn't mean that everything is perfect.
+#' The last check (15. if the date and datetimes are opal-compatible) is sub-optimal. It is very difficult to get a simple but complete check for all date(times) formats in opal. So interpret this with caution. Issues might be not a problem and no detected issues doesn't mean that everything is perfect.
 #'
 #' @return A list with a data.frame with the found issues and optionally (if min_max = TRUE) with the issues found with the check_categoriesmin_max function. Additionally, for every check a text is printed indicating whether or not an issue is found.
 #'
@@ -276,7 +278,25 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
     if(isFALSE(silent)){cat("There is no encrypted variable in your var dictionary, watch out!\n")}
   } else {
     if(isFALSE(silent)){cat("Encrypted information detected\n")}
+
+
+
+    check_encrypted = names(c(which(apply(datafile |> select(var |> filter(encrypted == "yes") |> pull(name)), 2, \(x){FALSE %in% str_starts(x, "3::")})),
+                              which(apply(datafile |> select(var |> filter(encrypted == "SI") |> pull(name)), 2, \(x){FALSE %in% str_starts(x, "1:")}))))
+
+    if(length(check_encrypted) != 0){
+      problems = problems |>
+        bind_rows(bind_cols(check = "encrypted", issue = "wrong indication", info = paste(check_encrypted, collapse = "; ")))
+
+      if(isFALSE(silent)){cat("There are variables not encrypted as indicated in the var dictionary, watch out!\n")}
+
+    } else {
+      if(isFALSE(silent)){cat("Encrypted as indicated\n")}
+    }
   }
+
+
+
 
 
 
