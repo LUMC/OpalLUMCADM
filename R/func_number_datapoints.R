@@ -13,7 +13,7 @@
 #'
 #' @author Lars van der burg
 #'
-#'
+#' @export
 number_datapoints = function(datafile, var, cat = NULL, count_Missings = FALSE){
 
   nr_points = NULL
