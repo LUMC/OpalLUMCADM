@@ -13,12 +13,9 @@ library(opalr)
 library(tidyverse)
 library(diffdf)
 library(openxlsx)
+library(rtres)
 
-
-files = list.files(path = "Functions", pattern = "*.R", full.names = TRUE)
-files = files[!str_detect(files, "_Function_template.Rmd")]
-
-sapply(files, source)
+library(OpalLUMCADM)
 ```
 
 
@@ -30,7 +27,7 @@ Here a Rmarkdown to show all the steps in a general workflow for working with Op
 dataset = 1  # With which dataset do you want to run everything? 1 or 2?
 projname = "TEST_LARS"
 
-path_diffdf = paste0(getwd(), "/Functions/Diffdf/")
+path_diffdf = paste0(getwd(), "/Diffdf/")
 if(!dir.exists(path_diffdf)){
   dir.create(path_diffdf)
 }
@@ -44,9 +41,9 @@ opal_test <- opalr::opal.login(url = "https://dw-test.clinicalresearch.nl/repo",
 ```{r}
 if(dataset == 1){
   # Random data test file:
-  load("Dataset/FAKE_datafile_20240902.RData") |> as_tibble()
-  load("Dataset/FAKE_var_20240902.RData") |> as_tibble()
-  load("Dataset/FAKE_cat_20240902.RData") |> as_tibble()
+  load("FAKE_datafile.RData") |> as_tibble()
+  load("FAKE_var.RData") |> as_tibble()
+  load("FAKE_cat.RData") |> as_tibble()
   
 
   tablename = "TESTTABLE1"
@@ -64,13 +61,12 @@ if(dataset == 1){
 } else if(dataset == 2){
 
   # Random data test file:
-  load(file = "Dataset\\randomdata_removed-parts-importscript_datafile.Rdata")
-  load(file = "Dataset\\randomdata_removed-parts-importscript_datafile.Rdata")
+  load(file = "randomdata_removed-parts-importscript_datafile.Rdata")
   datafile = datafile |> as_tibble()
   
   # Load dictionary file(s) into R. At least include a variables dictionary. categories dict is optional.
-  load(file = "Dataset\\randomdata_removed-parts-importscript_var.Rdata")
-  load(file = "Dataset\\randomdata_removed-parts-importscript_cat.Rdata")
+  load(file = "randomdata_removed-parts-importscript_var.Rdata")
+  load(file = "randomdata_removed-parts-importscript_cat.Rdata")
   
   var = var |> as_tibble()
   cat = cat |> as_tibble()
@@ -103,15 +99,33 @@ if(dataset == 1){
 # Write table
 Basis function just to write a table from R to opal.
 ```{r}
+var = var |> mutate(encrypted = rep(c("yes", "no", "SI", "YES", "Si", "No", "NO", "SI", "yes", "no"), 2))
+
 write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
 ```
 
+## Timezone 
+```{r}
+datafile$datetime1a = datafile$datetime1
+datafile$datetime1b = datafile$datetime1
+
+datafile$datetime1a = with_tz(datafile$datetime1a, "Europe/Amsterdam"); attributes(datafile$datetime1a)$tzone = "Europe/Amsterdam"
+datafile$datetime1b = with_tz(datafile$datetime1b, "UTC"); attributes(datafile$datetime1b)$tzone = "UTC"
+
+
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis_tz"), 
+                   datafile = datafile, var = var, cat = NULL, ent = ent, 
+                   action = "write", id.name = "id", max_tries = 2)
+``` 
+
+
 # Read table
 Basis function just to read in a table from opal and make it R ready by discarding some of the attributes
 ```{r}
 imported_table = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table_tz = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis_tz"), id.name = "id", max_tries = 2)
 ```
 
 
@@ -184,7 +198,7 @@ report_copy = import_copy_table_opal_many(opal = opal_test, projnames = projname
 ## All checks
 There is a single function to run all checks that we currently want to run. It does not change the data, but just gives you an indication whether or not something MIGHT be wrong. Sometimes things are missing for a reason and is a reported issue not a real problem. Always be alert.
 ```{r}
-report_checks = checks_opal_R(datafile = datafile, var = var, cat = NULL, key = "id", min_max = TRUE, silent = FALSE)
+report_checks = checks_opal_R(datafile = datafile, var = var, cat = cat, key = "id", min_max = TRUE, silent = FALSE)
 ```
 
 
@@ -234,7 +248,7 @@ This function will convert the datafile class to match with the valueType. If da
 
 For dataset == 2: when "Ymd HM" is not supplied, there will be loss of data.
 ```{r}
-datafile_conversion = datafile_conform_var_change(datafile = datafile, var = var2, date_time_format = c("Ymd", "Ymd HMS", "Ymd HM"))
+datafile_conversion = datafile_conform_var_change(datafile = datafile, var = var, date_time_format = c("Ymd", "Ymd HMS", "Ymd HM"))
 datafile = datafile_conversion$datafile
 
 
@@ -580,6 +594,202 @@ report_adjust_file = check_diffdf_opal_generic(datafile = datafile, datafile2 = 
 ```
 
 
+# Encryption & Decryption
+```{r}
+source("C:/Working projects/ADM/C_OpalLUMCADM/R/func_encrypt_data.R")
+source("C:/Working projects/ADM/C_OpalLUMCADM/R/func_decrypt_data.R")
+
+
+
+vars_to_encrypt = vars_to_decrypt = c("integer1", "text2", "date4")
+
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+
+
+TEST = encrypt_data(con = con, data = datafile$id, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile$integer1, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+
+
+TEST = encrypt_data(con = con, data = datafile, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+
+
+## No search_image
+datafile_encr = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = FALSE, salted_encryption = FALSE)
+datafile_decr = decrypt_data(con = con, data = datafile_encr, vars_to_decrypt = vars_to_decrypt)
+identical(datafile, datafile_decr |> mutate(integer1 = as.integer(integer1)))
+
+
+datafile_encr = datafile |> mutate(across(all_of(vars_to_encrypt), ~encrypt_data(con, .x)))
+datafile_decr = datafile_encr |> mutate(across(all_of(vars_to_decrypt), ~decrypt_data(con, .x)))
+identical(datafile, datafile_decr |> mutate(integer1 = as.integer(integer1)))
+
+
+datafile_encr = datafile |> 
+  mutate(integer1 = encrypt_data(con, datafile$integer1),
+         text2 = encrypt_data(con, datafile$text2),
+         date4 = encrypt_data(con, datafile$date4))
+datafile_decr = datafile_encr |>
+  mutate(integer1 = as.integer(decrypt_data(con, datafile_encr$integer1)),
+         text2 = decrypt_data(con, datafile_encr$text2),
+         date4 = decrypt_data(con, datafile_encr$date4))
+all.equal(datafile, datafile_decr)
+
+
+## Search_image
+datafile_encr = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+datafile_decr = decrypt_data(con = con, data = datafile_encr, vars_to_decrypt = vars_to_decrypt)
+```
+
+
+## Encryption
+```{r}
+vars_to_encrypt = c("integer1", "text2", "date4")
+
+
+## Correct connection
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+
+datafile_encr_vec = encrypt_data(con = con, data = datafile$integer1, search_image = TRUE, salted_encryption = FALSE)
+datafile_encr_mat = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+
+
+## vars_to_encrypt
+datafile_encr_mat1 = encrypt_data(con = con, data = datafile, vars_to_encrypt = NULL, search_image = TRUE, salted_encryption = FALSE)
+encrypt_data(con = con, data = datafile, vars_to_encrypt = c("integer0"), search_image = TRUE, salted_encryption = FALSE)
+
+
+
+## search_image vs salted_encryption
+datafile_encr1 = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+datafile_encr1 |> mutate(across(all_of(vars_to_encrypt), ~vec_extract_search_image(.x), .names = "{.col}_SI")) |> select(vars_to_encrypt, "integer1_SI", "text2_SI", "date4_SI")
+
+datafile_encr2 = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = FALSE, salted_encryption = TRUE)
+datafile_encr2 |> mutate(across(all_of(vars_to_encrypt), ~vec_extract_search_image(.x), .names = "{.col}_SI")) |> select(vars_to_encrypt, "integer1_SI", "text2_SI", "date4_SI")
+
+datafile_encr3 = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = FALSE, salted_encryption = FALSE)
+datafile_encr3 |> mutate(across(all_of(vars_to_encrypt), ~vec_extract_search_image(.x), .names = "{.col}_SI")) |> select(vars_to_encrypt, "integer1_SI", "text2_SI", "date4_SI")
+
+datafile_encr4 = encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = TRUE)
+
+
+
+## Wrong connection
+con <- tres_connect(base_url = "something", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "something", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "something", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "something", password = keyring::key_get("TRES_opals2s_lumina"))
+encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = "something")
+encrypt_data(con = con, data = datafile, vars_to_encrypt = vars_to_encrypt, search_image = TRUE, salted_encryption = FALSE)
+```
+
+## Decryption
+```{r}
+vars_to_decrypt = c("integer1", "text2", "date4")
+
+
+## Correct connection
+con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
+
+datafile_decr_vec = decrypt_data(con, data = datafile_encr_vec)
+identical(datafile$integer1, as.integer(datafile_decr_vec))
+
+datafile_decr_mat = decrypt_data(con, data = datafile_encr_mat, vars_to_decrypt = vars_to_decrypt)
+identical(datafile, datafile_decr_mat |> mutate(integer1 = as.integer(integer1)))
+
+
+## vars_to_decrypt
+datafile_decr_mat1 = decrypt_data(con, data = datafile_encr_mat, vars_to_decrypt = NULL)
+all.equal(datafile, datafile_decr_mat1 |> mutate(integer1 = as.integer(integer1)))
+
+decrypt_data(con, data = datafile_encr_mat, vars_to_decrypt = "integer0")
+datafile_decr_mat2 = decrypt_data(con, data = datafile_encr_mat, vars_to_decrypt = "integer1")
+all.equal(datafile, datafile_decr_mat2 |> mutate(integer1 = as.integer(integer1)))
+
+decrypt_data(con, data = datafile_encr_mat, vars_to_decrypt = "integer2")
+
+
+
+## Partly encrypted
+datafile_sub = datafile; datafile_sub[1, "text1"] = "3::NOT"
+
+datafile_sub_vec = decrypt_data(con, data = datafile_sub$text1)
+datafile_sub_mat = decrypt_data(con, data = datafile_sub, vars_to_decrypt = NULL)
+datafile_sub_mat = decrypt_data(con, data = datafile_sub, vars_to_decrypt = "text1")
+
+
+## Wrong connection
+# Has same checks as for encrypt_data
+```
+
+
+## Different accounts
+```{r}
+datafile1 = datafile
+datafile2 = datafile
+datafile3 = datafile
+
+vars_to_encrypt = vars_to_decrypt = c("integer1", "text2", "date4")
+
+
+## Encryption
+con1 <- tres_connect(base_url = "https://mereden.msbi.nl/TRESTEST/", domain = "test.clinicalresearch.nl", project = "S_O_A_C_B_SUBS_", username = "User1Groep1", password = "groep1USER1!")
+datafile1_encr = encrypt_data(con1, datafile1, vars_to_encrypt)
+
+
+con2 <- tres_connect(base_url = "https://mereden.msbi.nl/TRESTEST/", domain = "test.clinicalresearch.nl", project = "S_O_A_C_B_SUBS_", username = "User2Groep1", password = "groep1USER2!")
+datafile2_encr = encrypt_data(con2, datafile2, vars_to_encrypt, search_image = FALSE)
+
+
+con3 <- tres_connect(base_url = "https://mereden.msbi.nl/TRESTEST/", domain = "test.clinicalresearch.nl", project = "S_O_A_C_B_SUBS_", username = "User3Groep2", password = "groep2USER3!")
+datafile3_encr = encrypt_data(con3, datafile3, vars_to_encrypt)
+
+
+
+## Decryption
+datafile1_decr1 = decrypt_data(con1, datafile1_encr, vars_to_decrypt); identical(datafile1, datafile1_decr1 |> mutate(integer1 = as.integer(integer1)))
+datafile2_decr1 = decrypt_data(con1, datafile2_encr, vars_to_decrypt); identical(datafile2, datafile2_decr1 |> mutate(integer1 = as.integer(integer1)))
+datafile3_decr1 = decrypt_data(con1, datafile3_encr, vars_to_decrypt); identical(datafile3, datafile3_decr1 |> mutate(integer1 = as.integer(integer1)))
+
+datafile1_decr2 = decrypt_data(con2, datafile1_encr, vars_to_decrypt); identical(datafile1, datafile1_decr2 |> mutate(integer1 = as.integer(integer1)))
+datafile2_decr2 = decrypt_data(con2, datafile2_encr, vars_to_decrypt); identical(datafile2, datafile2_decr2 |> mutate(integer1 = as.integer(integer1)))
+datafile3_decr2 = decrypt_data(con2, datafile3_encr, vars_to_decrypt); identical(datafile3, datafile3_decr2 |> mutate(integer1 = as.integer(integer1)))
+
+datafile1_decr3 = decrypt_data(con3, datafile1_encr, vars_to_decrypt); identical(datafile1, datafile1_decr3 |> mutate(integer1 = as.integer(integer1)))
+datafile2_decr3 = decrypt_data(con3, datafile2_encr, vars_to_decrypt); identical(datafile2, datafile2_decr3 |> mutate(integer1 = as.integer(integer1)))
+datafile3_decr3 = decrypt_data(con3, datafile3_encr, vars_to_decrypt); identical(datafile3, datafile3_decr3 |> mutate(integer1 = as.integer(integer1)))
+
+
+### Combined decryption
+datafile123 = datafile1 |> bind_rows(datafile2) |> bind_rows(datafile3)
+datafile123_encr = datafile1_encr |> bind_rows(datafile2_encr) |> bind_rows(datafile3_encr)
+
+datafile123_decr1 = decrypt_data(con1, datafile123_encr, vars_to_decrypt); identical(datafile123, datafile123_decr1 |> mutate(integer1 = as.integer(integer1)))
+datafile123_decr2 = decrypt_data(con2, datafile123_encr, vars_to_decrypt); identical(datafile123, datafile123_decr2 |> mutate(integer1 = as.integer(integer1)))
+datafile123_decr3 = decrypt_data(con3, datafile123_encr, vars_to_decrypt); identical(datafile123, datafile123_decr3 |> mutate(integer1 = as.integer(integer1)))
+```
+
+
+
+# Number of data points
+```{r}
+source("C:\\Working projects\\ADM\\C_OpalLUMCADM\\R\\func_number_datapoints.R")
+
+var1 = number_datapoints(datafile, var, cat, count_Missings = FALSE)
+var2 = number_datapoints(datafile, var, cat, count_Missings = TRUE)
+
+var1$`Mlstr_area::nr_data_points`
+var2$`Mlstr_area::nr_data_points`
+```
 
 
 
