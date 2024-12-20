@@ -10,6 +10,7 @@ Comparison:
       R -e '
         install.packages("opalr", repos = "http://cran.rstudio.com/")
         install.packages("diffdf", repos = "http://cran.rstudio.com/")
+        install.packages("keyring", repos = "http://cran.rstudio.com/")
       '
 
     - |
