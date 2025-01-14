@@ -4,8 +4,8 @@
 # Author: Lars van der Burg
 # Status: in development (Do not use)
 #
-# Last modified: 2024-06-25
-# Last modifications: now when a view needs to be updated, it will be deleted and re-created. Added also some general checks to see if the function works correctly
+# Last modified: 2024-01-13
+# Last modifications: added a check to warn for possible parse error when non-verified var dict variables are not of class character
 #
 #' @title Making and updating views in opal
 #'
@@ -32,6 +32,8 @@
 #' This function does not handle entity filters! So keep that in mind when altering something with this function
 #' Currently (25/06) it is not possible to downsize a view (e.g., from 5 --> 4 variables). Therefore, independent of update, the view will be created from scratch
 #' It is possible that the view breaks down when the original datafile is altered. The view can then not be imported, an error is catched and the requested diffdf is turned off.
+#' For columns in the var dictionary that are not verified the class can only be character, otherwise a parse error will occur (https://git.lumc.nl/opal/public/adm_template_scripts/-/issues/1)
+#'
 #'
 #' @import opalr
 #' @import tidyr
@@ -75,7 +77,7 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
   if(isFALSE(update) & opalr::opal.table_exists(opal = opal_view, project = projname_view, table = tablename_view)){
     update = TRUE
 
-    warning("update was FALSE but the table existed, so set update to TRUE")
+    warning("update was FALSE but the table existed, so set update to TRUE\n")
   }
 
 
@@ -92,6 +94,22 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
     stop("There is a column called `table` in the dictionary. Views cannot handle that. Please rename or discard.")
   }
 
+
+  ## Check if dictionary is compatible with the data
+  ### Only verified attributes (columns) in the var dictionary can be non-characters, otherwiste get "ParseException, 1:179: Expected string"
+  cnames = unlist(lapply(strsplit(colnames(var), ":"), \(x){x[1]}))
+  cnames_verified = c("name", "valueType", "entityType", "index", "unit", "min", "max", "label", "description", "repeatable")
+  check_cnames = names(which(!sapply(cnames, \(x){x %in% cnames_verified})))
+  if(length(check_cnames) > 0){
+    check_cnames_class = names(which(sapply(check_cnames, \(x){class(var[[x]]) != "character"})))
+
+    if(length(check_cnames_class) > 0){
+      warning(paste0("Possibly there will be an error ('ParseException, 1:xx: Expected string') when creating this view. This is possibly because column(s): ",
+                     paste(check_cnames_class, collapse = "; "),
+                     " of the var dictionary are not of the class character. Opal cannot deal with that. Change that class to character and proceed.\n"))
+      cat("If there is no error or if the error persists after adjusting the dictionary, contact ADM and we will try to investigate further.\n")
+    }
+  }
 
 
 # Initializations ---------------------------------------------------------
