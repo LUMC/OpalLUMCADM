@@ -36,13 +36,16 @@ source("R/func_check_diffdf_opal_generic.R");
 source("R/func_checks_opal_R.R");
 source("R/func_datafile_conform_var_change.R");
 source("R/func_datafile_conform_var_check.R");
+source("R/func_decrypt_data.R");
 source("R/func_delete_table_opal.R");
+source("R/func_encrypt_data.R");
 source("R/func_import_copy_table_opal_many.R");
 source("R/func_import_copy_table_opal.R");
 source("R/func_import_create_table_opal.R");
 source("R/func_import_table_opal2R.R");
 source("R/func_make_opal_view.R");
-source("R/func_write_table_R2opal.R")
+source("R/func_number_datapoints.R");
+source("R/func_write_table_R2opal.R");
 
 source("CI_CD/CICD_procedure.R")
 
@@ -76,12 +79,12 @@ if(server == "demo"){
 
 # Procedure ---------------------------------------------------------------
 fakedata_exp = CICD_procedure(opal_url = opal_url, opal_username = opal_username, opal_password = opal_password, opal_token = opal_token,
-                              projname = projname, datafile = datafile, var = var, cat = cat)
+                              projname = projname, datafile = datafile, var = var, cat = cat, encryption = TRUE)
 
 
 # Expected outcome --------------------------------------------------------
 names(fakedata_exp) = paste0("exp_", names(fakedata_exp))
 save(fakedata_exp, file = "CI_CD/fakedata_exp.RData")
 
-save(fakedata_exp, file = paste0("CI_CD/", server, "_fakedata_exp_", format(Sys.Date()), ".RData"))
+save(fakedata_exp, file = paste0("CI_CD/", server, "_fakedata_exp_", format(Sys.Date(), "%Y%m%d"), ".RData"))
 

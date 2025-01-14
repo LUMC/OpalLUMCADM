@@ -43,6 +43,9 @@ source("R/func_import_create_table_opal.R");
 source("R/func_import_table_opal2R.R");
 source("R/func_make_opal_view.R");
 source("R/func_write_table_R2opal.R")
+source("R/func_make_opal_view.R");
+source("R/func_number_datapoints.R");
+source("R/func_write_table_R2opal.R");
 
 
 
@@ -77,7 +80,7 @@ if(server == "demo"){
 
 # Procedure ---------------------------------------------------------------
 fakedata_new = CICD_procedure(opal_url = opal_url, opal_username = opal_username, opal_password = opal_password, opal_token = opal_token,
-                              projname = projname, datafile = datafile, var = var, cat = cat)
+                              projname = projname, datafile = datafile, var = var, cat = cat, encryption = FALSE)
 
 output_checks = fakedata_new$output_checks
 report_checks = fakedata_new$report_checks
@@ -98,6 +101,7 @@ report_view = fakedata_new$report_view
 report_view2 = fakedata_new$report_view2
 report_create4 = fakedata_new$report_create4
 report_view3 = fakedata_new$report_view3
+NDPs = fakedata_new$NDPs
 
 output_checks2 = fakedata_new$output_checks2
 report_checks2 = fakedata_new$report_checks2
@@ -142,6 +146,7 @@ exp_report_view = fakedata_exp$exp_report_view
 exp_report_view2 = fakedata_exp$exp_report_view2
 exp_report_create4 = fakedata_exp$exp_report_create4
 exp_report_view3 = fakedata_exp$exp_report_view3
+exp_NDPs = fakedata_exp$exp_NDPs
 
 exp_output_checks2 = fakedata_exp$exp_output_checks2
 exp_report_checks2 = fakedata_exp$exp_report_checks2
@@ -187,6 +192,7 @@ cat("report_view:       "); if(identical(exp_report_view, report_view)){cat("che
 cat("report_view2:      "); if(identical(exp_report_view2, report_view2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view2 = report_view2}
 cat("report_create4:    "); if(identical(exp_report_create4, report_create4)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_create4 = report_create4}
 cat("report_view3:      "); if(identical(exp_report_view3, report_view3)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view3 = report_view3}
+cat("NDP:               "); if(identical(exp_NDP, NDP)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$NDP = NDP}
 
 cat("output_checks2:    "); if(identical(exp_output_checks2, output_checks2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$output_checks2 = output_checks2}
 cat("report_checks2:    "); if(identical(exp_report_checks2, report_checks2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_checks2 = report_checks2}

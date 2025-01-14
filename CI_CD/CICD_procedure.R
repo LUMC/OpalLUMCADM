@@ -21,7 +21,7 @@
 #'
 #'
 CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_username = "administrator", opal_password = "password", opal_token = NULL,
-                          projname = "TESTING", datafile, var, cat){
+                          projname = "TESTING", datafile, var, cat, encryption = FALSE){
 
 # Initializations ---------------------------------------------------------
   tablename = "fakedata"; tablename_temp = "fakedata_copy"; tablename_view = "fakedata_view"
@@ -34,6 +34,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   }
 
 
+  ## Intermediate opal version did not allow categories for date(time) variables
   # cat = cat |> filter(!(variable %in% c("date2", "date4", "datetime2", "datetime4")))
 
 
@@ -42,8 +43,6 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   cat_temp = cat
 
 
-
-# Procedure ---------------------------------------------------------------
   if(isTRUE(opalr::opal.table_exists(opal, projname, tablename))){
     delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
   }
@@ -52,13 +51,15 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   }
 
 
+
+# Procedure ---------------------------------------------------------------
   output_checks = capture.output(report_checks <<- checks_opal_R(datafile = datafile, var = var, cat = cat, key = "id", min_max = TRUE, silent = FALSE))
   report_change = datafile_conform_var_change(datafile = datafile, var = var)
 
   write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, cat = cat, ent = "Participant", action = "write")
 
-  report_import = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
-  datafile2 = report_import$datafile; var2 = report_import$var; cat2 = report_import$cat
+  report_import1 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
+  datafile2 = report_import1$datafile; var2 = report_import1$var; cat2 = report_import1$cat
 
 
   delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
@@ -67,7 +68,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   report_diffdf = check_diffdf_opal_generic(datafile, datafile2, var, var2, cat, cat2, comparison = "both", comp_key = "id", suppress_warnings = TRUE,
                                             report_path = NULL, opt_rm_VarDiff_null = TRUE, opt_calc_VarDiff_diff = TRUE, opt_calc_VarDiff_spaces = TRUE)
 
-  report_diffdf2 = check_diffdf_opal_generic(datafile2, report_import$datafile4copy, var2, report_import$var4copy, cat2, report_import$cat4copy,
+  report_diffdf2 = check_diffdf_opal_generic(datafile2, report_import1$datafile4copy, var2, report_import1$var4copy, cat2, report_import1$cat4copy,
                                              comparison = "both", comp_key = "id", suppress_warnings = TRUE,
                                              report_path = NULL, opt_rm_VarDiff_null = TRUE, opt_calc_VarDiff_diff = TRUE, opt_calc_VarDiff_spaces = TRUE)
 
@@ -140,6 +141,50 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   delete_table_opal(opal = opal, projname = projname, tablename = tablename_view, child_lock = FALSE)
 
 
+
+## Encryption -------------------------------------------------------------
+  if(isTRUE(encryption)){
+    con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"),
+                        search_image = TRUE)
+    vars_to_encrypt = var |> filter(encrypted == "yes") |> pull(name)
+    vars_to_encrypt_SI = var |> filter(encrypted == "SI") |> pull(name)
+
+    encryption_checks1 = capture.output(datafile_encr <<- datafile |> mutate(across(all_of(vars_to_encrypt), ~encrypt_data(con, .x, search_image = FALSE))))
+    decryption_checks1 = capture.output(datafile_decr <<- datafile_encr |> mutate(across(all_of(vars_to_encrypt), ~decrypt_data(con, .x))))
+
+    report_diffdf8 = check_diffdf_opal_generic(datafile, datafile_decr, NULL, NULL, NULL, NULL, comparison = "both", comp_key = "id", suppress_warnings = TRUE,
+                                               report_path = NULL, opt_rm_VarDiff_null = TRUE, opt_calc_VarDiff_diff = TRUE, opt_calc_VarDiff_spaces = TRUE,
+                                               opt_rm_VarDiff_diff_0 = TRUE, opt_repl_castor = TRUE, aggregate_VarDiff = TRUE)
+
+    var_encr = var |> mutate(valueType = ifelse(name %in% vars_to_encrypt, "text", valueType))
+    write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile_encr, var = var_encr, cat = cat, ent = "Participant", action = "write")
+
+    report_import4 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
+    delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
+
+    decryption_checks2 = capture.output(datafile_decr2 <<- report_import4$datafile4copy |> mutate(across(all_of(vars_to_encrypt), ~decrypt_data(con, .x))))
+
+    report_diffdf9 = check_diffdf_opal_generic(datafile, datafile_decr2, NULL, NULL, NULL, NULL, comparison = "both", comp_key = "id", suppress_warnings = TRUE,
+                                               report_path = NULL, opt_rm_VarDiff_null = TRUE, opt_calc_VarDiff_diff = TRUE, opt_calc_VarDiff_spaces = TRUE,
+                                               opt_rm_VarDiff_diff_0 = TRUE, opt_repl_castor = TRUE, aggregate_VarDiff = TRUE)
+
+    encryption_checks2 = capture.output(datafile_encr2 <<- datafile_encr |> mutate(across(all_of(vars_to_encrypt_SI), ~encrypt_data(con, .x, search_image = TRUE))))
+    var_encr = var_encr |> mutate(valueType = ifelse(name %in% vars_to_encrypt_SI, "text", valueType))
+
+    decryption_checks3 = tryCatch({datafile_encr2 |> mutate(across(all_of(vars_to_encrypt_SI), ~decrypt_data(con, .x)))},
+                                  error = function(e){e$parent$parent})
+  }
+
+
+## Number_datapoints ------------------------------------------------------
+  NDP1 = number_datapoints(datafile, var, cat, count_Missings = FALSE)
+  NDP2 = number_datapoints(datafile_encr2, var_encr, cat, count_Missings = FALSE)
+  NDP3 = number_datapoints(datafile, var, cat, count_Missings = TRUE)
+
+  NDPs = NDP1 |>
+    full_join(NDP2, by = join_by(name, valueType, `label:en`, unit, `description:en`, min, max, encrypted, index)) |>
+    full_join(NDP3, by = join_by(name, valueType, `label:en`, unit, `description:en`, min, max, encrypted, index)) |>
+    select(name, starts_with("Mlstr_area::"))
 
 
 
@@ -232,7 +277,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   out = list(output_checks = output_checks,
              report_checks = report_checks,
              report_change = report_change,
-             report_import = report_import,
+             report_import1 = report_import1,
              report_diffdf = report_diffdf,
              report_diffdf2 = report_diffdf2,
              report_diffdf3 = report_diffdf3,
@@ -248,6 +293,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
              report_view2 = report_view2,
              report_create4 = report_create4,
              report_view3 = report_view3,
+             NDPs = NDPs,
 
              output_checks2 = output_checks2,
              report_checks2 = report_checks2,
@@ -266,6 +312,18 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
              output_checks4 = output_checks4,
              report_checks4 = report_checks4,
              report_diffdf7 = report_diffdf7)
+
+  if(isTRUE(encryption)){
+    out2 = list(encryption_checks1 = encryption_checks1,
+                decryption_checks1 = decryption_checks1,
+                report_diffdf8 = report_diffdf8,
+                decryption_checks2 = decryption_checks2,
+                report_diffdf9 = report_diffdf9,
+                encryption_checks2 = encryption_checks2,
+                decryption_checks3 = decryption_checks3)
+
+    out = append(out, out2)
+  }
 
 
   return(out)
