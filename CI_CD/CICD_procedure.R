@@ -64,6 +64,13 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
 
   delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
 
+  ##
+  out = list(output_checks = output_checks,
+       report_checks = report_checks,
+       report_change = report_change,
+       report_import1 = report_import1)
+  return(out)
+  ##
 
   report_diffdf = check_diffdf_opal_generic(datafile, datafile2, var, var2, cat, cat2, comparison = "both", comp_key = "id", suppress_warnings = TRUE,
                                             report_path = NULL, opt_rm_VarDiff_null = TRUE, opt_calc_VarDiff_diff = TRUE, opt_calc_VarDiff_spaces = TRUE)
