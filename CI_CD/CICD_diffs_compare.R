@@ -2,18 +2,26 @@
 # Script to make a start with the CI/CD comparison between expected and observed differences
 #
 # Written by: Lars van der Burg
-# Written on: 2024-10-30
+# Written on: 2025-01-14
 #
 #
+
 
 
 # Read-in results ---------------------------------------------------------
-load("CI_CD/fakedata_CICD_diffs.Rdata")
-load("CI_CD/fakedata_exp.RData")
+## For encryption/decryption we cannot use the CI/CD. Compare with an old expected outcome
+load("CI_CD/demo_fakedata_exp_20250114.RData")
+fakedata_exp_prev = fakedata_exp
+
+
+load("CI_CD/fakedata_exp.RData")  # The expected outcome
+load("CI_CD/fakedata_CICD_diffs.Rdata")  # The outcome of the CI/CD
 
 
 
 
+
+# Compare CI/CD -----------------------------------------------------------
 N = length(fakedata_CICD_diffs)
 cnames = names(fakedata_CICD_diffs)
 
@@ -43,5 +51,18 @@ for(i in 1:N){
 
     cat(diff, "\n")
   }
+}
+
+
+
+# Compare encrypt/decrypt -------------------------------------------------
+checks = c("exp_encryption_checks1", "exp_decryption_checks1", "exp_report_diffdf8", "exp_decryption_checks2", "exp_report_diffdf9", "exp_encryption_checks2", "exp_decryption_checks3"); nr_checks = length(checks)
+for(i in 1:nr_checks){
+  check_i = checks[i]
+
+  exp_i = fakedata_exp_prev[[check_i]]
+  out_i = fakedata_exp[[check_i]]
+
+  cat(paste0(check_i, ": ", identical(exp_i, out_i)), "\n")
 }
 
