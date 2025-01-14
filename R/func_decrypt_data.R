@@ -42,7 +42,7 @@ decrypt_data = function(con, data, vars_to_decrypt = NULL){
       data_decr = suppressWarnings(tibble(x = data) |> mutate(y = tres_decrypt(x, con)) |> pull(y))
       warning_list = dplyr::last_dplyr_warnings(n = Inf)
     } else {
-      stop("Data is not (completely) decrypted because haven't detected encryption\n")
+      stop("Data is not (completely/non-SI) decrypted because haven't detected 3:: encryption\n")
     }
 
   } else if(tibble::is_tibble(data) | is.data.frame(data)){
