@@ -1,6 +1,8 @@
 # Start -------------------------------------------------------------------
 # Script to make a start with the CI/CD comparison between expected and observed differences
 #
+# For the comparison, fakedata_CICD_diff.RData is the job artifact that must be downloaded from the git CI/CD
+#
 # Written by: Lars van der Burg
 # Written on: 2025-01-14
 #
