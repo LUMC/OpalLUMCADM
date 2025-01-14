@@ -178,12 +178,10 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
 
 ## Number_datapoints ------------------------------------------------------
   NDP1 = number_datapoints(datafile, var, cat, count_Missings = FALSE)
-  NDP2 = number_datapoints(datafile_encr2, var_encr, cat, count_Missings = FALSE)
-  NDP3 = number_datapoints(datafile, var, cat, count_Missings = TRUE)
+  NDP2 = number_datapoints(datafile, var, cat, count_Missings = TRUE)
 
   NDPs = NDP1 |>
     full_join(NDP2, by = join_by(name, valueType, `label:en`, unit, `description:en`, min, max, encrypted, index)) |>
-    full_join(NDP3, by = join_by(name, valueType, `label:en`, unit, `description:en`, min, max, encrypted, index)) |>
     select(name, starts_with("Mlstr_area::"))
 
 
