@@ -95,11 +95,10 @@ if(dataset == 1){
 ```
 
 
-
 # Write table
 Basis function just to write a table from R to opal.
 ```{r}
-var = var |> mutate(encrypted = rep(c("yes", "no", "SI", "YES", "Si", "No", "NO", "SI", "yes", "no"), 2))
+# var = var |> mutate(encrypted = rep(c("yes", "no", "SI", "YES", "Si", "No", "NO", "SI", "yes", "no"), 2))
 
 write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
@@ -125,7 +124,7 @@ write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tab
 Basis function just to read in a table from opal and make it R ready by discarding some of the attributes
 ```{r}
 imported_table = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
-imported_table_tz = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis_tz"), id.name = "id", max_tries = 2)
+# imported_table_tz = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis_tz"), id.name = "id", max_tries = 2)
 ```
 
 
@@ -137,9 +136,9 @@ var2 = imported_table$var
 cat2 = imported_table$cat
 
 
-datafile2[1, "text1"] = " 4RRnDdnOBEYa8qDTrNSjvMyu0"
-datafile2[2, "text1"] = "KfQs5tyxEsgGeuMqfCFgXZR66 "
-datafile2[3, "text1"] = " T8uIXL8xc8ZjeX2VvVksUvr "
+# datafile2[1, "text1"] = " 4RRnDdnOBEYa8qDTrNSjvMyu0"
+# datafile2[2, "text1"] = "KfQs5tyxEsgGeuMqfCFgXZR66 "
+# datafile2[3, "text1"] = " T8uIXL8xc8ZjeX2VvVksUvr "
   
 report_diffdf = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, 
                                           comparison = "mod", comp_key = "id", date_time_format = c("Ymd", "Ymd HMS"), suppress_warnings = TRUE, 
@@ -259,6 +258,14 @@ opaltable = opalr::dictionary.apply(tibble = datafile, variables = var, cat = ca
 # Views
 The idea behind opal is that instead of sharing your actual datafile, you can share a view with others. With `make_opal_view` you can make a view.
 ```{r}
+colnames(var)
+var$index2 = 1:20  # breaks down
+var$index2 = as.character(1:20)  # works
+
+var$ent = 1
+
+var$repeatable = 1
+
 view_report = make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
                              opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view"),
                              var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent, 
