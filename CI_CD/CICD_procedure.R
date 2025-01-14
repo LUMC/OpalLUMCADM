@@ -64,6 +64,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
 
   delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
 
+
   ##
   out = list(output_checks = output_checks,
        report_checks = report_checks,

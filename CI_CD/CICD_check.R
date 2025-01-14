@@ -85,7 +85,7 @@ fakedata_new = CICD_procedure(opal_url = opal_url, opal_username = opal_username
 output_checks = fakedata_new$output_checks
 report_checks = fakedata_new$report_checks
 report_change = fakedata_new$report_change
-report_import = fakedata_new$report_import
+report_import1 = fakedata_new$report_import1
 # report_diffdf = fakedata_new$report_diffdf
 # report_diffdf2 = fakedata_new$report_diffdf2
 # report_diffdf3 = fakedata_new$report_diffdf3
@@ -130,7 +130,7 @@ load("CI_CD/fakedata_exp.RData")
 exp_output_checks = fakedata_exp$exp_output_checks
 exp_report_checks = fakedata_exp$exp_report_checks
 exp_report_change = fakedata_exp$exp_report_change
-exp_report_import = fakedata_exp$exp_report_import
+exp_report_import1 = fakedata_exp$exp_report_import1
 # exp_report_diffdf = fakedata_exp$exp_report_diffdf
 # exp_report_diffdf2 = fakedata_exp$exp_report_diffdf2
 # exp_report_diffdf3 = fakedata_exp$exp_report_diffdf3
@@ -176,7 +176,7 @@ cat("\n\nChecking CI/CD on fakedata\n")
 cat("output_checks:     "); if(identical(exp_output_checks, output_checks)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$output_checks = output_checks}
 cat("report_checks:     "); if(identical(exp_report_checks, report_checks)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_checks = report_checks}
 cat("report_change:     "); if(identical(exp_report_change, report_change)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_change = report_change}
-cat("report_import:     "); if(identical(exp_report_import, report_import)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_import = report_import}
+cat("report_import1:    "); if(identical(exp_report_import1, report_import1)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_import1 = report_import1}
 # cat("report_diffdf:     "); if(identical(exp_report_diffdf, report_diffdf)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_diffdf = report_diffdf}
 # cat("report_diffdf2:    "); if(identical(exp_report_diffdf2, report_diffdf2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_diffdf2 = report_diffdf2}
 # cat("report_diffdf3:    "); if(identical(exp_report_diffdf3, report_diffdf3)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_diffdf3 = report_diffdf3}
