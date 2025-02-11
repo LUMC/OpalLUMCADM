@@ -98,12 +98,44 @@ if(dataset == 1){
 # Write table
 Basis function just to write a table from R to opal.
 ```{r}
-# var = var |> mutate(encrypted = rep(c("yes", "no", "SI", "YES", "Si", "No", "NO", "SI", "yes", "no"), 2))
-
 write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
 ```
+
+## Dictionary update
+```{r}
+# var = var |> mutate(encrypted = rep(c("yes", "no", "SI", "YES", "Si", "No", "NO", "SI", "yes", "no"), 2))
+
+cat_FULL = cat
+cat = cat[-2, ]
+
+write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
+                   datafile = datafile, var = var, cat = cat, ent = ent, 
+                   action = "write", id.name = "id", max_tries = 2)
+
+imported_table1 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table1$cat4copy |> filter(variable == "integer2")
+
+cat_FULL[3, 4] = "level 3a"
+
+var$entityType = ent  # Required if entityType is not default `Participant`
+opalr::opal.table_dictionary_update(opal_test, projname, paste0(tablename, "_basis"), var, cat_FULL)
+
+imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table2$cat4copy |> filter(variable == "integer2")
+
+diff=diffdf::diffdf(datafile, imported_table2$datafile4copy, keys = "id"); diff$NumDiff
+
+
+cat_FULL[2, 2] = "4";  # Can only add cat dictionary if levels are present in the datafile
+opalr::opal.table_dictionary_update(opal_test, projname, paste0(tablename, "_basis"), var, cat_FULL)
+
+imported_table3 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table3 |> filter(variable == "integer2")
+```
+
+
 
 ## Timezone 
 ```{r}
