@@ -48,12 +48,10 @@ source("R/func_number_datapoints.R");
 source("R/func_write_table_R2opal.R");
 
 
-
 # Fake dataset ------------------------------------------------------------
 load("example/FAKE_datafile.RData")
 load("example/FAKE_var.RData")
 load("example/FAKE_cat.RData")
-
 
 
 server = "demo"  # c("demo", "test", "new")

@@ -5,9 +5,6 @@
 #
 # Written by: Lars van der Burg
 # Written on: 2025-01-14
-#
-#
-
 
 
 # Read-in results ---------------------------------------------------------
@@ -15,12 +12,8 @@
 load("CI_CD/demo_fakedata_exp_20250114.RData")
 fakedata_exp_prev = fakedata_exp
 
-
 load("CI_CD/fakedata_exp.RData")  # The expected outcome
 load("CI_CD/fakedata_CICD_diffs.Rdata")  # The outcome of the CI/CD
-
-
-
 
 
 # Compare CI/CD -----------------------------------------------------------
