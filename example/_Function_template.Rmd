@@ -105,7 +105,8 @@ write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tab
 
 ## Dictionary update
 ```{r}
-# var = var |> mutate(encrypted = rep(c("yes", "no", "SI", "YES", "Si", "No", "NO", "SI", "yes", "no"), 2))
+var_FULL = var
+var = var |> select(-encrypted)
 
 cat_FULL = cat
 cat = cat[-2, ]
@@ -115,17 +116,21 @@ write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tab
                    action = "write", id.name = "id", max_tries = 2)
 
 imported_table1 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+"encrypted" %in% colnames(imported_table1$var4copy)
 imported_table1$cat4copy |> filter(variable == "integer2")
+
 
 cat_FULL[3, 4] = "level 3a"
 
-var$entityType = ent  # Required if entityType is not default `Participant`
-opalr::opal.table_dictionary_update(opal_test, projname, paste0(tablename, "_basis"), var, cat_FULL)
+var_FULL$entityType = ent  # Required if entityType is not default `Participant`
+opalr::opal.table_dictionary_update(opal_test, projname, paste0(tablename, "_basis"), var_FULL, cat_FULL)
 
 imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+"encrypted" %in% colnames(imported_table2$var4copy)
 imported_table2$cat4copy |> filter(variable == "integer2")
 
-diff=diffdf::diffdf(datafile, imported_table2$datafile4copy, keys = "id"); diff$NumDiff
+
+diff = diffdf::diffdf(datafile, imported_table2$datafile4copy, keys = "id"); diff$NumDiff
 
 
 cat_FULL[2, 2] = "4";  # Can only add cat dictionary if levels are present in the datafile
@@ -333,6 +338,10 @@ report_import4 <- import_create_table_opal(opal = opal_test, projname = projname
                                            report_path = path_diffdf, report_name = paste("Report_import_overwrite", tablename, sep = "_"))
 
 ## Is there an easy way to see if this view is still usable?
+
+
+
+import_view = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_view2"))
 ```
 
 
