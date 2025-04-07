@@ -56,7 +56,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   output_checks = capture.output(report_checks <<- checks_opal_R(datafile = datafile, var = var, cat = cat, key = "id", min_max = TRUE, silent = FALSE))
   report_change = datafile_conform_var_change(datafile = datafile, var = var)
 
-  write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, cat = cat, ent = "Participant", action = "write")
+  write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, cat = cat, ent = "Participant", action = "write", child_lock = FALSE)
 
   report_import1 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
   datafile2 = report_import1$datafile; var2 = report_import1$var; cat2 = report_import1$cat
@@ -157,7 +157,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
                                                opt_rm_VarDiff_diff_0 = TRUE, opt_repl_castor = TRUE, aggregate_VarDiff = TRUE)
 
     var_encr = var |> mutate(valueType = ifelse(name %in% vars_to_encrypt, "text", valueType))
-    write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile_encr, var = var_encr, cat = cat, ent = "Participant", action = "write")
+    write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile_encr, var = var_encr, cat = cat, ent = "Participant", action = "write", child_lock = FALSE)
 
     report_import4 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
     delete_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE)
@@ -191,7 +191,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
 
   output_checks2 = capture.output(report_checks2 <<- checks_opal_R(datafile = datafile, var = var, key = "id", min_max = TRUE, silent = FALSE))
 
-  write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, ent = "Participant", action = "write")
+  write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, ent = "Participant", action = "write", child_lock = FALSE)
 
   report_import2 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
   datafile2 = report_import2$datafile; var2 = report_import2$var; cat2 = report_import2$cat
@@ -254,7 +254,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   output_checks3 = capture.output(report_checks3 <<- checks_opal_R(datafile = datafile, var = var, cat = cat, key = "id", min_max = TRUE, silent = FALSE))
 
 
-  write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, cat = cat, ent = "Participant", action = "write")
+  write_table_R2opal(opal, projname = projname, tablename = tablename, datafile = datafile, var = var, cat = cat, ent = "Participant", action = "write", child_lock = FALSE)
 
 
   report_import3 = import_table_opal2R(opal = opal, projname = projname, tablename = tablename)
