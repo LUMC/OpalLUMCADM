@@ -377,11 +377,11 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
 # Four decimals -----------------------------------------------------------
 ## Temporary check if there are more than four decimals in the data
   decimalplaces <- function(x) {
-    x <- sub("0+$", "", x)
-    x <- sub("^.+[.]", "", x)
-    nchar(x)
+    # x <- sub("0+$", "", x)
+    # x <- sub("^.+[.]", "", x)
+    # nchar(x)
 
-    # unlist(lapply(str_split(x, "\\."), function(y){y[2]}))
+    nchar(unlist(lapply(str_split(x, "\\."), function(y){y[2]})))
   }
 
   check_decimals = FALSE
@@ -495,7 +495,7 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
     ## 2. whether conversion gives an appropriate date(time)
     NA_after2 = sum(is.na(suppressWarnings({lubridate::parse_date_time(vect, orders = formats)})))
 
-    ## 3. whether a `T` is present (opal says it can handle it, but can't)
+    ## 3. whether a `T` is present (opal says it can handle it, but can't (wouldn't know how))
     NA_after3 = sum(is.na(vect) | str_detect(vect, "T"))
 
     return(max(c(NA_after1 - NA_before, NA_after2 - NA_before, NA_after3 - NA_before)))
