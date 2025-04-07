@@ -99,7 +99,7 @@ import_create_table_opal <- function(opal, projname, tablename, datafile, var, c
 
 
 # Write table -------------------------------------------------------------
-  write_table_R2opal(opal, projname, tablename, datafile, var, cat, ent = ent, action = action, id.name = id.name, max_tries = max_tries, ...)
+  write_table_R2opal(opal, projname, tablename, datafile, var, cat, ent = ent, action = action, id.name = id.name, max_tries = max_tries)
 
 
 
