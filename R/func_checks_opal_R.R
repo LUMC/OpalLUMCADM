@@ -449,7 +449,7 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
         cats = NULL
       }
 
-      report_min_max = check_categoriesminmax_generic(datafiles = datafiles, vars = vars, cats = cats, report_path = NULL, silent = TRUE)
+      report_min_max = check_categoriesminmax_generic(datafiles = datafiles, vars = vars, cats = cats, key = key, report_path = NULL, silent = TRUE)
       if(length(report_min_max) == 0){
         if(isFALSE(silent)){cat("No min/max issues\n")}
       } else {

@@ -5,14 +5,15 @@
 #' @param datafiles list. A list containing for each element a datafile
 #' @param vars list. A list containing for each element a var dictionary, that matches the datafile from datafiles with the same element
 #' @param cats an optional list. A list containing for each element a cat dictionary, that matches the datafile from datafiles with the same element. If NULL, than only the min/max can be checked and not the categories.
+#' @param key string. The key of the datafile that will be read into opal.
 #' @param report_path string. Folder where the report needs to be saved. If \code{NULL} the report is not saved but only returned.
 #' @param silent boolean. Whether or not to silence the printing of messages while running the function (FALSE is default).
 #' @param conditional an optional list. In each list element for a specific variable an extra filter statement can be included. Should be constructed as: `variable_name ~ statement`, where the variable name must match a variable in the dataset and the statement should be an evaluable statement by the dplyr::filter function.
 #' @param includeNA boolean. Whether or not to include the NAs from the min_max report
 #'
 #' @return a list with an element for each supplied datafile. Per list element there can be two separate list elements containing matrices with the findings. Only present if there are non-zero findings:
-#' * min_max A matrix with 5 columns and rows equal to the number of findings. Columns are `id`, `variable name`, `value`, `min` and `max`. Value is the observed value that is outside the min/max range
-#' * outside_cat A matrix with 4 column and rows equal to the number of findings. Columns are `id`, `variable name`, `value` and `categories`. Value is the observed value, categories the current known labels
+#' * min_max A matrix with 5 columns and rows equal to the number of findings. Columns are `{key}`, `variable name`, `value`, `min` and `max`. Value is the observed value that is outside the min/max range
+#' * outside_cat A matrix with 4 column and rows equal to the number of findings. Columns are `{key}`, `variable name`, `value` and `categories`. Value is the observed value, categories the current known labels
 #'
 #' @note
 #' Cannot be used reliably when the variables have labels, so when a table is retrieved from opal
@@ -22,7 +23,7 @@
 #' @importFrom rlang parse_expr
 #'
 #' @author Lars van der Burg & Thekla Jansen
-check_categoriesminmax_generic <- function(datafiles, vars, cats = NULL, report_path = NULL, report_name = "Report", silent = FALSE, conditional = NULL, includeNA = FALSE){
+check_categoriesminmax_generic <- function(datafiles, vars, cats = NULL, key = "id", report_path = NULL, report_name = "Report", silent = FALSE, conditional = NULL, includeNA = FALSE){
 
 
 # Checks ------------------------------------------------------------------
@@ -89,7 +90,7 @@ check_categoriesminmax_generic <- function(datafiles, vars, cats = NULL, report_
     ## fetch type, categories (values), min, max, missing values
     for(variable_name in names(datafiles[[table_name]])){
 
-      if(variable_name == "id" | !(variable_name %in% (vars[[table_name]] |> pull(name)))){
+      if(variable_name == key | !(variable_name %in% (vars[[table_name]] |> pull(name)))){
         next
       }
       if(isFALSE(silent)){cat(table_name, "with", variable_name, "\n")}
@@ -129,7 +130,7 @@ check_categoriesminmax_generic <- function(datafiles, vars, cats = NULL, report_
             filter(!!rlang::parse_expr(condit |> filter(var == variable_name) |> pull(con)))
         }
         tempdata <- tempdata %>%
-          select(id, all_of(variable_name)) |> rename(current_var = all_of(variable_name))
+          select(all_of(c(key, variable_name))) |> rename(current_var = all_of(variable_name))
 
         ## if datetime: apply as.POSIXct to data: to remove ending zeros
         if(xtype == "datetime"){
