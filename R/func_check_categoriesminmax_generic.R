@@ -23,6 +23,8 @@
 #' @importFrom rlang parse_expr
 #'
 #' @author Lars van der Burg & Thekla Jansen
+#'
+#' @export
 check_categoriesminmax_generic <- function(datafiles, vars, cats = NULL, key = "id", report_path = NULL, report_name = "Report", silent = FALSE, conditional = NULL, includeNA = FALSE){
 
 
