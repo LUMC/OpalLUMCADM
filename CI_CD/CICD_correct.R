@@ -27,6 +27,7 @@ library(tibble); library(dplyr); library(stringr)
 library(opalr)
 library(diffdf)
 library(keyring)
+library(rtres)
 
 
 # Functions ---------------------------------------------------------------
@@ -56,7 +57,7 @@ load("example/FAKE_var.RData")
 load("example/FAKE_cat.RData")
 
 
-server = "demo"  # c("demo", "test", "new")
+server = "test"  # c("demo", "test", "new")
 
 # Datafiles ---------------------------------------------------------------
 if(server == "demo"){
@@ -71,9 +72,11 @@ if(server == "demo"){
 
 } else if(server == "new"){
 ## Future prod server
-  opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_TOM"
-  opal_token = NULL
+  # opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_LARS"
+  # opal_token = NULL
 
+  opal_url = "https://opal.clinicalresearch.nl"; opal_token = keyring::key_get("token_opal_clinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
 }
 
 
@@ -84,7 +87,7 @@ fakedata_exp = CICD_procedure(opal_url = opal_url, opal_username = opal_username
 
 # Expected outcome --------------------------------------------------------
 names(fakedata_exp) = paste0("exp_", names(fakedata_exp))
-save(fakedata_exp, file = "CI_CD/fakedata_exp.RData")
+save(fakedata_exp, file = "CI_CD/fakedata_exp_OLDTEST.RData")
 
 save(fakedata_exp, file = paste0("CI_CD/", server, "_fakedata_exp_", format(Sys.Date(), "%Y%m%d"), ".RData"))
 

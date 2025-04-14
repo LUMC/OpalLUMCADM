@@ -68,9 +68,12 @@ if(server == "demo"){
   opal_username = opal_password = NULL
 
 } else if(server == "new"){
-  ## Future prod server
-  opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_TOM"
-  opal_token = NULL
+## Future prod server
+  # opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_LARS"
+  # opal_token = NULL
+
+  opal_url = "https://opal.clinicalresearch.nl"; opal_token = keyring::key_get("token_opal_clinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
 
 }
 
@@ -123,7 +126,7 @@ report_diffdf7 = fakedata_new$report_diffdf7
 
 
 # Expected results --------------------------------------------------------
-load("CI_CD/fakedata_exp.RData")
+load("CI_CD/fakedata_exp_NEWPROD.RData")
 
 exp_output_checks = fakedata_exp$exp_output_checks
 exp_report_checks = fakedata_exp$exp_report_checks
