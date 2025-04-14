@@ -63,6 +63,7 @@ Important that a column script and a column entityType is present in the var dic
 This function does not handle entity filters! So keep that in mind when altering something with this function
 Currently (25/06) it is not possible to downsize a view (e.g., from 5 --> 4 variables). Therefore, independent of update, the view will be created from scratch
 It is possible that the view breaks down when the original datafile is altered. The view can then not be imported, an error is catched and the requested diffdf is turned off.
+For columns in the var dictionary that are not verified the class can only be character, otherwise a parse error will occur (https://git.lumc.nl/opal/public/adm_template_scripts/-/issues/1)
 }
 \author{
 Lars van der Burg

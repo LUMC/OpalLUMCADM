@@ -32,8 +32,14 @@ if(!dir.exists(path_diffdf)){
   dir.create(path_diffdf)
 }
 
-opal_test <- opalr::opal.login(url = "https://dw-test.clinicalresearch.nl/repo",
-                               token = keyring::key_get("token_opal_testclinicalresearch"))
+# opal_url = "https://dw-test.clinicalresearch.nl/repo"
+# opal_token = keyring::key_get("token_opal_testclinicalresearch")
+
+opal_url = "https://opal.clinicalresearch.nl"
+opal_token = keyring::key_get("token_opal_clinicalresearch")
+
+
+opal = opalr::opal.login(url = opal_url, token = opal_token)
 ```
 
 
@@ -98,7 +104,7 @@ if(dataset == 1){
 # Write table
 Basis function just to write a table from R to opal.
 ```{r}
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
 ```
@@ -111,11 +117,11 @@ var = var |> select(-encrypted)
 cat_FULL = cat
 cat = cat[-2, ]
 
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), 
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
 
-imported_table1 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table1 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
 "encrypted" %in% colnames(imported_table1$var4copy)
 imported_table1$cat4copy |> filter(variable == "integer2")
 
@@ -123,9 +129,9 @@ imported_table1$cat4copy |> filter(variable == "integer2")
 cat_FULL[3, 4] = "level 3a"
 
 var_FULL$entityType = ent  # Required if entityType is not default `Participant`
-opalr::opal.table_dictionary_update(opal_test, projname, paste0(tablename, "_basis"), var_FULL, cat_FULL)
+opalr::opal.table_dictionary_update(opal, projname, paste0(tablename, "_basis"), var_FULL, cat_FULL)
 
-imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table2 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
 "encrypted" %in% colnames(imported_table2$var4copy)
 imported_table2$cat4copy |> filter(variable == "integer2")
 
@@ -134,9 +140,9 @@ diff = diffdf::diffdf(datafile, imported_table2$datafile4copy, keys = "id"); dif
 
 
 cat_FULL[2, 2] = "4";  # Can only add cat dictionary if levels are present in the datafile
-opalr::opal.table_dictionary_update(opal_test, projname, paste0(tablename, "_basis"), var, cat_FULL)
+opalr::opal.table_dictionary_update(opal, projname, paste0(tablename, "_basis"), var, cat_FULL)
 
-imported_table3 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table3 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
 imported_table3 |> filter(variable == "integer2")
 ```
 
@@ -151,17 +157,18 @@ datafile$datetime1a = with_tz(datafile$datetime1a, "Europe/Amsterdam"); attribut
 datafile$datetime1b = with_tz(datafile$datetime1b, "UTC"); attributes(datafile$datetime1b)$tzone = "UTC"
 
 
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis_tz"), 
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_tz"), 
                    datafile = datafile, var = var, cat = NULL, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
+
+imported_table_tz = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_tz"), id.name = "id", max_tries = 2)
 ``` 
 
 
 # Read table
 Basis function just to read in a table from opal and make it R ready by discarding some of the attributes
 ```{r}
-imported_table = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
-# imported_table_tz = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis_tz"), id.name = "id", max_tries = 2)
+imported_table = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
 ```
 
 
@@ -171,7 +178,6 @@ Function to obtain the differences between the datafiles and dictionaries. There
 datafile2 = imported_table$datafile
 var2 = imported_table$var
 cat2 = imported_table$cat
-
 
 # datafile2[1, "text1"] = " 4RRnDdnOBEYa8qDTrNSjvMyu0"
 # datafile2[2, "text1"] = "KfQs5tyxEsgGeuMqfCFgXZR66 "
@@ -195,17 +201,17 @@ Function to import a table into opal.
 
 An optional diffdf report will be made if report_path != FALSE. if report_path = NULL, it will not be saved, just outputted by the function
 ```{r create}
-report_import1 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+report_import1 <- import_create_table_opal(opal = opal, projname = projname, tablename = tablename, ent = ent, 
                                            datafile = datafile, var = var, cat = cat, action = "write", id.name = "id", comparison = "mod",
                                            report_path = path_diffdf, report_name = paste("Report_import", tablename, sep = "_"))
 
 
-report_import2 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+report_import2 <- import_create_table_opal(opal = opal, projname = projname, tablename = tablename, ent = ent, 
                                            datafile = datafile, var = var, cat = cat, action = "update", id.name = "id", comparison = "mod",
                                            report_path = path_diffdf, report_name = paste("Report_import_update", tablename, sep = "_"))
 
 
-report_import3 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+report_import3 <- import_create_table_opal(opal = opal, projname = projname, tablename = tablename, ent = ent, 
                                            datafile = datafile, var = var, cat = cat, action = "overwrite", id.name = "id", comparison = "mod",
                                            report_path = path_diffdf, report_name = paste("Report_import_overwrite", tablename, sep = "_"))
 ```
@@ -217,15 +223,15 @@ Function to move a table in opal.
 
 An optional diffdf report will be made if report_path != FALSE. if report_path = NULL, it will not be saved, just outputted by the function
 ```{r copy}
-report_copy <- import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent,
-                                      opal2 = opal_test, projname2 = projname, tablename2 = paste0(tablename, "_copy"), 
+report_copy <- import_copy_table_opal(opal = opal, projname = projname, tablename = tablename, ent = ent,
+                                      opal2 = opal, projname2 = projname, tablename2 = paste0(tablename, "_copy"), 
                                       report_path = path_diffdf, report_name = paste("Report_copy", tablename, sep = "_"))
 ```
 
 Possible to move more than table at once, with a wrapper around `import_copy_table_opal`.
 ```{r multi copy}
-report_copy = import_copy_table_opal_many(opal = opal_test, projnames = projname, tablenames = tablenames, ent = ent,
-                                          opal2 = opal_test, projnames2 = projname, tablenames2 = tablenames2,
+report_copy = import_copy_table_opal_many(opal = opal, projnames = projname, tablenames = tablenames, ent = ent,
+                                          opal2 = opal, projnames2 = projname, tablenames2 = tablenames2,
                                           report_path = path_diffdf, report_name = "Report_copy")
 ```
 
@@ -303,8 +309,8 @@ var$ent = 1
 
 var$repeatable = 1
 
-view_report = make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
-                             opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view"),
+view_report = make_opal_view(opal = opal, projname = projname, tablename = tablename, 
+                             opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_view"),
                              var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent, 
                              report_path = FALSE)
 ```
@@ -315,23 +321,23 @@ The idea is that you can simply change the directory, and than update the view. 
 
 Currently, instead of updating, we replace the view. Because with an update it is not yet possible to downsize the view.
 ```{r}
-make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
-               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view2"),
+make_opal_view(opal = opal, projname = projname, tablename = tablename, 
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_view2"),
                var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent)
 
 
 var_adj = var; var_adj[var_adj$name == "integer2", "label:en"] = "integer with categories; but with a more fancy label"
 cat_adj = cat; cat_adj[cat_adj$variable == "integer2" & cat_adj$`label:en` == "level 1", "label:en"] = "level 1; but fancier"
 
-view_report_update = make_opal_view(opal = opal_test, projname = projname, tablename = tablename, 
-                                    opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_view2"),
+view_report_update = make_opal_view(opal = opal, projname = projname, tablename = tablename, 
+                                    opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_view2"),
                                     var = var_adj, cat = cat_adj, update = TRUE, comp_key = "id", ent = ent, report_path = NULL)
 ```
 
 ### Deprecate view
 When we discard a variable that is in the view from the table, the view is not accessable anymore
 ```{r}
-report_import4 <- import_create_table_opal(opal = opal_test, projname = projname, tablename = tablename, ent = ent, 
+report_import4 <- import_create_table_opal(opal = opal, projname = projname, tablename = tablename, ent = ent, 
                                            datafile = datafile|> select(-integer1), 
                                            var = var |> filter(name != "integer1"), 
                                            cat = cat, action = "overwrite", id.name = "id", comparison = "mod",
@@ -341,36 +347,36 @@ report_import4 <- import_create_table_opal(opal = opal_test, projname = projname
 
 
 
-import_view = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_view2"))
+import_view = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_view2"))
 ```
 
 
 ### Less variables
 ```{r, eval = FALSE, echo = FALSE}
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis2"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, force = FALSE)
 
-make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
-               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view"),
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_basis2"), 
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view"),
                var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent)
-opalr::opal.table_perm_add(opal_test, projname, paste0(tablename, "_basis2_view"), subject = "rmwissels", type = "user", permission = "view")
-opalr::opal.table_perm(opal_test, projname, paste0(tablename, "_basis2_view"))
+opalr::opal.table_perm_add(opal, projname, paste0(tablename, "_basis2_view"), subject = "rmwissels", type = "user", permission = "view")
+opalr::opal.table_perm(opal, projname, paste0(tablename, "_basis2_view"))
 
 
 var_adj = var; var_adj = var_adj[var_adj$name != "var5", ]
 cat_adj = cat; cat_adj = cat_adj[cat_adj$variable != "var5", ]
 
 
-make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
-               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view2"),
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_basis2"), 
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view2"),
                var = var_adj, cat = cat_adj, update = FALSE, comp_key = "id", ent = ent)
-opalr::opal.table_perm(opal_test, projname, paste0(tablename, "_basis2_view2"))
+opalr::opal.table_perm(opal, projname, paste0(tablename, "_basis2_view2"))
 
 
-make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_basis2"), 
-               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view"),
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_basis2"), 
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_basis2_view"),
                var = var_adj, cat = cat_adj, update = TRUE, comp_key = "id", ent = ent)
-opalr::opal.table_perm(opal_test, projname, paste0(tablename, "_basis2_view"))
+opalr::opal.table_perm(opal, projname, paste0(tablename, "_basis2_view"))
 ```
 
 
@@ -395,12 +401,12 @@ datafile_adj[3, 3] = "34"; datafile_adj[4, 3] = "99"
 # datafile_adj[4, 5] = as.character(as.Date(parse_date_time("20230712", "Ymd")))
 
 
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_EntFilt"),
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_EntFilt"),
                    datafile = datafile_adj, var = var_adj, cat = cat_adj, ent = ent)
 
 
-make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_EntFilt"), 
-               opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_EntFilt_view"),
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_EntFilt"), 
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_EntFilt_view"),
                var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent)
 ```
 
@@ -436,21 +442,86 @@ var_adj2 = var |>
 cat_adj2 = cat
 
 
-view_report_update = make_opal_view(opal = opal_test, projname = projname, tablename = paste0(tablename, "_EntFilt"), 
-                                    opal_view = opal_test, projname_view = projname, tablename_view = paste0(tablename, "_EntFilt_view2"),
+view_report_update = make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_EntFilt"), 
+                                    opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_EntFilt_view2"),
                                     var = var_adj2, cat = cat_adj2, update = TRUE, comp_key = "id", ent = ent, report_path = NULL)
 
 
-imported_datafile2 <- import_table_opal2R(opal_test, projname, paste0(tablename, "_EntFilt_view2"))
+imported_datafile2 <- import_table_opal2R(opal, projname, paste0(tablename, "_EntFilt_view2"))
 imported_datafile2$datafile
 ```
 
+### NEED example
+```{r}
+opal = opalr::opal.login(url = opal_url, token = opal_token)
+
+
+datafile10 = datafile |> mutate(across(everything(), as.character))
+var10 = var |> mutate(valueType = "text")
+cat10 = cat
+
+opal = opalr::opal.login(url = opal_url, token = opal_token)
+write_table_R2opal(opal, projname, "TESTTABLE10", datafile10, var10, cat10, ent = "Participant")
+
+make_opal_view(opal, projname, "TESTTABLE10", opal, projname, "TESTTABLE10_view", var, cat, ent = "Participant")
+View10 = import_table_opal2R(opal, projname, "TESTTABLE10_view")
+View10$datafile4copy[1, c("date2", "datetime2")]
+
+
+datafile11 = datafile10; datafile11[1, c("datetime2")] = "Rogier"
+
+write_table_R2opal(opal, projname, "TESTTABLE11", datafile11, var10, cat10, ent = "Participant")
+
+## View cannot be exported due to "Rogier" not being a datetime
+# make_opal_view(opal, projname, "TESTTABLE11", opal, projname, "TESTTABLE11_view1", var, cat, ent = "Participant")
+# View11.1 = import_table_opal2R(opal, projname, "TESTTABLE11_view1")
+# View11.1$datafile4copy[, "datetime2"]
+
+
+var11 = var |> 
+  mutate(script = paste0("$('", name, "')")) |> 
+  mutate(valueType = ifelse(name == "datetime2", "text", valueType))
+var11 = var11 |> 
+  bind_rows(tribble(~name,        ~valueType, ~`label:en`,  ~script,
+                    # "datetime20a", "text", "TEST", "$('datetime2')",
+                    # "datetime20b", "text", "TEST", "$value('datetime2')",
+                    # # "datetime21", "text", "TEST", "$value('datetime2').datetime('yyyy-MM-dd HH:mm')",           # ERROR
+                    # # "datetime22", "text", "TEST", "if($value('datetime1').isDateTime()){'yes'}else{'no'}",      # ERROR
+                    # "datetime23a", "datetime", "TEST", "$value('datetime1').datetime('yyyy-MM-dd HH:mm')",      # Same as valueType datetime
+                    # "datetime23b", "datetime", "TEST", "$('datetime1')",
+                    # "datetime24a", "date", "TEST", "$value('datetime1').date('yyyy-MM-dd')",                    # Same as valueType date
+                    # "datetime24b", "date", "TEST", "$('datetime1')",
+                    # "datetime25a", "text", "TEST", "if($value('datetime1').datetime('yyyy-MM-dd HH:mm').after('2016-01-01 00:00:00')){'yes'}else{'no'}",
+                    # "datetime25b", "text", "TEST", "if($value('datetime1').datetime('yyyy-MM-dd HH:mm').before('2016-01-01 00:00:00')){'yes'}else{'no'}",
+                    # # "datetime25b", "text", "TEST", "if($value('datetime1').before('2016-01-01 00:00:00')){'yes'}else{'no'}",  # ERROR
+                    # "datetime26a",  "text", "TEST", "if($value('datetime1').datetime('yyyy-MM-dd HH:mm').empty()){'yes'}else{'no'}",
+                    # "datetime26b",  "text", "TEST", "if($value('datetime1').datetime('yyyy-MM-dd HH:mm').empty()){'no'}else{'yes'}",
+                    # # "datetime26c",  "text", "TEST", "if($value('datetime1').datetime().empty()){'no'}else{'yes'}",  # ERROR
+                    # # "datetime26d",  "text", "TEST", "if($value('datetime2').datetime('yyyy-MM-dd HH:mm').empty()){'no'}else{'yes'}",
+                    
+                    # "datetime27a",  "text", "TEST", "try{$value('datetime2').datetime('yyyy-MM-dd HH:mm')} catch(e) {'yes'}",
+                    "datetime27b",  "datetime", "TEST", "try{$value('datetime2').datetime('yyyy-MM-dd HH:mm')} catch(e) {'1800-01-01 00:00:00'}",
+                    "datetime27c",  "datetime", "TEST", "try{$value('datetime2').datetime('yyyy-MM-dd HH:mm')} catch(e) {'1800-01-01 01:00:00'}",
+                    "datetime27d",  "datetime", "TEST", "try{$value('datetime2').datetime('yyyy-MM-dd HH:mm:ss')} catch(e) {'1800-01-01 01:00:00'}",
+                    "datetime27e",  "datetime", "TEST", "try{$value('datetime2').datetime('yyyy-MM-dd')} catch(e) {'1800-01-01 01:00:00'}",
+                    
+                    # "datetime", "text", "TEST", "if($value('datetime1').datetime('yyyy-MM-dd HH:mm').lt){'yes'}else{'no'}",
+                    # "datetime", "text", "TEST", "if($var('datetime2').datetime('yyyy-MM-dd HH:mm:ss').empty()){'1800-01-01 00:00'}else{'1900-01-01 00:00'}"
+
+                    ))
+cat11 = cat
+
+make_opal_view(opal, projname, "TESTTABLE11", opal, projname, "TESTTABLE11_view2", var11, cat11, ent = "Participant", update = TRUE, child_lock = FALSE)
+View11.2 = import_table_opal2R(opal, projname, "TESTTABLE11_view2", max_tries = 2)
+
+View11.2$datafile4copy |> select(id, starts_with("datetime2"))
+``` 
 
 
 # Delete table
 Function to easily delete a table from opal
 ```{r}
-delete_table_opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_copy"))
+delete_table_opal(opal = opal, projname = projname, tablename = paste0(tablename, "_copy"))
 ```
 
 
@@ -476,23 +547,23 @@ Hier bevindingen:
 ## Data from opal
 ```{r}
 ## To make a separate table for each setting
-report_start <- import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename,
+report_start <- import_copy_table_opal(opal = opal, projname = projname, tablename = tablename,
                                        projname2 = projname, tablename2 = paste0(tablename, "_adjust"))
 
-import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+import_copy_table_opal(opal = opal, projname = projname, tablename = tablename, report_path = FALSE,
                        projname2 = projname, tablename2 = paste0(tablename, "_adjust_row"))
-import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+import_copy_table_opal(opal = opal, projname = projname, tablename = tablename, report_path = FALSE,
                        projname2 = projname, tablename2 = paste0(tablename, "_adjust_col"))
-import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+import_copy_table_opal(opal = opal, projname = projname, tablename = tablename, report_path = FALSE,
                        projname2 = projname, tablename2 = paste0(tablename, "_adjust_val"))
-import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+import_copy_table_opal(opal = opal, projname = projname, tablename = tablename, report_path = FALSE,
                        projname2 = projname, tablename2 = paste0(tablename, "_remove_val"))
-import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename, report_path = FALSE,
+import_copy_table_opal(opal = opal, projname = projname, tablename = tablename, report_path = FALSE,
                        projname2 = projname, tablename2 = paste0(tablename, "_adjust_cat"))
 
 
 
-imported_table = import_table_opal2R(opal = opal_test, projname, paste0(tablename, "_adjust"))
+imported_table = import_table_opal2R(opal = opal, projname, paste0(tablename, "_adjust"))
 
 datafile = imported_table$datafile
 var = imported_table$var
@@ -525,9 +596,9 @@ if(dataset == 1){
   )
   datafile4copy = datafile4copy |> bind_rows(new_row)
   
-  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_row"), ent = ent,
+  write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust_row"), ent = ent,
                      datafile = new_row, var = imported_table$var4copy, cat = imported_table$cat4copy, force = TRUE)
-  imported_table2_R = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_row"))
+  imported_table2_R = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust_row"))
 
 
     
@@ -538,10 +609,10 @@ if(dataset == 1){
   new_col_var = cbind.data.frame("var6", "decimal", NA, FALSE, 6, "BMI", "10", "100") |> as_tibble() |> rename_with(~ colnames(var4copy))
   var4copy = var4copy |> bind_rows(new_col_var)
   
-  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_col"), ent = ent,
+  write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust_col"), ent = ent,
                      datafile = datafile4copy |> filter(id < "6") |> select(id, var6), 
                      var = var4copy |> filter(name == "var6"), cat = imported_table$cat4copy, force = TRUE)
-  imported_table2_C = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_col"))
+  imported_table2_C = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust_col"))
   
   
   
@@ -549,15 +620,15 @@ if(dataset == 1){
   datafile4copy = datafile4copy |> mutate(var2 = if_else(id == 4, 79, var2))
   datafile4copy = datafile4copy |> mutate(var3 = if_else(id == 2, NA, var3))
   
-  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_val"), ent = ent,
+  write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust_val"), ent = ent,
                      datafile = datafile4copy |> mutate(var2 = if_else(id == 4, 79, var2)) |> filter(id == "4") |> select(id, var2),
                      var = var4copy |> filter(name != "var6"), cat = imported_table$cat4copy, force = TRUE)
-  imported_table2_V1 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust_val"))
+  imported_table2_V1 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust_val"))
   
-  write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_remove_val"), ent = ent,
+  write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_remove_val"), ent = ent,
                      datafile = datafile4copy |> mutate(var3 = if_else(id == 3, NA, var3)) |> filter(id == "3") |> select(id, var3),
                      var = var4copy |> filter(name != "var6"), cat = imported_table$cat4copy, force = TRUE)
-  imported_table2_V2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_remove_val"))
+  imported_table2_V2 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_remove_val"))
   
   
   
@@ -565,15 +636,15 @@ if(dataset == 1){
   new_cat_row = cbind.data.frame(variable = "var1", name = "-98", missing = TRUE, `label:en` = "Not applicable") |> as_tibble()
   cat4copy = cat4copy |> bind_rows(new_cat_row)
   
-  opal.table_dictionary_update(opal = opal_test, project = projname, table = paste0(tablename, "_adjust_cat"), 
+  opal.table_dictionary_update(opal = opal, project = projname, table = paste0(tablename, "_adjust_cat"), 
                                variables = var4copy |> filter(name != "var6") |> mutate(entityType = "L"), categories = cat4copy)
 } 
 
 
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust"), ent = ent,
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust"), ent = ent,
                    datafile = datafile4copy, var = var4copy, cat = cat4copy, force = TRUE)
 
-imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust"))
+imported_table2 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust"))
 
 datafile2 = imported_table2$datafile
 var2 = imported_table2$var
@@ -585,18 +656,18 @@ report_adjust_opal = check_diffdf_opal_generic(datafile = datafile, datafile2 = 
                                                report_path = NULL, suppress_warnings = TRUE)
 
 
-# delete_table_opal(opal = opal_test, projname, paste0(tablename, "_adjust"))
+# delete_table_opal(opal = opal, projname, paste0(tablename, "_adjust"))
 ```
 
 
 ## Data from file
 ```{r}
 ## To make a separete table on opal that I can adjust
-report_start <- import_copy_table_opal(opal = opal_test, projname = projname, tablename = tablename,
+report_start <- import_copy_table_opal(opal = opal, projname = projname, tablename = tablename,
                                        projname2 = projname, tablename2 = paste0(tablename, "_adjust2"))
 
 
-imported_table = import_table_opal2R(opal = opal_test, projname, paste0(tablename, "_adjust2"))
+imported_table = import_table_opal2R(opal = opal, projname, paste0(tablename, "_adjust2"))
 
 datafile = imported_table$datafile
 var = imported_table$var
@@ -624,9 +695,9 @@ datafile4copy = datafile4copy_conversion$datafile
 }
 
 
-write_table_R2opal(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust2"), ent = ent,
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust2"), ent = ent,
                    datafile = datafile4copy, var = var4copy, cat = cat4copy, force = TRUE)
-imported_table2 = import_table_opal2R(opal = opal_test, projname = projname, tablename = paste0(tablename, "_adjust2"))
+imported_table2 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_adjust2"))
 
 datafile2 = imported_table2$datafile
 var2 = imported_table2$var
@@ -638,7 +709,7 @@ report_adjust_file = check_diffdf_opal_generic(datafile = datafile, datafile2 = 
 
 
 ## To delete the separately made table on opal
-# delete_table_opal(opal = opal_test, projname, paste0(tablename, "_adjust2"))
+# delete_table_opal(opal = opal, projname, paste0(tablename, "_adjust2"))
 ```
 
 
@@ -840,7 +911,46 @@ var2$`Mlstr_area::nr_data_points`
 ```
 
 
+# MICA
 
+```{r}
+opal = opalr::opal.login(url = opal_url, token = opal_token)
+
+datafile2 = datafile
+var2 = var 
+cat2 = cat
+
+var2 = var2 |> 
+  select(-all_of(c("unit", "description:en", "index"))) |> 
+  mutate(`Mlstr_area::Administrative_information` = "Identifiers")
+var2 = number_datapoints(datafile2, var2, cat2, count_Missings = FALSE)
+
+## Is the same as just making a column
+# anno = tribble(~variable,  ~taxonomy,    ~vocabulary, ~term,
+#                "integer1", "Mlstr_area", "Genetics",  "Genetics")
+# opal.annotate(opal, projname, tablename, anno)
+# opalr::opal.table_dictionary_get(opal, projname, tablename)
+## Is the same as just making a column
+
+
+OpalLUMCADM::import_create_table_opal(opal, projname, tablename, datafile2, var2, cat2, ent = "R", action = "overwrite", child_lock = FALSE)
+
+
+opalr::opal.annotate(opal, projname, tablename)
+opalr::opal.annotations(opal, projname, tablename)
+
+
+m <- mica.login(url = "https://mica-demo.obiba.org")
+mica.taxonomies(m, target="variable", query="sex", locale="en", taxonomies = list("Mlstr_area", "Mlstr_additional"))
+
+
+
+
+o <- opal.login('administrator','password', url='https://opal-demo.obiba.org')
+cqx <- opal.table_get(o, "CPTP", "Cag_coreqx")
+annot <- dictionary.annotations(cqx, taxonomy = "Mlstr_harmo", vocabulary = "status")
+opal.logout(o)
+```
 
 
 
