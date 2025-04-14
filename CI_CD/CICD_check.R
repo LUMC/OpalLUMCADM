@@ -126,7 +126,7 @@ report_diffdf7 = fakedata_new$report_diffdf7
 
 
 # Expected results --------------------------------------------------------
-load("CI_CD/fakedata_exp_NEWPROD.RData")
+load("CI_CD/fakedata_exp.RData")
 
 exp_output_checks = fakedata_exp$exp_output_checks
 exp_report_checks = fakedata_exp$exp_report_checks

@@ -57,7 +57,7 @@ load("example/FAKE_var.RData")
 load("example/FAKE_cat.RData")
 
 
-server = "test"  # c("demo", "test", "new")
+server = "new"  # c("demo", "test", "new")
 
 # Datafiles ---------------------------------------------------------------
 if(server == "demo"){
