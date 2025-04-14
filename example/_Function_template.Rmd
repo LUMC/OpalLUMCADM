@@ -110,18 +110,24 @@ write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablenam
 ```
 
 ## Dictionary update
+## It is possible to update the dictionary, there are a few things important:
+- Columns can be added to the var dictionary, for example the encrypted column
+- Labels can be added or altered of *existing* variables only
+- The entityType needs to be supplied to the var dictionary (if it is not the default Participant)
+
 ```{r}
 var_FULL = var
-var = var |> select(-encrypted)
+var = var |> select(-"encrypted")  
 
 cat_FULL = cat
-cat = cat[-2, ]
+cat = cat[-2, ]  # level 2 of integer2 is gone
 
-write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), 
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_dict"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
 
-imported_table1 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table1 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_dict"), id.name = "id", max_tries = 2)
+
 "encrypted" %in% colnames(imported_table1$var4copy)
 imported_table1$cat4copy |> filter(variable == "integer2")
 
@@ -129,9 +135,10 @@ imported_table1$cat4copy |> filter(variable == "integer2")
 cat_FULL[3, 4] = "level 3a"
 
 var_FULL$entityType = ent  # Required if entityType is not default `Participant`
-opalr::opal.table_dictionary_update(opal, projname, paste0(tablename, "_basis"), var_FULL, cat_FULL)
+opalr::opal.table_dictionary_update(opal, projname, paste0(tablename, "_basis_dict"), var_FULL, cat_FULL)
 
-imported_table2 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+imported_table2 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_dict"), id.name = "id", max_tries = 2)
+
 "encrypted" %in% colnames(imported_table2$var4copy)
 imported_table2$cat4copy |> filter(variable == "integer2")
 
@@ -139,11 +146,11 @@ imported_table2$cat4copy |> filter(variable == "integer2")
 diff = diffdf::diffdf(datafile, imported_table2$datafile4copy, keys = "id"); diff$NumDiff
 
 
-cat_FULL[2, 2] = "4";  # Can only add cat dictionary if levels are present in the datafile
-opalr::opal.table_dictionary_update(opal, projname, paste0(tablename, "_basis"), var, cat_FULL)
-
-imported_table3 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
-imported_table3 |> filter(variable == "integer2")
+# cat_FULL[2, 2] = "4";  # Can only add cat dictionary if levels are present in the datafile
+# opalr::opal.table_dictionary_update(opal, projname, paste0(tablename, "_basis_dict"), var, cat_FULL)
+# 
+# imported_table3 = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_dict"), id.name = "id", max_tries = 2)
+# imported_table3 |> filter(variable == "integer2")
 ```
 
 
@@ -162,6 +169,12 @@ write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablenam
                    action = "write", id.name = "id", max_tries = 2)
 
 imported_table_tz = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis_tz"), id.name = "id", max_tries = 2)
+
+diff = diffdf(datafile, imported_table_tz$datafile4copy, keys = "id")
+
+
+
+datafile = datafile |> select(-all_of("datetime1a", "datetime1b"))
 ``` 
 
 
@@ -301,14 +314,6 @@ opaltable = opalr::dictionary.apply(tibble = datafile, variables = var, cat = ca
 # Views
 The idea behind opal is that instead of sharing your actual datafile, you can share a view with others. With `make_opal_view` you can make a view.
 ```{r}
-colnames(var)
-var$index2 = 1:20  # breaks down
-var$index2 = as.character(1:20)  # works
-
-var$ent = 1
-
-var$repeatable = 1
-
 view_report = make_opal_view(opal = opal, projname = projname, tablename = tablename, 
                              opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_view"),
                              var = var, cat = cat, update = FALSE, comp_key = "id", ent = ent, 
@@ -715,11 +720,6 @@ report_adjust_file = check_diffdf_opal_generic(datafile = datafile, datafile2 = 
 
 # Encryption & Decryption
 ```{r}
-source("C:/Working projects/ADM/C_OpalLUMCADM/R/func_encrypt_data.R")
-source("C:/Working projects/ADM/C_OpalLUMCADM/R/func_decrypt_data.R")
-
-
-
 vars_to_encrypt = vars_to_decrypt = c("integer1", "text2", "date4")
 
 con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
