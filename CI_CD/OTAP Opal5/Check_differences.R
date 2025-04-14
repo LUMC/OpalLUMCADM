@@ -8,10 +8,10 @@ quiet = function(x){
 }
 
 
-load("CI_CD/fakedata_exp_NEWPROD.RData")
+load("CI_CD/OTAP Opal5/fakedata_exp_NEWPROD.RData")
 fakedata_PROD = fakedata_exp
 
-load("CI_CD/fakedata_exp_OLDTEST.RData")
+load("CI_CD/OTAP Opal5/fakedata_exp_OLDTEST.RData")
 fakedata_TEST = fakedata_exp
 
 
@@ -162,3 +162,11 @@ fakedata_TEST[[cnames[11]]]$NumDiff
 fakedata_PROD[[cnames[11]]]$VarDiff
 fakedata_TEST[[cnames[11]]]$VarDiff
 
+
+
+
+lubridate::parse_date_time2("2002-11-08T21:30:00.000Z", "Ymd HMS")
+format("08-11-2002T21:30:00.000Z", "%Y%m%d %H%M%S")
+
+ymd_hms("08-11-2002T21:30:00.000Z")
+dmy_hms("08-11-2002T21:30:00.000Z")
