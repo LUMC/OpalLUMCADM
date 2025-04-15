@@ -182,6 +182,8 @@ datafile = datafile |> select(-all_of("datetime1a", "datetime1b"))
 Basis function just to read in a table from opal and make it R ready by discarding some of the attributes
 ```{r}
 imported_table = import_table_opal2R(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), id.name = "id", max_tries = 2)
+
+imported_table$var4copy
 ```
 
 
