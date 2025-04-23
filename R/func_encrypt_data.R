@@ -70,7 +70,11 @@ encrypt_data = function(con, data, vars_to_encrypt = NULL, search_image = FALSE,
 
 
   warning_list_foos = unlist(lapply(warning_list, \(x){paste0(x$parent) == "simpleWarning in foo(): foo\n"}))
-  warning_list = warning_list[(which(warning_list_foos)[sum(warning_list_foos)] + 1):(length(warning_list))]
+  if(max(which(warning_list_foos)) == length(warning_list_foos)){
+    warning_list = NULL
+  } else {
+    warning_list = warning_list[(which(warning_list_foos)[sum(warning_list_foos)] + 1):(length(warning_list))]
+  }
 
   if(length(warning_list) != 0){
     all_warnings = matrix(unlist(lapply(warning_list, \(x){str_match(x$parent$message, "\\[\\d+\\]\\s*(.+?)\\.\\s*\\((E\\d+)\\)")[1, c(2, 3)]})),
