@@ -87,7 +87,7 @@ fakedata_exp = CICD_procedure(opal_url = opal_url, opal_username = opal_username
 
 # Expected outcome --------------------------------------------------------
 names(fakedata_exp) = paste0("exp_", names(fakedata_exp))
-save(fakedata_exp, file = "CI_CD/fakedata_exp_OLDTEST.RData")
+save(fakedata_exp, file = "CI_CD/fakedata_exp.RData")
 
 save(fakedata_exp, file = paste0("CI_CD/", server, "_fakedata_exp_", format(Sys.Date(), "%Y%m%d"), ".RData"))
 
