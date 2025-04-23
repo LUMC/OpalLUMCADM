@@ -101,6 +101,10 @@ check_categoriesminmax_generic <- function(datafiles, vars, cats = NULL, key = "
       varinfo <- list()
       xtype <- vars[[table_name]] %>% filter(name == variable_name) %>% select(valueType) %>% unlist()
 
+      if(length(xtype) != 1){
+        next
+      }
+
       if("min" %in% colnames(vars[[table_name]])){
         varinfo[["xmin"]] <- vars[[table_name]] %>% filter(name == variable_name) %>% select(min) %>% unlist()
       } else {varinfo[["xmin"]] <- NA}

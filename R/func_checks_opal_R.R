@@ -33,11 +33,14 @@
 #' 10.5 If the column exist, check if "yes" and "SI" are actually encrypted
 #' 11. If all essential cat columns are present
 #' 12.5 If all missing values are valid
-#' 13. If there are values with more than decimals, currently not possible with opal
+#' 13. If there are Inf values in the datafile, need to be changed to NA to save in opal
 #' 14. If all observed values adhere to the min/max in the var dictionary (optional).
 #' 15. If all date and datetimes have a format that is accepted by opal.
 #'
 #' The last check (15. if the date and datetimes are opal-compatible) is sub-optimal. It is very difficult to get a simple but complete check for all date(times) formats in opal. So interpret this with caution. Issues might be not a problem and no detected issues doesn't mean that everything is perfect.
+#'
+#' Previous checks include:
+#' - Number of decimals. If there are values with more than decimals, currently not possible with opal. In opal 5 this problem is no more
 #'
 #' @return A list with a data.frame with the found issues and optionally (if min_max = TRUE) with the issues found with the check_categoriesmin_max function. Additionally, for every check a text is printed indicating whether or not an issue is found.
 #'
@@ -296,6 +299,24 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
   }
 
 
+## Duplicated rows ---------------------------------------------------------
+  var_dups = var |>
+    group_by(name) |> filter(n() > 1) |>
+    summarize(info = n(), .groups = "keep") |>
+    ungroup() |>
+    mutate(info = paste0(info, " rows")) |>
+    rename(issue = name) |>
+    mutate(check = "Duplicated var dictionary") |>
+    select(check, issue, info)
+
+  if(nrow(var_dups) == 0){
+    if(isFALSE(silent)){cat("No var dictionary duplicates\n")}
+  } else {
+    problems = problems |> bind_rows(var_dups)
+
+    if(isFALSE(silent)){cat("There are duplicated rows in the var dictionary, watch out!\n")}
+  }
+
 
 
 
@@ -326,6 +347,25 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
 
     } else {
       if(isFALSE(silent)){cat("No cat column issues\n")}
+    }
+
+
+# Duplicated rows ---------------------------------------------------------
+    cat_dups = cat |>
+      group_by(variable, name) |> filter(n() > 1) |>
+      summarize(info = n(), .groups = "keep") |>
+      ungroup() |>
+      mutate(info = paste0(info, " rows")) |>
+      unite("issue", variable, name, sep = "_") |>
+      mutate(check = "Duplicated cat dictionary") |>
+      select(check, issue, info)
+
+    if(nrow(cat_dups) == 0){
+      if(isFALSE(silent)){cat("No cat dictionary duplicates\n")}
+    } else {
+      problems = problems |> bind_rows(cat_dups)
+
+      if(isFALSE(silent)){cat("There are duplicated rows in the cat dictionary, watch out!\n")}
     }
 
 
@@ -372,37 +412,60 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
 
 
 
+# Inf values --------------------------------------------------------------
+vars_inf_check = var |> filter(valueType %in% c("integer", "decimal")) |> pull(name)
+inf_present = FALSE
+for(i in 1:length(vars_inf_check)){
+
+  vars_inf_check_i = vars_inf_check[i]
+  vars_inf = is.infinite(datafile[[vars_inf_check_i]])
+
+  if(sum(vars_inf) > 0){
+    problems = problems |>
+      bind_rows(bind_cols(check = "Inf values", issue = "Inf present", info = paste0(vars_inf_check_i, ": ", paste(which(vars_inf), collapse = ","))))
+
+    inf_present = TRUE
+  }
+}
+
+if(isTRUE(inf_present)){
+  if(isFALSE(silent)){cat("There are inf values detected in the datafile, watch out!\n")}
+} else {
+  if(isFALSE(silent)){cat("No inf values\n")}
+}
+
+
 
 
 # Four decimals -----------------------------------------------------------
 ## Temporary check if there are more than four decimals in the data
-  decimalplaces <- function(x) {
-    # x <- sub("0+$", "", x)
-    # x <- sub("^.+[.]", "", x)
-    # nchar(x)
-
-    nchar(unlist(lapply(str_split(x, "\\."), function(y){y[2]})))
-  }
-
-  check_decimals = FALSE
-  for(i in 1:nrow(var)){
-    if(var$valueType[i] == "decimal"){
-      varname <- var$name[i]
-      decm <- decimalplaces(x = datafile[[varname]])
-
-      if(TRUE %in% (decm > 4)){
-        problems = problems |>
-          bind_rows(bind_cols(check = "decimals", issue = "More than four decimals", info = paste0(varname, ": ", sum(decm > 4, na.rm = TRUE), " observations")))
-
-        check_decimals = TRUE
-      }
-    }
-  }
-  if(isTRUE(check_decimals)){
-    if(isFALSE(silent)){cat("There are values with more than four decimals, watch out!\n")}
-  } else {
-    if(isFALSE(silent)){cat("There are no issues with the number of decimals\n")}
-  }
+  # decimalplaces <- function(x) {
+  #   # x <- sub("0+$", "", x)
+  #   # x <- sub("^.+[.]", "", x)
+  #   # nchar(x)
+  #
+  #   nchar(unlist(lapply(str_split(x, "\\."), function(y){y[2]})))
+  # }
+  #
+  # check_decimals = FALSE
+  # for(i in 1:nrow(var)){
+  #   if(var$valueType[i] == "decimal"){
+  #     varname <- var$name[i]
+  #     decm <- decimalplaces(x = datafile[[varname]])
+  #
+  #     if(TRUE %in% (decm > 4)){
+  #       problems = problems |>
+  #         bind_rows(bind_cols(check = "decimals", issue = "More than four decimals", info = paste0(varname, ": ", sum(decm > 4, na.rm = TRUE), " observations")))
+  #
+  #       check_decimals = TRUE
+  #     }
+  #   }
+  # }
+  # if(isTRUE(check_decimals)){
+  #   if(isFALSE(silent)){cat("There are values with more than four decimals, watch out!\n")}
+  # } else {
+  #   if(isFALSE(silent)){cat("There are no issues with the number of decimals\n")}
+  # }
 
 
 
@@ -505,7 +568,7 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
   for(i in 1:length(cnames)){
     vT_vect = var |> filter(name == cnames[i]) |> pull(valueType)
 
-    if(length(vT_vect) != 0 && vT_vect %in% c("date", "datetime")){
+    if(length(vT_vect) == 1 && vT_vect %in% c("date", "datetime")){
       NA_diff = check_date_time_formats(vect = datafile[[cnames[i]]], vT_vect = vT_vect)
 
       if(NA_diff != 0){
