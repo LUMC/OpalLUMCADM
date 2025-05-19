@@ -22,7 +22,10 @@
 #' @param update boolean. Whether or not the function should update or make a view with the supplied var and cat dictionary
 #' @param comp_key string. The name of the column representing the entity identifiers. Default is 'id'
 #' @param ent string. EntityType used in the datafile.
+#' @param source list. List of the table names that will be referred to by the view. If NULL, will be combination of projname and tablename
+#' @param EntityFilter string. The additional filter supplied to the view. Can be build up in two ways: the required format: $this('group').eq('A') or a convenient format: c("group" = "A")
 #' @param report_path boolean. Indicating where to save the diffdf report. If NULL (default) report will only be returned and not saved.
+#' @param report_name string. Name of the report to save. A sys.Date() is always added to the report_name.
 #' @param max_tries integer. The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @return Optionally returns a diffdf report comparing the table supplied with `opal`, `projname` and `tablename` with the view supplied with `opal_view`, `projname_view` and `tablename_view`.
@@ -42,7 +45,7 @@
 #'
 #' @export
 make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname_view = NULL, tablename_view, var, cat = NULL, update = FALSE, comp_key = "id", ent = NULL, source = NULL, EntityFilter = NULL,
-                           report_path = FALSE, report_out = "single", report_name = "Report", comparison = "mod", max_tries = 3, ...){
+                           report_path = FALSE, report_name = "Report", comparison = "mod", max_tries = 3, ...){
 
 
 # Checks ------------------------------------------------------------------
@@ -228,9 +231,9 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
     var <- var_base
     cat <- cat_base
 
-    if(!is.null(EntityFilter)){
-      datafile = datafile |> filter(!!sym(ET_var) == ET_val)
-    }
+    # if(!is.null(EntityFilter)){
+    #   datafile = datafile |> filter(!!sym(ET_var) == ET_val)
+    # }
 
 
     imported_datafile2 <- import_table_opal2R(opal_view, projname_view, tablename_view, id.name = comp_key, max_tries = max_tries)
@@ -241,7 +244,7 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
 
 
     report = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, suppress_warnings = TRUE,
-                                       report_out = report_out, report_name = report_name, report_path = report_path, comparison = comparison)
+                                       report_path = report_path, report_name = report_name, comparison = comparison)
 
     return(report)
   }
