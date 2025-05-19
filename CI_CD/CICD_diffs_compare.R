@@ -11,7 +11,7 @@ library(tidyverse)
 
 # Read-in results ---------------------------------------------------------
 ## For encryption/decryption we cannot use the CI/CD. Compare with an old expected outcome
-load("CI_CD/demo_fakedata_exp_20250114.RData")
+load("CI_CD/demo_fakedata_exp_20250519.RData")
 fakedata_exp_prev = fakedata_exp
 
 load("CI_CD/fakedata_exp.RData")  # The expected outcome
@@ -27,8 +27,8 @@ for(i in 1:N){
   cat("Now compare  ", cnames_i, paste(rep(" ", 16 - str_count(cnames_i)), collapse = ""))
 
 
-  exp_i = fakedata_exp[[paste0("exp_", cnames[i])]]
   out_i = fakedata_CICD_diffs[[cnames[i]]]
+  exp_i = fakedata_exp[[paste0("exp_", cnames[i])]]
 
 
   if(FALSE %in% (names(exp_i) %in% c("Overview", "NumDiff", "VarDiff", "AttribD", "VarClas", "VarMode", "ExtRows", "ExtCols", "Repeatability", "VarDiff_aggregated"))){
@@ -49,6 +49,9 @@ for(i in 1:N){
     cat(diff, "\n")
   }
 }
+
+diffdf::diffdf(fakedata_CICD_diffs[[cnames[1]]]$datafile4copy, fakedata_exp[[paste0("exp_", cnames[1])]]$datafile4copy)
+diffdf::diffdf(fakedata_CICD_diffs[[cnames[2]]]$NumDiff, fakedata_exp[[paste0("exp_", cnames[2])]])
 
 
 

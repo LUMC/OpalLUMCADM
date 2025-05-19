@@ -17,8 +17,8 @@ make_opal_view(
   comp_key = "id",
   ent = NULL,
   source = NULL,
+  EntityFilter = NULL,
   report_path = FALSE,
-  report_out = "single",
   report_name = "Report",
   comparison = "mod",
   max_tries = 3,
@@ -48,7 +48,13 @@ make_opal_view(
 
 \item{ent}{string. EntityType used in the datafile.}
 
+\item{source}{list. List of the table names that will be referred to by the view. If NULL, will be combination of projname and tablename}
+
+\item{EntityFilter}{string. The additional filter supplied to the view. Can be build up in two ways: the required format: $this('group').eq('A') or a convenient format: c("group" = "A")}
+
 \item{report_path}{boolean. Indicating where to save the diffdf report. If NULL (default) report will only be returned and not saved.}
+
+\item{report_name}{string. Name of the report to save. A sys.Date() is always added to the report_name.}
 
 \item{max_tries}{integer. The number of times R will try to read a datafile from, or write a datafile to, opal.}
 }
