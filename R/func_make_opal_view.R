@@ -41,7 +41,7 @@
 #' @author Lars van der Burg
 #'
 #' @export
-make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname_view = NULL, tablename_view, var, cat = NULL, update = FALSE, comp_key = "id", ent = NULL, source = NULL,
+make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname_view = NULL, tablename_view, var, cat = NULL, update = FALSE, comp_key = "id", ent = NULL, source = NULL, EntityFilter = NULL,
                            report_path = FALSE, report_out = "single", report_name = "Report", comparison = "mod", max_tries = 3, ...){
 
 
@@ -110,6 +110,31 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
       cat("If there is no error or if the error persists after adjusting the dictionary, contact ADM and we will try to investigate further.\n")
     }
   }
+
+
+  ## Check if we can work with the EntityFilter
+  ### There are two options that someone can supply an EntityFilter: 1) $this('group').eq('A') or 2) c("group" = "A")
+  if(!is.null(EntityFilter)){
+    if(length(EntityFilter) == 1 && str_starts(EntityFilter, "\\$this\\(")){
+      ET_var = str_extract(EntityFilter, "(?<=\\(').+(?='\\).eq)")
+      ET_val = str_extract(EntityFilter, "(?<=.eq\\(').+(?='\\))")
+    } else if(length(EntityFilter) == 1 && !is.null(names(EntityFilter))){
+      ET_var = names(EntityFilter)
+      ET_val = EntityFilter[[1]]
+
+      EntityFilter = paste0("$this('", ET_var, "').eq('", ET_val, "')")
+    } else {
+      stop("The EntityFilter is not in correct format, adjust it or remove it to continue.\n")
+    }
+
+    if(isFALSE(ET_var %in% (datafile |> colnames()))){
+      stop("The variable of the EntityFilter is not supplied to the datafile")
+    }
+    if(isFALSE(ET_val %in% (datafile |> pull(ET_var)))){
+      stop("The value of the EntityFilter is not present in the datafile")
+    }
+  }
+
 
 
 # Initializations ---------------------------------------------------------
@@ -189,6 +214,12 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
   }
 
 
+  ## Apply EntityFilter
+  if(!is.null(EntityFilter)){
+    opalr::opal.table_view_update(opal_view, projname_view, tablename_view, where = EntityFilter)
+  }
+
+
 
 # Comparison --------------------------------------------------------------
   if(is.null(report_path) || report_path != FALSE){  # When report_path == FALSE, the diffdf is not created
@@ -196,6 +227,10 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
     datafile <- datafile_base
     var <- var_base
     cat <- cat_base
+
+    if(!is.null(EntityFilter)){
+      datafile = datafile |> filter(!!sym(ET_var) == ET_val)
+    }
 
 
     imported_datafile2 <- import_table_opal2R(opal_view, projname_view, tablename_view, id.name = comp_key, max_tries = max_tries)
