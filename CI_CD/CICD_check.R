@@ -100,8 +100,9 @@ report_copy = fakedata_new$report_copy
 report_copy_many = fakedata_new$report_copy_many
 report_view = fakedata_new$report_view
 report_view2 = fakedata_new$report_view2
-report_create4 = fakedata_new$report_create4
 report_view3 = fakedata_new$report_view3
+report_create4 = fakedata_new$report_create4
+report_view4 = fakedata_new$report_view4
 NDPs = fakedata_new$NDPs
 
 output_checks2 = fakedata_new$output_checks2
@@ -112,8 +113,8 @@ report_create6 = fakedata_new$report_create6
 report_create7 = fakedata_new$report_create7
 report_copy2 = fakedata_new$report_copy2
 report_copy_many2 = fakedata_new$report_copy_many2
-report_view4 = fakedata_new$report_view4
 report_view5 = fakedata_new$report_view5
+report_view6 = fakedata_new$report_view6
 
 output_checks3 = fakedata_new$output_checks3
 report_checks3 = fakedata_new$report_checks3
@@ -145,8 +146,9 @@ exp_report_copy = fakedata_exp$exp_report_copy
 exp_report_copy_many = fakedata_exp$exp_report_copy_many
 exp_report_view = fakedata_exp$exp_report_view
 exp_report_view2 = fakedata_exp$exp_report_view2
-exp_report_create4 = fakedata_exp$exp_report_create4
 exp_report_view3 = fakedata_exp$exp_report_view3
+exp_report_create4 = fakedata_exp$exp_report_create4
+exp_report_view4 = fakedata_exp$exp_report_view4
 exp_NDPs = fakedata_exp$exp_NDPs
 
 exp_output_checks2 = fakedata_exp$exp_output_checks2
@@ -157,8 +159,8 @@ exp_report_create6 = fakedata_exp$exp_report_create6
 exp_report_create7 = fakedata_exp$exp_report_create7
 exp_report_copy2 = fakedata_exp$exp_report_copy2
 exp_report_copy_many2 = fakedata_exp$exp_report_copy_many2
-exp_report_view4 = fakedata_exp$exp_report_view4
 exp_report_view5 = fakedata_exp$exp_report_view5
+exp_report_view6 = fakedata_exp$exp_report_view6
 
 exp_output_checks3 = fakedata_exp$exp_output_checks3
 exp_report_checks3 = fakedata_exp$exp_report_checks3
@@ -191,8 +193,9 @@ cat("report_copy:       "); if(identical(exp_report_copy, report_copy)){cat("che
 cat("report_copy_many:  "); if(identical(exp_report_copy_many, report_copy_many)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_copy_many = report_copy_many}
 cat("report_view:       "); if(identical(exp_report_view, report_view)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view = report_view}
 cat("report_view2:      "); if(identical(exp_report_view2, report_view2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view2 = report_view2}
-cat("report_create4:    "); if(identical(exp_report_create4, report_create4)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_create4 = report_create4}
 cat("report_view3:      "); if(identical(exp_report_view3, report_view3)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view3 = report_view3}
+cat("report_create4:    "); if(identical(exp_report_create4, report_create4)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_create4 = report_create4}
+cat("report_view4:      "); if(identical(exp_report_view4, report_view4)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view4 = report_view4}
 cat("NDP:               "); if(identical(exp_NDPs, NDPs)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$NDPs = NDPs}
 
 cat("output_checks2:    "); if(identical(exp_output_checks2, output_checks2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$output_checks2 = output_checks2}
@@ -203,8 +206,8 @@ cat("report_create6:    "); if(identical(exp_report_create6, report_create6)){ca
 cat("report_create7:    "); if(identical(exp_report_create7, report_create7)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_create7 = report_create7}
 cat("report_copy2:      "); if(identical(exp_report_copy2, report_copy2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_copy2 = report_copy2}
 cat("report_copy_many2: "); if(identical(exp_report_copy_many2, report_copy_many2)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_copy_many2 = report_copy_many2}
-cat("report_view4:      "); if(identical(exp_report_view4, report_view4)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view4 = report_view4}
 cat("report_view5:      "); if(identical(exp_report_view5, report_view5)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view5 = report_view5}
+cat("report_view6:      "); if(identical(exp_report_view6, report_view6)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_view6 = report_view6}
 
 cat("output_checks3:    "); if(identical(exp_output_checks3, output_checks3)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$output_checks3 = output_checks3}
 cat("report_checks3:    "); if(identical(exp_report_checks3, report_checks3)){cat("check!\n")} else {cat("THERE IS A DIFFERENCE\n"); fakedata_CICD_diffs$report_checks3 = report_checks3}

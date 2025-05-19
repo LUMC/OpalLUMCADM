@@ -125,6 +125,10 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
                                 opal_view = opal, projname_view = projname, tablename_view = tablename_view,
                                 var = var, cat = cat, ent = "Participant", update = TRUE, comparison = "both", report_path = NULL, child_lock = FALSE)
 
+  report_view3 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
+                                opal_view = opal, projname_view = projname, tablename_view = tablename_view, EntityFilter = "$this('group').eq('A')",
+                                var = var, cat = cat, ent = "Participant", update = TRUE, comparison = "both", report_path = NULL, child_lock = FALSE)
+
 ### What happens when the view is deprecated? So original table is reduced
   report_create4 = import_create_table_opal(opal = opal, projname = projname, tablename = tablename, child_lock = FALSE,
                                             datafile = datafile |> select(-integer4),
@@ -132,7 +136,7 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
                                             cat = cat |> filter(variable != "integer4"),
                                             ent = "Participant", action = "overwrite", id.name = "id", report_path = NULL, comparison = "both")
 
-  report_view3 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
+  report_view4 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
                                 opal_view = opal, projname_view = projname, tablename_view = tablename_view,
                                 var = var, cat = cat, ent = "Participant", update = TRUE, comparison = "both", report_path = NULL, child_lock = FALSE)
 
@@ -228,11 +232,11 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
   }
 
 
-  report_view4 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
+  report_view5 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
                                 opal_view = opal, projname_view = projname, tablename_view = tablename_view,
                                 var = var, ent = "Participant", update = FALSE, comparison = "both", report_path = NULL, child_lock = FALSE)
 
-  report_view5 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
+  report_view6 = make_opal_view(opal = opal, projname = projname, tablename = tablename,
                                 opal_view = opal, projname_view = projname, tablename_view = tablename_view,
                                 var = var, ent = "Participant", update = TRUE, comparison = "both", report_path = NULL, child_lock = FALSE)
 
@@ -289,8 +293,9 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
              report_copy_many = report_copy_many,
              report_view = report_view,
              report_view2 = report_view2,
-             report_create4 = report_create4,
              report_view3 = report_view3,
+             report_create4 = report_create4,
+             report_view4 = report_view4,
              NDPs = NDPs,
 
              output_checks2 = output_checks2,
@@ -301,8 +306,8 @@ CICD_procedure = function(opal_url = "https://opal-demo.obiba.org", opal_usernam
              report_create7 = report_create7,
              report_copy2 = report_copy2,
              report_copy_many2 = report_copy_many2,
-             report_view4 = report_view4,
              report_view5 = report_view5,
+             report_view6 = report_view6,
 
              output_checks3 = output_checks3,
              report_checks3 = report_checks3,
