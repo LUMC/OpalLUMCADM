@@ -15,7 +15,10 @@ library(diffdf)
 library(openxlsx)
 library(rtres)
 
-library(OpalLUMCADM)
+# library(OpalLUMCADM)
+
+folder_func = "C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/R/"
+sapply(list.files(folder_func), \(x){source(paste0(folder_func, x))})
 ```
 
 
@@ -32,11 +35,11 @@ if(!dir.exists(path_diffdf)){
   dir.create(path_diffdf)
 }
 
-# opal_url = "https://dw-test.clinicalresearch.nl/repo"
-# opal_token = keyring::key_get("token_opal_testclinicalresearch")
+opal_url = "https://dw-test.clinicalresearch.nl/repo"
+opal_token = keyring::key_get("token_opal_testclinicalresearch")
 
-opal_url = "https://opal.clinicalresearch.nl"
-opal_token = keyring::key_get("token_opal_clinicalresearch")
+# opal_url = "https://opal.clinicalresearch.nl"
+# opal_token = keyring::key_get("token_opal_clinicalresearch")
 
 
 opal = opalr::opal.login(url = opal_url, token = opal_token)
@@ -104,9 +107,14 @@ if(dataset == 1){
 # Write table
 Basis function just to write a table from R to opal.
 ```{r}
+# datafile[1, "id"] = "Sample _1"
+
 write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
+
+
+import_copy_table_opal(opal, projname, paste0(tablename, "_basis"), opal, projname, paste0(tablename, "_basis2"), report_path = NULL)
 ```
 
 ## Dictionary update
@@ -388,9 +396,57 @@ opalr::opal.table_perm(opal, projname, paste0(tablename, "_basis2_view"))
 
 
 ## Different $('script')
+### Entity filters
 It is also possible to give more difficult entity Filters to your view, to alter your data or to just give a subset of your data. 
 
 They are not really investigated and (at the moment) cannot be added to `make_opal_view`.
+```{r}
+datafile_ET = datafile; datafile_ET$group = c(rep("A", 8), rep("B", 8), rep("C", 9))
+var_ET = var |> bind_rows(bind_cols(name = "group", valueType = "text", `label:en` = "groupID", encrypted = "no"))
+cat_ET = cat |> bind_rows(bind_cols(variable = "group", name = c("A", "B", "C"), missing = FALSE, `label:en` = c("Level A", "Level B", "Level C")))
+
+
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_ET"), 
+                   datafile = datafile_ET, var = var_ET, cat = cat_ET, ent = ent, 
+                   action = "write", id.name = "id", max_tries = 2)
+
+
+EntityFilter1 = "$this('group').eq('A')"
+
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_ET"),
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_ET_view1"),
+               var = var_ET, cat = cat_ET, update = FALSE, comp_key = "id", ent = ent, EntityFilter = EntityFilter,
+               report_path = NULL)
+viewA1 = import_table_opal2R(opal, projname, paste0(tablename, "_ET_view1"))
+viewA1$datafile4copy$group
+
+
+
+EntityFilter1 = "$this('group').eq('A')"
+
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_ET"),
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_ET_view1"),
+               var = var_ET, cat = cat_ET, update = FALSE, comp_key = "id", ent = ent, EntityFilter = EntityFilter1,
+               report_path = FALSE)
+view1 = import_table_opal2R(opal, projname, paste0(tablename, "_ET_view1"))
+
+
+
+EntityFilter2 = c("group" = "A")
+
+make_opal_view(opal = opal, projname = projname, tablename = paste0(tablename, "_ET"),
+               opal_view = opal, projname_view = projname, tablename_view = paste0(tablename, "_ET_view2"),
+               var = var_ET, cat = cat_ET, update = FALSE, comp_key = "id", ent = ent, EntityFilter = EntityFilter2,
+               report_path = FALSE)
+view2 = import_table_opal2R(opal, projname, paste0(tablename, "_ET_view2"))
+
+
+identical(view1$datafile4copy, view2$datafile4copy)
+
+
+```
+
+
 
 ### Setting up data
 ```{r}
@@ -914,10 +970,68 @@ var2$`Mlstr_area::nr_data_points`
 
 
 # MICA
+Is only testable on a different server
+
+Things to keep in mind:
+- PublishMica needs to have view permissions on the project that contains the table you want to show in Mica
+- spaces (" ") are replaced by underscore ("_") in opal for the index, so make sure there are no spaces in the index (title or description is fine)
+- If you add annotations manually to the var dictionary. If something is not applicable, don't write NA or NULL, but write it with ""
 
 ```{r}
-opal = opalr::opal.login(url = opal_url, token = opal_token)
+library(yaml)
 
+opal_tst_url = "https://opal-tst92.clinicalresearch.nl/"
+opal_tst_token = keyring::key_get("token_tst_clinicalresearch")
+
+opal_tst = opalr::opal.login(url = opal_tst_url, token = opal_tst_token)
+
+
+## Read in required excel sheets
+taxonomy = openxlsx::read.xlsx("C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/Mica/Taxonomy_example.xlsx", sheet = "Taxonomy")
+annotations = openxlsx::read.xlsx("C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/Mica/Taxonomy_example.xlsx", sheet = "Annotations")
+
+## Create yml file
+YAML = taxonomy_setup(taxonomy)
+writeLines(YAML, "C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/Mica/Taxonomy_example.yml")
+
+## Create a table in opal
+OpalLUMCADM::import_create_table_opal(opal_tst, projname, tablename, datafile, var, cat, ent = "R", action = "overwrite", child_lock = FALSE)
+datadict1 = OpalLUMCADM::import_table_opal2R(opal_tst, projname, tablename)
+datadict1$var4copy
+
+## update annotations
+opalr::opal.annotate(opal_tst, projname, tablename, annotations)
+
+## See annotations
+datadict2 = OpalLUMCADM::import_table_opal2R(opal_tst, projname, tablename)
+datadict2$var4copy |> select(name, starts_with("Tax_example"))
+
+## To also see the annotations in Mica, do following steps:
+# If not done yet, create a network and an individual study (including population and Data collection event)
+# If not done yet, create a collected dataset. At study choose the uploaded table
+# In administration mode: administration --> Taxonomies --> you can select order and which are (not) visible
+# In administration mode: administration --> Taxonomies --> Files --> upload yml here (or in variable folder) (werkt soms)
+# In administration mode: administration --> Indexing --> Actions All/Taxonomies (werkt soms)
+
+
+
+## Same files that need to be supplied can be obtained from Opal/Mica
+library(micar)
+mica <- micar::mica.login(url = "https://mica-tst92.clinicalresearch.nl/")
+taxonomy_mica = micar::mica.taxonomies(mica)
+
+annotations_opal = opalr::opal.annotations(opal_tst, projname, tablename)
+
+## YAML can best be downloaded manually from opal
+opalr::opal.taxonomies(opal_tst)
+# yaml::as.yaml(opalr::opal.taxonomy(opal_tst, "Tax_example"))
+# opalr::opal.taxonomy_upload("C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/Mica/Taxonomy_test_out.yml")
+# opalr::opal.taxonomy_download(opal_tst, "Tax_example", "C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/Mica/Taxonomy_test_out_opal.yml")
+```
+
+
+## first trials
+```{r}
 datafile2 = datafile
 var2 = var 
 cat2 = cat
@@ -952,6 +1066,29 @@ o <- opal.login('administrator','password', url='https://opal-demo.obiba.org')
 cqx <- opal.table_get(o, "CPTP", "Cag_coreqx")
 annot <- dictionary.annotations(cqx, taxonomy = "Mlstr_harmo", vocabulary = "status")
 opal.logout(o)
+```
+
+
+## Annotations
+```{r}
+o <- opal.login('administrator','password', url='https://opal-demo.obiba.org')
+# datafile = opal.table_get(o, "LBLS", "1978")
+var = opal.table_dictionary_get(o, "LBLS", "1978")$variables
+
+var |> colnames()
+var |> select(name, starts_with("Mlstr"))
+
+
+var2 = var |> 
+  mutate(`Mlstr_area::test` = c(rep("A", 10), rep("B", 15)),
+         `Mlstr_area::test2` = c(rep("C", 8), rep("D", 8), rep("E", 9))) |> 
+  select(name, entityType, valueType, `Mlstr_area::test`, `Mlstr_area::test2`, everything())
+openxlsx::write.xlsx(var2, "C:/Working projects/ADM/R-Packages/C_OpalLUMCADM/Mica/dict.xlsx")
+
+
+o <- opal.login(token = "MnAWufPOH6ylwkTxE4PYemIiD6p5JjL2", url = "https://opal-dev91.clinicalresearch.nl/")
+opalr::opal.table_create(o, "TEST_LARS", "TEST")
+opalr::opal.table_dictionary_update(o, "TEST_LARS", "TEST", var2)
 ```
 
 
