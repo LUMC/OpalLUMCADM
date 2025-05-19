@@ -1,10 +1,21 @@
+#' @title Create YAML file from excel
 #'
+#' @description The YAML file can be uploaded into Opal as a taxonomy. The ADM template is required for correct functioning
 #'
+#' @param taxonomy matrix. The taxonomy, obtained from the ADM template
+#' @param author string. The author of the taxonomy
+#' @param license string. The license for the taxonomy
+#'
+#' @return The taxonomy in YAML format
+#'
+#' @note use writeLines({returned_object}, paste0({path}, ".yml")) to write the YAML file correctly away after running this function
 #'
 #' @import tidyverse yaml
 #' @importFrom openxlsx read.xlsx
 #'
+#' @author Lars van der Burg
 #'
+#' @export
 taxonomy_setup = function(taxonomy, author = "ADM", license = "CC BY-NC-ND 4.0"){
 
   all_taxonomy = list(
