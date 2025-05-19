@@ -87,6 +87,12 @@ import_table_opal2R = function(opal, projname, tablename, id.name = "id", max_tr
     }
   }
 
+  if(isFALSE(table_imported)){
+    cat("Could not import data, so abort function.\n")
+    return(NULL)
+  }
+
+
 ## get dictionary from opal
   dict = opal.table_dictionary_get(opal, project = projname, table = tablename)
   var = dict$variables |> as_tibble()

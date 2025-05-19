@@ -31,7 +31,7 @@ decrypt_data = function(con, data, vars_to_decrypt = NULL){
 
 
   ## Unknown how to clear dplyr::last_dplyr_warnings()...
-  ## So run a manual warning that ensures that later works correctly...
+  ## So run a manual warning that ensures that we can discard all earlier warnings
   foo <- function(){warning("foo")}; df <- tibble(x = 1); suppressWarnings(df <- mutate(df, x = foo()))
 
 
@@ -42,7 +42,7 @@ decrypt_data = function(con, data, vars_to_decrypt = NULL){
       data_decr = suppressWarnings(tibble(x = data) |> mutate(y = tres_decrypt(x, con)) |> pull(y))
       warning_list = dplyr::last_dplyr_warnings(n = Inf)
     } else {
-      stop("Data is not (completely) decrypted because haven't detected encryption\n")
+      stop("Data is not (completely/non-SI) decrypted because haven't detected 3:: encryption\n")
     }
 
   } else if(tibble::is_tibble(data) | is.data.frame(data)){
@@ -63,13 +63,18 @@ decrypt_data = function(con, data, vars_to_decrypt = NULL){
       stop(paste0("The variable(s) ", paste(names(which(apply(data[, vars_to_decrypt], 2, \(x){FALSE %in% str_starts(x, "3::")}))), collapse = ", "), " that you want to decrypt have values that do not start with '3::'\n"))
     }
 
-
     data_decr = suppressWarnings(data |> mutate(across(all_of(vars_to_decrypt), ~tres_decrypt(.x, con))))
     warning_list = dplyr::last_dplyr_warnings(n = Inf)
   }
 
 
-  warning_list = warning_list[unlist(lapply(warning_list, \(x){paste0(x$parent) != "simpleWarning in foo(): foo\n"}))]
+  ## Check which warnings are there before the last foo
+  warning_list_foos = unlist(lapply(warning_list, \(x){paste0(x$parent) == "simpleWarning in foo(): foo\n"}))
+  if(max(which(warning_list_foos)) == length(warning_list_foos)){
+    warning_list = NULL
+  } else {
+    warning_list = warning_list[(which(warning_list_foos)[sum(warning_list_foos)] + 1):(length(warning_list))]
+  }
 
   if(length(warning_list) != 0){
     all_warnings = matrix(unlist(lapply(warning_list, \(x){str_match(x$parent$message, "\\[\\d+\\]\\s*(.+?)\\.\\s*\\((E\\d+)\\)")[1, c(2, 3)]})),

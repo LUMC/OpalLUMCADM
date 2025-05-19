@@ -8,6 +8,7 @@ check_categoriesminmax_generic(
   datafiles,
   vars,
   cats = NULL,
+  key = "id",
   report_path = NULL,
   report_name = "Report",
   silent = FALSE,
@@ -22,6 +23,8 @@ check_categoriesminmax_generic(
 
 \item{cats}{an optional list. A list containing for each element a cat dictionary, that matches the datafile from datafiles with the same element. If NULL, than only the min/max can be checked and not the categories.}
 
+\item{key}{string. The key of the datafile that will be read into opal.}
+
 \item{report_path}{string. Folder where the report needs to be saved. If \code{NULL} the report is not saved but only returned.}
 
 \item{silent}{boolean. Whether or not to silence the printing of messages while running the function (FALSE is default).}
@@ -32,8 +35,8 @@ check_categoriesminmax_generic(
 }
 \value{
 a list with an element for each supplied datafile. Per list element there can be two separate list elements containing matrices with the findings. Only present if there are non-zero findings:
-* min_max A matrix with 5 columns and rows equal to the number of findings. Columns are `id`, `variable name`, `value`, `min` and `max`. Value is the observed value that is outside the min/max range
-* outside_cat A matrix with 4 column and rows equal to the number of findings. Columns are `id`, `variable name`, `value` and `categories`. Value is the observed value, categories the current known labels
+* min_max A matrix with 5 columns and rows equal to the number of findings. Columns are `{key}`, `variable name`, `value`, `min` and `max`. Value is the observed value that is outside the min/max range
+* outside_cat A matrix with 4 column and rows equal to the number of findings. Columns are `{key}`, `variable name`, `value` and `categories`. Value is the observed value, categories the current known labels
 }
 \description{
 In the var dictionary it is possible to supply a min and a max, to give the boundaries of the values. However, it is still possible that values are observed that are outside this boundary and it can be important to check if this is the case.

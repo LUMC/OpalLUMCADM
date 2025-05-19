@@ -4,8 +4,8 @@
 # Author: Lars van der Burg
 # Status: in development (Do not use)
 #
-# Last modified: 2024-06-25
-# Last modifications: now when a view needs to be updated, it will be deleted and re-created. Added also some general checks to see if the function works correctly
+# Last modified: 2024-01-13
+# Last modifications: added a check to warn for possible parse error when non-verified var dict variables are not of class character
 #
 #' @title Making and updating views in opal
 #'
@@ -22,7 +22,10 @@
 #' @param update boolean. Whether or not the function should update or make a view with the supplied var and cat dictionary
 #' @param comp_key string. The name of the column representing the entity identifiers. Default is 'id'
 #' @param ent string. EntityType used in the datafile.
+#' @param source list. List of the table names that will be referred to by the view. If NULL, will be combination of projname and tablename
+#' @param EntityFilter string. The additional filter supplied to the view. Can be build up in two ways: the required format: $this('group').eq('A') or a convenient format: c("group" = "A")
 #' @param report_path boolean. Indicating where to save the diffdf report. If NULL (default) report will only be returned and not saved.
+#' @param report_name string. Name of the report to save. A sys.Date() is always added to the report_name.
 #' @param max_tries integer. The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @return Optionally returns a diffdf report comparing the table supplied with `opal`, `projname` and `tablename` with the view supplied with `opal_view`, `projname_view` and `tablename_view`.
@@ -32,6 +35,8 @@
 #' This function does not handle entity filters! So keep that in mind when altering something with this function
 #' Currently (25/06) it is not possible to downsize a view (e.g., from 5 --> 4 variables). Therefore, independent of update, the view will be created from scratch
 #' It is possible that the view breaks down when the original datafile is altered. The view can then not be imported, an error is catched and the requested diffdf is turned off.
+#' For columns in the var dictionary that are not verified the class can only be character, otherwise a parse error will occur (https://git.lumc.nl/opal/public/adm_template_scripts/-/issues/1)
+#'
 #'
 #' @import opalr
 #' @import tidyr
@@ -39,8 +44,8 @@
 #' @author Lars van der Burg
 #'
 #' @export
-make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname_view = NULL, tablename_view, var, cat = NULL, update = FALSE, comp_key = "id", ent = NULL, source = NULL,
-                           report_path = FALSE, report_out = "single", report_name = "Report", comparison = "mod", max_tries = 3, ...){
+make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname_view = NULL, tablename_view, var, cat = NULL, update = FALSE, comp_key = "id", ent = NULL, source = NULL, EntityFilter = NULL,
+                           report_path = FALSE, report_name = "Report", comparison = "mod", max_tries = 3, ...){
 
 
 # Checks ------------------------------------------------------------------
@@ -75,7 +80,7 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
   if(isFALSE(update) & opalr::opal.table_exists(opal = opal_view, project = projname_view, table = tablename_view)){
     update = TRUE
 
-    warning("update was FALSE but the table existed, so set update to TRUE")
+    warning("update was FALSE but the table existed, so set update to TRUE\n")
   }
 
 
@@ -90,6 +95,47 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
   ## Check whether there is no column called table, views cannot handle that
   if("table" %in% var$name){
     stop("There is a column called `table` in the dictionary. Views cannot handle that. Please rename or discard.")
+  }
+
+
+  ## Check if dictionary is compatible with the data
+  ### Only verified attributes (columns) in the var dictionary can be non-characters, otherwiste get "ParseException, 1:179: Expected string"
+  cnames = unlist(lapply(strsplit(colnames(var), ":"), \(x){x[1]}))
+  cnames_verified = c("name", "valueType", "entityType", "index", "unit", "min", "max", "label", "description", "repeatable")
+  check_cnames = names(which(!sapply(cnames, \(x){x %in% cnames_verified})))
+  if(length(check_cnames) > 0){
+    check_cnames_class = names(which(sapply(check_cnames, \(x){class(var[[x]]) != "character"})))
+
+    if(length(check_cnames_class) > 0){
+      warning(paste0("Possibly there will be an error ('ParseException, 1:xx: Expected string') when creating this view. This is possibly because column(s): ",
+                     paste(check_cnames_class, collapse = "; "),
+                     " of the var dictionary are not of the class character. Opal cannot deal with that. Change that class to character and proceed.\n"))
+      cat("If there is no error or if the error persists after adjusting the dictionary, contact ADM and we will try to investigate further.\n")
+    }
+  }
+
+
+  ## Check if we can work with the EntityFilter
+  ### There are two options that someone can supply an EntityFilter: 1) $this('group').eq('A') or 2) c("group" = "A")
+  if(!is.null(EntityFilter)){
+    if(length(EntityFilter) == 1 && str_starts(EntityFilter, "\\$this\\(")){
+      ET_var = str_extract(EntityFilter, "(?<=\\(').+(?='\\).eq)")
+      ET_val = str_extract(EntityFilter, "(?<=.eq\\(').+(?='\\))")
+    } else if(length(EntityFilter) == 1 && !is.null(names(EntityFilter))){
+      ET_var = names(EntityFilter)
+      ET_val = EntityFilter[[1]]
+
+      EntityFilter = paste0("$this('", ET_var, "').eq('", ET_val, "')")
+    } else {
+      stop("The EntityFilter is not in correct format, adjust it or remove it to continue.\n")
+    }
+
+    if(isFALSE(ET_var %in% (datafile |> colnames()))){
+      stop("The variable of the EntityFilter is not supplied to the datafile")
+    }
+    if(isFALSE(ET_val %in% (datafile |> pull(ET_var)))){
+      stop("The value of the EntityFilter is not present in the datafile")
+    }
   }
 
 
@@ -171,6 +217,12 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
   }
 
 
+  ## Apply EntityFilter
+  if(!is.null(EntityFilter)){
+    opalr::opal.table_view_update(opal_view, projname_view, tablename_view, where = EntityFilter)
+  }
+
+
 
 # Comparison --------------------------------------------------------------
   if(is.null(report_path) || report_path != FALSE){  # When report_path == FALSE, the diffdf is not created
@@ -178,6 +230,10 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
     datafile <- datafile_base
     var <- var_base
     cat <- cat_base
+
+    # if(!is.null(EntityFilter)){
+    #   datafile = datafile |> filter(!!sym(ET_var) == ET_val)
+    # }
 
 
     imported_datafile2 <- import_table_opal2R(opal_view, projname_view, tablename_view, id.name = comp_key, max_tries = max_tries)
@@ -188,7 +244,7 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
 
 
     report = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, suppress_warnings = TRUE,
-                                       report_out = report_out, report_name = report_name, report_path = report_path, comparison = comparison)
+                                       report_path = report_path, report_name = report_name, comparison = comparison)
 
     return(report)
   }

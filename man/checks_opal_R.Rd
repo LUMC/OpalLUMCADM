@@ -47,11 +47,14 @@ The following checks are executed:
 10.5 If the column exist, check if "yes" and "SI" are actually encrypted
 11. If all essential cat columns are present
 12.5 If all missing values are valid
-13. If there are values with more than decimals, currently not possible with opal
+13. If there are Inf values in the datafile, need to be changed to NA to save in opal
 14. If all observed values adhere to the min/max in the var dictionary (optional).
 15. If all date and datetimes have a format that is accepted by opal.
 
 The last check (15. if the date and datetimes are opal-compatible) is sub-optimal. It is very difficult to get a simple but complete check for all date(times) formats in opal. So interpret this with caution. Issues might be not a problem and no detected issues doesn't mean that everything is perfect.
+
+Previous checks include:
+- Number of decimals. If there are values with more than decimals, currently not possible with opal. In opal 5 this problem is no more
 }
 \author{
 Lars van der Burg

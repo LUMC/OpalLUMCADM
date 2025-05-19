@@ -19,6 +19,11 @@ Comparison:
 
         ## Run the tests
         source("CI_CD/CICD_check.R")
+
+        ## Check if there is an mismatch
+        if(length(fakedata_CICD_diffs) > 0){
+          error("There are mismatches")
+        }
       '
   artifacts:
     paths:

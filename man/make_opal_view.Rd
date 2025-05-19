@@ -17,8 +17,8 @@ make_opal_view(
   comp_key = "id",
   ent = NULL,
   source = NULL,
+  EntityFilter = NULL,
   report_path = FALSE,
-  report_out = "single",
   report_name = "Report",
   comparison = "mod",
   max_tries = 3,
@@ -48,7 +48,13 @@ make_opal_view(
 
 \item{ent}{string. EntityType used in the datafile.}
 
+\item{source}{list. List of the table names that will be referred to by the view. If NULL, will be combination of projname and tablename}
+
+\item{EntityFilter}{string. The additional filter supplied to the view. Can be build up in two ways: the required format: $this('group').eq('A') or a convenient format: c("group" = "A")}
+
 \item{report_path}{boolean. Indicating where to save the diffdf report. If NULL (default) report will only be returned and not saved.}
+
+\item{report_name}{string. Name of the report to save. A sys.Date() is always added to the report_name.}
 
 \item{max_tries}{integer. The number of times R will try to read a datafile from, or write a datafile to, opal.}
 }
@@ -63,6 +69,7 @@ Important that a column script and a column entityType is present in the var dic
 This function does not handle entity filters! So keep that in mind when altering something with this function
 Currently (25/06) it is not possible to downsize a view (e.g., from 5 --> 4 variables). Therefore, independent of update, the view will be created from scratch
 It is possible that the view breaks down when the original datafile is altered. The view can then not be imported, an error is catched and the requested diffdf is turned off.
+For columns in the var dictionary that are not verified the class can only be character, otherwise a parse error will occur (https://git.lumc.nl/opal/public/adm_template_scripts/-/issues/1)
 }
 \author{
 Lars van der Burg

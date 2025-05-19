@@ -12,14 +12,14 @@ install.packages("git2r")
 ```R
 ## Install package
 remotes::install_git(
-  url = "https://git.lumc.nl/research-it/OpalLUMCADM.git",
+  url = "https://git.lumc.nl/research-it/r-packages/OpalLUMCADM.git",
   credentials = git2r::cred_user_pass("USERNAME", "GIT_ACCESS_TOKEN")
 )
 
 ## Specific version
 remotes::install_git(
-  url = "https://git.lumc.nl/research-it/OpalLUMCADM.git",
-  ref = "v1.0.1", ## Or other tag
+  url = "https://git.lumc.nl/research-it/r-packages/OpalLUMCADM.git",
+  ref = "v1.0.2", ## Or other tag
   credentials = git2r::cred_user_pass("USERNAME", "GIT_ACCESS_TOKEN")
 )
 
@@ -29,3 +29,10 @@ library(OpalLUMCADM)
 
 ## Usage
 Check `_Function_template.Rmd` in the example folder
+
+## New in this version
+Newly implemented things:
+- Allow for EntityFilters in make_opal_view
+- Correctly counting the warnings in encrypt_data and decrypt_data
+- Included the checks "Inf values", "duplicated var columns" and "duplicated cat columns" in check_opal_R. Also discarded "more than four decimals" which became redundant with Opal5
+- If cannot download table with import_table_opal2R will terminate function and return NULL (so is empty)
