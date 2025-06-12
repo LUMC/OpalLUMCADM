@@ -100,7 +100,10 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
 
   ## Check if dictionary is compatible with the data
   ### Only verified attributes (columns) in the var dictionary can be non-characters, otherwiste get "ParseException, 1:179: Expected string"
-  cnames = unlist(lapply(strsplit(colnames(var), ":"), \(x){x[1]}))
+  # cnames = unlist(lapply(strsplit(colnames(var), ":"), \(x){x[1]}))
+  cnames = colnames(var)
+  cnames[str_starts(cnames, "label|description")] = unlist(lapply(strsplit(cnames[str_starts(cnames, "label|description")], ":"), \(x){x[1]}))
+
   cnames_verified = c("name", "valueType", "entityType", "index", "unit", "min", "max", "label", "description", "repeatable")
   check_cnames = names(which(!sapply(cnames, \(x){x %in% cnames_verified})))
   if(length(check_cnames) > 0){
