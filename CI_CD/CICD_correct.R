@@ -57,7 +57,7 @@ load("example/FAKE_var.RData")
 load("example/FAKE_cat.RData")
 
 
-server = "demo"  # c("demo", "test", "new")
+server = "demo"  # c("demo", "acc")
 
 # Datafiles ---------------------------------------------------------------
 if(server == "demo"){
@@ -65,18 +65,11 @@ if(server == "demo"){
   opal_url = "https://opal-demo.obiba.org"; opal_username = "administrator"; opal_password = "password"; projname = "TESTING"
   opal_token = NULL
 
-} else if(server == "test"){
-## Current test server
-  opal_url = "https://dw-test.clinicalresearch.nl/repo"; opal_token = keyring::key_get("token_opal_testclinicalresearch"); projname = "TEST_LARS"
+} else if(server == "acc"){
+## Acceptation server
+  opal_url = "https://opal-acc93.clinicalresearch.nl"; opal_token = keyring::key_get("token_acc_clinicalresearch"); projname = "TEST_LARS"
   opal_username = opal_password = NULL
 
-} else if(server == "new"){
-## Future prod server
-  # opal_url = "https://opal.clinicalresearch.nl"; opal_username = "administrator"; opal_password = "Testing1!"; projname = "TEST_LARS"
-  # opal_token = NULL
-
-  opal_url = "https://opal.clinicalresearch.nl"; opal_token = keyring::key_get("token_opal_clinicalresearch"); projname = "TEST_LARS"
-  opal_username = opal_password = NULL
 }
 
 

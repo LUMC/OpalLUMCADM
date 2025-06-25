@@ -36,6 +36,7 @@ Function that performs various checks on the datafile and dictionary, essential 
 The following checks are executed:
 1. if there are duplicated columns.
 2. If there are duplicated keys.
+2.5 If the key is a character
 3. If there are variables in the var dictionary that are not in the datafile.
 4. If there are variables in the cat dictionary that are not in the datafile.
 5. If there are variables that are not described in the var dictionary.

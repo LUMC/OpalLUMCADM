@@ -22,6 +22,7 @@
 #' The following checks are executed:
 #' 1. if there are duplicated columns.
 #' 2. If there are duplicated keys.
+#' 2.5 If the key is a character
 #' 3. If there are variables in the var dictionary that are not in the datafile.
 #' 4. If there are variables in the cat dictionary that are not in the datafile.
 #' 5. If there are variables that are not described in the var dictionary.
@@ -125,7 +126,21 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
   }
 
 
-  # Compatible data-dict ----------------------------------------------------
+# Key as character --------------------------------------------------------
+  check_char_key = datafile |> pull(key) |> is_character()
+  if(isFALSE(check_char_key)){
+    key_class = datafile |> pull(key) |> class()
+
+    problems = problems |>
+      bind_rows(bind_cols(check = "keys", issue = "not a character", info = key_class))
+
+    if(isFALSE(silent)){cat(paste0("The key is not a character, but instead a", key_class, "watch out!\n"))}
+  } else {
+    if(isFALSE(silent)){cat("Key is a character\n")}
+  }
+
+
+# Compatible data-dict ----------------------------------------------------
   ## check if var dictionary contains variables that do not occur in the data
   check_var = var$name %in% cnames
   if(FALSE %in% check_var){
@@ -414,25 +429,31 @@ checks_opal_R <- function(datafile, var, cat = NULL, key = "id", min_max = FALSE
 
 # Inf values --------------------------------------------------------------
 vars_inf_check = var |> filter(valueType %in% c("integer", "decimal")) |> pull(name)
-inf_present = FALSE
-for(i in 1:length(vars_inf_check)){
+if(length(vars_inf_check) == 0){
+  if(isFALSE(silent)){cat("No integer or decimal variables\n")}
 
-  vars_inf_check_i = vars_inf_check[i]
-  vars_inf = is.infinite(datafile[[vars_inf_check_i]])
+} else {
+  inf_present = FALSE
+  for(i in 1:length(vars_inf_check)){
 
-  if(sum(vars_inf) > 0){
-    problems = problems |>
-      bind_rows(bind_cols(check = "Inf values", issue = "Inf present", info = paste0(vars_inf_check_i, ": ", paste(which(vars_inf), collapse = ","))))
+    vars_inf_check_i = vars_inf_check[i]
+    vars_inf = is.infinite(datafile[[vars_inf_check_i]])
 
-    inf_present = TRUE
+    if(sum(vars_inf) > 0){
+      problems = problems |>
+        bind_rows(bind_cols(check = "Inf values", issue = "Inf present", info = paste0(vars_inf_check_i, ": ", paste(which(vars_inf), collapse = ","))))
+
+      inf_present = TRUE
+    }
+  }
+
+  if(isTRUE(inf_present)){
+    if(isFALSE(silent)){cat("There are inf values detected in the datafile, watch out!\n")}
+  } else {
+    if(isFALSE(silent)){cat("No inf values\n")}
   }
 }
 
-if(isTRUE(inf_present)){
-  if(isFALSE(silent)){cat("There are inf values detected in the datafile, watch out!\n")}
-} else {
-  if(isFALSE(silent)){cat("No inf values\n")}
-}
 
 
 
