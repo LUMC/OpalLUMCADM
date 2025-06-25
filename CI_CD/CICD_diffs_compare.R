@@ -31,9 +31,25 @@ for(i in 1:N){
   exp_i = fakedata_exp[[paste0("exp_", cnames[i])]]
 
 
-  if(FALSE %in% (names(exp_i) %in% c("Overview", "NumDiff", "VarDiff", "AttribD", "VarClas", "VarMode", "ExtRows", "ExtCols", "Repeatability", "VarDiff_aggregated"))){
-    cat("UNKOWN\n")
-  } else {
+  if(str_detect(cnames_i, "output_checks")){
+    cat("TEKST\n")
+  } else if(str_detect(cnames_i, "report_import")){
+
+    check_datafile = diffdf::diffdf(out_i$datafile, exp_i$datafile)
+    check_var = diffdf::diffdf(out_i$var, exp_i$var)
+    check_cat = diffdf::diffdf(out_i$cat, exp_i$cat)
+    check_datafile4copy = diffdf::diffdf(out_i$datafile4copy, exp_i$datafile4copy)
+    check_var4copy = diffdf::diffdf(out_i$var4copy, exp_i$var4copy)
+    check_cat4copy = diffdf::diffdf(out_i$cat4copy, exp_i$cat4copy)
+
+    if(length(check_datafile) == 0 & length(check_var) == 0 & length(check_cat) == 0 &
+       length(check_datafile4copy) == 0 & length(check_var4copy) == 0 & length(check_cat4copy) == 0){
+      cat("Passed\n")
+    } else {
+      cat("FAILEDD\n")
+    }
+
+  } else if(str_detect(cnames_i, "report_diffdf|report_create")){
 
     diff = case_when(!identical(exp_i$Overview, out_i$Overview) ~ "Overview",
                      !identical(exp_i$NumDiff, out_i$NumDiff) ~ "NumDiff",
@@ -47,6 +63,8 @@ for(i in 1:N){
                      .default = "Else")
 
     cat(diff, "\n")
+  } else {
+    cat("UNKNOWN\n")
   }
 }
 
