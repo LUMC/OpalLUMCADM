@@ -35,14 +35,12 @@ if(!dir.exists(path_diffdf)){
   dir.create(path_diffdf)
 }
 
-opal_url = "https://dw-test.clinicalresearch.nl/repo"
-opal_token = keyring::key_get("token_opal_testclinicalresearch")
-
-# opal_url = "https://opal.clinicalresearch.nl"
-# opal_token = keyring::key_get("token_opal_clinicalresearch")
-
+opal_url = "https://opal-acc93.clinicalresearch.nl"
+opal_token = keyring::key_get("token_acc_clinicalresearch")
 
 opal = opalr::opal.login(url = opal_url, token = opal_token)
+
+temp = opal.table_get(opal, "TEST_LARS", "Decimals_SPSS_export")
 ```
 
 
@@ -109,10 +107,9 @@ Basis function just to write a table from R to opal.
 ```{r}
 # datafile[1, "id"] = "Sample _1"
 
-write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis"), 
+write_table_R2opal(opal = opal, projname = projname, tablename = paste0(tablename, "_basis4"), 
                    datafile = datafile, var = var, cat = cat, ent = ent, 
                    action = "write", id.name = "id", max_tries = 2)
-
 
 import_copy_table_opal(opal, projname, paste0(tablename, "_basis"), opal, projname, paste0(tablename, "_basis2"), report_path = NULL)
 ```
@@ -783,7 +780,7 @@ vars_to_encrypt = vars_to_decrypt = c("integer1", "text2", "date4")
 con <- tres_connect(base_url = "https://mereden.msbi.nl/Tres", domain = "dw.clinicalresearch.nl", project = "Lumina", username = "ADMs2s", password = keyring::key_get("TRES_opals2s_lumina"))
 
 
-TEST = encrypt_data(con = con, data = datafile$id, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
+TEST = encrypt_data(con = con, data = datafile$id[1:6], vars_to_encrypt = "id", search_image = TRUE, salted_encryption = FALSE)
 TEST = encrypt_data(con = con, data = datafile$integer1, vars_to_encrypt = "id", search_image = FALSE, salted_encryption = FALSE)
 
 
