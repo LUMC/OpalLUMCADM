@@ -108,16 +108,16 @@ import_copy_table_opal = function(opal, projname, tablename, opal2 = NULL, projn
   # Diffdf report -----------------------------------------------------------
   if(is.null(report_path) || report_path != FALSE){  # When report_path == FALSE, the diffdf is not created
 
-    datafile = imported_table$datafile
-    var = imported_table$var
-    cat = imported_table$cat; if(is.null(cat) || nrow(cat) == 0){cat = NULL}
+    datafile = imported_table$datafile4copy
+    var = imported_table$var4copy
+    cat = imported_table$cat4copy; if(is.null(cat) || nrow(cat) == 0){cat = NULL}
 
 
     imported_table2 = import_table_opal2R(opal2, projname2, tablename2)
 
-    datafile2 = imported_table2$datafile
-    var2 = imported_table2$var
-    cat2 = imported_table2$cat; if(is.null(cat2) || nrow(cat2) == 0){cat2 = NULL}
+    datafile2 = imported_table2$datafile4copy
+    var2 = imported_table2$var4copy
+    cat2 = imported_table2$cat4copy; if(is.null(cat2) || nrow(cat2) == 0){cat2 = NULL}
 
 
     report_title = "This report compares the old version (BASE) of the datafile/dictionary on opal with the moved version (COMPARE) of the datafile/dictionary on opal"
