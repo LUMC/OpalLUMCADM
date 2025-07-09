@@ -24,9 +24,9 @@ tablename = "Example_data"
 
 
 ## Data -------------------------------------------------------------------
-load("example/FAKE_datafile.RData"); datafile
-load("example/FAKE_var.RData"); var
-load("example/FAKE_cat.RData"); cat
+load("example/Example_datafile.RData"); datafile
+load("example/Example_var.RData"); var
+load("example/Example_cat.RData"); cat
 
 
 # Export ------------------------------------------------------------------
