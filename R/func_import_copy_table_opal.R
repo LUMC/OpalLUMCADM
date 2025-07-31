@@ -33,6 +33,7 @@
 #'
 #' @import opalr
 #' @import dplyr
+#' @import purrr
 #'
 #' @author Lars van der Burg, Thekla Jansen & Kristel Schaap
 #'
