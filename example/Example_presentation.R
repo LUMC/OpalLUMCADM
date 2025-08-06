@@ -14,8 +14,8 @@ library(OpalLUMCADM)
 
 
 ## Opal -------------------------------------------------------------------
-opal_url = "https://opal-tst92.clinicalresearch.nl"
-opal_token = keyring::key_get("token_tst_clinicalresearch")
+opal_url = "https://opal-acc93.clinicalresearch.nl"
+opal_token = keyring::key_get("token_acc_clinicalresearch")
 
 opal = opalr::opal.login(url = opal_url, token = opal_token)
 
