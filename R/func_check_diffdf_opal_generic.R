@@ -370,7 +370,7 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
         !(BASE %in% NULLs) & !(COMPARE %in% NULLs) ~ "VALUE->VALUE"
       )) |>
       group_by(id, CONVERSION, .add = TRUE) |>
-      dplyr::mutate("TABLES" = case_when(
+      dplyr::mutate(TABLES = case_when(
         (("diff_data" %in% TABLE) & ("diff_datamod" %in% TABLE)) ~ "both_data",
         (("diff_data" %in% TABLE) & !("diff_datamod" %in% TABLE)) ~ "diff_data",
         (!("diff_data" %in% TABLE) & ("diff_datamod" %in% TABLE)) ~ "diff_datamod",
@@ -386,13 +386,13 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
         .default = "Check")) |>
       group_by(VARIABLE, CONVERSION, TABLE, TABLES) |>
       dplyr::mutate(n = n(),
-             min_base = if_else(TABLE %in% c("diff_data", "diff_datamod"), min(BASE), NA),
-             max_base = if_else(TABLE %in% c("diff_data", "diff_datamod"), max(BASE), NA),
-             min_comp = if_else(TABLE %in% c("diff_data", "diff_datamod"), min(COMPARE), NA),
-             max_comp = if_else(TABLE %in% c("diff_data", "diff_datamod"), max(COMPARE), NA)) |>
+             min_base = if_else(TABLE %in% c("both_data", "diff_data", "diff_datamod"), min(BASE), NA),
+             max_base = if_else(TABLE %in% c("both_data", "diff_data", "diff_datamod"), max(BASE), NA),
+             min_comp = if_else(TABLE %in% c("both_data", "diff_data", "diff_datamod"), min(COMPARE), NA),
+             max_comp = if_else(TABLE %in% c("both_data", "diff_data", "diff_datamod"), max(COMPARE), NA)) |>
       ungroup() |>
       select(VARIABLE, CONVERSION, n, TABLES, min_base, max_base, min_comp, max_comp) |>
-      unique() |>
+      distinct() |>
       arrange(VARIABLE, CONVERSION)
 
     report$VarDiff_aggregated = aggregated_VarDiff
