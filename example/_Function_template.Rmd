@@ -131,6 +131,40 @@ report_import3 = import_create_table_opal(opal = opal, projname = projname, tabl
                                           report_path = path_diffdf, report_name = "Report_import_overwrite")
 ```
 
+### Customized diffdf
+With optional arguments, you can customize your diffdf comparison in import_create_table_opal
+```{r}
+## make copies to see difference
+import_copy_table_opal(opal, projname, tablename, opal, projname, paste0(tablename, "1"), ent = ent, report_path = FALSE)
+import_copy_table_opal(opal, projname, tablename, opal, projname, paste0(tablename, "2"), ent = ent, report_path = FALSE)
+
+
+## make some alterations to the data
+datafile2 = datafile |> 
+  mutate(integer1 = integer1 + 1,
+         date1 = as.character(format(as_date(date1) + 1, "%d-%m-%Y")),
+         datetime1 = ifelse(id == "Sample1", "13-07-1997 12:30:00", datetime1))
+
+var2 = var |> 
+  mutate(unit = "null")
+
+
+
+report_import3.1 = import_create_table_opal(opal = opal, projname = projname, tablename = paste0(tablename, "1"), ent = ent, 
+                                           datafile = datafile2, var = var2, cat = cat, 
+                                           action = "overwrite", id.name = "id", comparison = "mod", child_lock = FALSE,
+                                           report_path = path_diffdf, report_name = "Report_import_overwrite1")
+
+report_import3.2 = import_create_table_opal(opal = opal, projname = projname, tablename = paste0(tablename, "2"), ent = ent, 
+                                           datafile = datafile2, var = var2, cat = cat, 
+                                           action = "overwrite", id.name = "id", comparison = "mod", child_lock = FALSE,
+                                           opt_rm_VarDiff_null = TRUE, opt_calc_VarDiff_diff = TRUE,  date_time_format = c("dmY HMS"),
+                                           report_path = path_diffdf, report_name = "Report_import_overwrite2")
+
+
+identical(report_import3.1, report_import3.2)
+```
+
 
 ## Move/copy table
 Function to move a table in opal.
