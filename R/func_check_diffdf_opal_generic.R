@@ -23,11 +23,10 @@
 #' @param opt_calc_VarDiff_spaces logical. Whether to try to calculate if the difference between BASE and COMPARE is due to whitespaces at the start and/or end of a string. If with stringr::str_trim(..) there is no difference between BASE and COMPARE, difference is set to 0 for that row
 #' @param opt_calc_VarDiff_diff logical. Whether to try to calculate differences between BASE and COMPARE for all VarDiff rows (default = TRUE)
 #' @param opt_rm_VarDiff_diff_0 logical. Whether to remove all rows with VarDiff difference of 0 (default = FALSE)
-#' ## The following four arguments are eligible for discarding, dont think they will be used anymore (report_out = "single" is then always the case)
+#' ## The following three arguments are eligible for discarding, dont think they will be used anymore (report_out = "single" is then always the case)
 #' @param report_out string. In what format the report needs to be saved, there are two options: c("single", "multiple"). Single exports all files in one excel, multiple saves a separate file for each component.
 #' @param manual_csv logical. Whether to save the VarDiff as .csv document. Required when because of too many strange symbols the \code{read_excel} function doesnot work (default = FALSE)
 #' @param opt_rm_AttribD_null logical. Whether to remove attribute differences with only ""/null/NULL/NA differences (default = FALSE)
-#' @param opt_rm_nonUTF8 logical. Whether first to remove all non-UTF8 characters and then to remove all start and trailing spaces and all double spaces (default = FALSE)
 #'
 #' @return A diffdf report is made (and optionally saved) that is a list with at most 7 elements: NumDiff, VarDiff, AttribD, VarClas, VarMode, ExtRows, ExtCols. Each element contains information about differences between the datafiles, vars and cats. If a file is empty, it is omitted from the saving of the plot.
 #' * VarMode: Difference modes for each variable or attribute, e.g., character vs numeric. If different, variables are not checked! But only an issue when table = diff_xmod
@@ -53,8 +52,7 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
                                       opt_repl_castor = FALSE, opt_rm_VarDiff_null = FALSE, aggregate_VarDiff = FALSE,
                                       opt_calc_VarDiff_spaces = TRUE, opt_calc_VarDiff_diff = TRUE, opt_rm_VarDiff_diff_0 = FALSE,
 
-                                      report_out = "single", manual_csv = FALSE, opt_rm_spaces_around = FALSE,
-                                      opt_rm_AttribD_null = FALSE, opt_rm_nonUTF8 = FALSE){
+                                      report_out = "single", manual_csv = FALSE, opt_rm_spaces_around = FALSE, opt_rm_AttribD_null = FALSE, ...){
 
 
 # Checks ------------------------------------------------------------------
@@ -100,7 +98,6 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
   if(!is.logical(opt_calc_VarDiff_diff)){stop("opt_calc_VarDiff_diff must either be TRUE or FALSE.")}
   if(!is.logical(opt_rm_VarDiff_diff_0)){stop("opt_rm_VarDiff_diff_0 must either be TRUE or FALSE.")}
   if(!is.logical(opt_rm_AttribD_null)){stop("opt_rm_AttribD_null must either be TRUE or FALSE.")}
-  if(!is.logical(opt_rm_nonUTF8)){stop("opt_rm_nonUTF8 must either be TRUE or FALSE.")}
 
   if(isTRUE(opt_rm_VarDiff_diff_0) & (isFALSE(opt_calc_VarDiff_diff) & isFALSE(opt_calc_VarDiff_spaces))){
     opt_rm_VarDiff_diff_0 = FALSE
@@ -144,20 +141,6 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
 
   if(opt_rm_spaces_around){
     cat("This option is deprecated, use opt_calc_VarDiff_spaces from now on")
-    # if(!is.null(datafile)){
-    #   datafile = datafile |> dplyr::mutate(across(where(is.character), ~str_trim(., side = "both")))
-    #   datafile2 = datafile2 |> dplyr::mutate(across(where(is.character), ~str_trim(., side = "both")))
-    # }
-    #
-    # if(!is.null(var)){
-    #   var = var |> dplyr::mutate(across(where(is.character), ~str_trim(., side = "both")))
-    #   var2 = var2 |> dplyr::mutate(across(where(is.character), ~str_trim(., side = "both")))
-    # }
-    #
-    # if(!is.null(cat)){
-    #   cat = cat |> dplyr::mutate(across(where(is.character), ~str_trim(., side = "both")))
-    #   cat2 = cat2 |> dplyr::mutate(across(where(is.character), ~str_trim(., side = "both")))
-    # }
   }
 
 
@@ -228,7 +211,7 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
 # Report overview ----------------------------------------------------------
 ## Here an overview of the diffdf settings are saved into an excel sheet
   if(!is.null(report_path)){
-    Overview = matrix(NA, nrow = 22, ncol = 4, dimnames = list(NULL, c(" ", " ", " ", " ")))
+    Overview = matrix(NA, nrow = 21, ncol = 4, dimnames = list(NULL, c(" ", " ", " ", " ")))
     Overview[1, 1] = report_title
     Overview[2, 1] = paste0("This is a diffdf report that is executed on: ", Sys.Date())
 
@@ -255,7 +238,6 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
     Overview[19, 1] = "opt_calc_VarDiff_diff:"; Overview[19, 2] = opt_calc_VarDiff_diff; if(isTRUE(opt_calc_VarDiff_diff)){Overview[19, 4] = "This means that we tried to calculate differences between the BASE and COMPARE for all VarDiff rows"}
     Overview[20, 1] = "opt_rm_VarDiff_diff_0:"; Overview[20, 2] = opt_rm_VarDiff_diff_0; if(isTRUE(opt_rm_VarDiff_diff_0)){Overview[20, 4] = "This means that all rows with a VarDiff difference of 0 are discarded"}
     Overview[21, 1] = "opt_rm_AttribD_null:"; Overview[21, 2] = opt_rm_AttribD_null; if(isTRUE(opt_rm_AttribD_null)){Overview[21, 4] = "This means that all attributes differences with only NA/NULL/space are discarded"}
-    Overview[22, 1] = "opt_rm_nonUTF8:"; Overview[22, 2] = opt_rm_nonUTF8; if(isTRUE(opt_rm_nonUTF8)){Overview[22, 4] = "This means that all non-UTF8 characters are discarded"}
 
     report$Overview = Overview
   }
@@ -335,20 +317,12 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
   }
 
 
-
   if(opt_rm_AttribD_null){
     # Optional: Remove attribute differences with only ""/null/NULL/NA difference
     report$AttribD <- report$AttribD %>%
       filter(!(VALUES.BASE %in% c("null", "NULL", "none", "", NA) & VALUES.COMP %in% c("null", "NULL", "none", "", NA)))
   }
 
-  if(opt_rm_nonUTF8){
-    # Optional:FIRST remove all NON UTF8 characters, THEN remove all start and trailing spaces and all double spaces in all values.
-    report$AttribD <- report$AttribD %>%
-      filter(tolower(str_replace_all(VALUES.BASE,"[^[:graph:]]"," "))!=tolower(str_replace_all(VALUES.COMP,"[^[:graph:]]"," "))) %>%
-      filter(str_squish(VALUES.BASE) != str_squish(VALUES.COMP))
-    cat("the opt_rm_nonUTF8 optionl argument is not checked, use with care")
-  }
 
 
 
@@ -385,7 +359,7 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
 
 # Aggregate ---------------------------------------------------------------
   if(aggregate_VarDiff & nrow(report$VarDiff) > 0){
-    NULLs = c(NA, "null", "", "none", "NA")
+    NULLs = c(NA, "null", "", "none", "NA", "NULL")
 
     aggregated_VarDiff = report$VarDiff |>
       group_by(VARIABLE) |>
@@ -446,12 +420,12 @@ check_diffdf_opal_generic <- function(datafile = NULL, datafile2 = NULL, var = N
           write.csv(x = report[[Name]], file = path, quote = TRUE, row.names = FALSE)
 
           # REPORT: WRITE TO EXCEl
-        } else if(nrow(report[[Name]] < 100000)){
+        } else if(nrow(report[[Name]] < 1E6)){
           path <- paste0(report_path, report_name, "_", format(Sys.Date(), "%Y%m%d"), "_", Name, ".xlsx")
           openxlsx::write.xlsx(report[[Name]], file = path)
 
-          # EXPORT LOG TO CSV if number of rows>=10k
-        } else if(nrow(report[[Name]] >= 100000)){
+          # EXPORT LOG TO CSV if number of rows>=1M
+        } else if(nrow(report[[Name]] >= 1E6)){
           path <- paste0(report_path, report_name, "_", format(Sys.Date(), "%Y%m%d"), "_", Name, ".csv")
           write.csv(x = report[[Name]], file = path, quote = TRUE, row.names = FALSE)
         }
