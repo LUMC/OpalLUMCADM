@@ -12,13 +12,13 @@ install.packages("git2r")
 ```R
 ## Install package
 remotes::install_git(
-  url = "https://git.lumc.nl/research-it/r-packages/OpalLUMCADM.git",
+  url = "https://git.lumc.nl/adm/r-packages/OpalLUMCADM.git",
   credentials = git2r::cred_user_pass("USERNAME", "GIT_ACCESS_TOKEN")
 )
 
 ## Specific version
 remotes::install_git(
-  url = "https://git.lumc.nl/research-it/r-packages/OpalLUMCADM.git",
+  url = "https://git.lumc.nl/adm/r-packages/OpalLUMCADM.git",
   ref = "v1.0.3", ## Or other tag
   credentials = git2r::cred_user_pass("USERNAME", "GIT_ACCESS_TOKEN")
 )
