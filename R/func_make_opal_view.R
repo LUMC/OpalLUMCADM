@@ -250,7 +250,7 @@ make_opal_view <- function(opal, projname, tablename, opal_view = NULL, projname
 
 
     report = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, suppress_warnings = TRUE,
-                                       report_path = report_path, report_name = report_name, comparison = comparison)
+                                       report_path = report_path, report_name = report_name, comparison = comparison, ...)
 
     return(report)
   }

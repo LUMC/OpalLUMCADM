@@ -124,7 +124,7 @@ import_copy_table_opal = function(opal, projname, tablename, opal2 = NULL, projn
     report_title = "This report compares the old version (BASE) of the datafile/dictionary on opal with the moved version (COMPARE) of the datafile/dictionary on opal"
 
     report = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, suppress_warnings = TRUE,
-                                       report_path = report_path, report_name = report_name, report_title = report_title, comparison = comparison)
+                                       report_path = report_path, report_name = report_name, report_title = report_title, comparison = comparison, ...)
 
     return(report)
   }
