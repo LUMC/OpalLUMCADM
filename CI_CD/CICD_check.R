@@ -25,7 +25,6 @@ library(tibble); library(dplyr); library(stringr)
 
 library(opalr)
 library(diffdf)
-# library(keyring)
 
 
 
@@ -54,7 +53,7 @@ load("example/FAKE_var.RData")
 load("example/FAKE_cat.RData")
 
 
-server = "acc"  # c("demo", "acc", "prod")
+server = "demo"  # c("demo", "acc", "prod")
 
 # Datafiles ---------------------------------------------------------------
 if(server == "demo"){
@@ -62,17 +61,17 @@ if(server == "demo"){
   opal_url = "https://opal-demo.obiba.org"; opal_username = "administrator"; opal_password = "password"; projname = "TESTING"
   opal_token = NULL
 
-# } else if(server == "acc"){
-#   opal_url = "https://opal-acc93.clinicalresearch.nl"; opal_token = keyring::key_get("token_acc_clinicalresearch"); projname = "TEST_LARS"
-#   opal_username = opal_password = NULL
-#
-#   source("CI_CD/CICD_procedure.R")
-#
-# } else if(server == "prod"){
-#   opal_url = "https://opal.clinicalresearch.nl"; opal_token = keyring::key_get("token_opal_clinicalresearch"); projname = "TEST_LARS"
-#   opal_username = opal_password = NULL
-#
-#   source("CI_CD/CICD_procedure.R")
+} else if(server == "acc"){
+  opal_url = "https://opal-acc93.clinicalresearch.nl"; opal_token = keyring::key_get("token_acc_clinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
+
+  source("CI_CD/CICD_procedure.R")
+
+} else if(server == "prod"){
+  opal_url = "https://opal.clinicalresearch.nl"; opal_token = keyring::key_get("token_opal_clinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
+
+  source("CI_CD/CICD_procedure.R")
 
 }
 
