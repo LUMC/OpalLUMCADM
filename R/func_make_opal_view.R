@@ -32,8 +32,8 @@
 #'
 #' @note
 #' Important that a column script and a column entityType is present in the var dictionary. Otherwise it will not run!
-#' It is currently not known how to combine multiple tables into one view
-#' If you want to ahve Magma JS in the column script, you need to make the script column before calling this function
+#' If you want to combine multiple tables in one view you need to add it to the source argument
+#' If you want to have Magma JS in the column script, you need to make the script column before calling this function
 #' Currently (25/06) it is not possible to downsize a view (e.g., from 5 --> 4 variables). Therefore, independent of update, the view will be created from scratch
 #' It is possible that the view breaks down when the original datafile is altered. The view can then not be imported, an error is catched and the requested diffdf is turned off.
 #' For columns in the var dictionary that are not verified the class can only be character, otherwise a parse error will occur
