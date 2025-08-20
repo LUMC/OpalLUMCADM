@@ -14,8 +14,8 @@ library(OpalLUMCADM)
 
 
 ## Opal -------------------------------------------------------------------
-opal_url = "https://opal-tst92.clinicalresearch.nl"
-opal_token = keyring::key_get("token_tst_clinicalresearch")
+opal_url = "https://opal-acc93.clinicalresearch.nl"
+opal_token = keyring::key_get("token_acc_clinicalresearch")
 
 opal = opalr::opal.login(url = opal_url, token = opal_token)
 
@@ -24,9 +24,9 @@ tablename = "Example_data"
 
 
 ## Data -------------------------------------------------------------------
-load("example/FAKE_datafile.RData"); datafile
-load("example/FAKE_var.RData"); var
-load("example/FAKE_cat.RData"); cat
+load("example/Example_datafile.RData"); datafile
+load("example/Example_var.RData"); var
+load("example/Example_cat.RData"); cat
 
 
 # Export ------------------------------------------------------------------

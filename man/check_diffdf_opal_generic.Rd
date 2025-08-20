@@ -28,7 +28,7 @@ check_diffdf_opal_generic(
   manual_csv = FALSE,
   opt_rm_spaces_around = FALSE,
   opt_rm_AttribD_null = FALSE,
-  opt_rm_nonUTF8 = FALSE
+  ...
 )
 }
 \arguments{
@@ -69,15 +69,13 @@ check_diffdf_opal_generic(
 \item{opt_calc_VarDiff_diff}{logical. Whether to try to calculate differences between BASE and COMPARE for all VarDiff rows (default = TRUE)}
 
 \item{opt_rm_VarDiff_diff_0}{logical. Whether to remove all rows with VarDiff difference of 0 (default = FALSE)
-## The following four arguments are eligible for discarding, dont think they will be used anymore (report_out = "single" is then always the case)}
+## The following three arguments are eligible for discarding, dont think they will be used anymore (report_out = "single" is then always the case)}
 
 \item{report_out}{string. In what format the report needs to be saved, there are two options: c("single", "multiple"). Single exports all files in one excel, multiple saves a separate file for each component.}
 
 \item{manual_csv}{logical. Whether to save the VarDiff as .csv document. Required when because of too many strange symbols the \code{read_excel} function doesnot work (default = FALSE)}
 
 \item{opt_rm_AttribD_null}{logical. Whether to remove attribute differences with only ""/null/NULL/NA differences (default = FALSE)}
-
-\item{opt_rm_nonUTF8}{logical. Whether first to remove all non-UTF8 characters and then to remove all start and trailing spaces and all double spaces (default = FALSE)}
 }
 \value{
 A diffdf report is made (and optionally saved) that is a list with at most 7 elements: NumDiff, VarDiff, AttribD, VarClas, VarMode, ExtRows, ExtCols. Each element contains information about differences between the datafiles, vars and cats. If a file is empty, it is omitted from the saving of the plot.

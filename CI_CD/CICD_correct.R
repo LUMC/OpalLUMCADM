@@ -66,8 +66,11 @@ if(server == "demo"){
   opal_token = NULL
 
 } else if(server == "acc"){
-## Acceptation server
   opal_url = "https://opal-acc93.clinicalresearch.nl"; opal_token = keyring::key_get("token_acc_clinicalresearch"); projname = "TEST_LARS"
+  opal_username = opal_password = NULL
+
+} else if(server == "prod"){
+  opal_url = "https://opal.clinicalresearch.nl"; opal_token = keyring::key_get("token_opal_clinicalresearch"); projname = "TEST_LARS"
   opal_username = opal_password = NULL
 
 }

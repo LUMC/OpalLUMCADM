@@ -125,7 +125,7 @@ import_create_table_opal <- function(opal, projname, tablename, datafile, var, c
 
 
     report = check_diffdf_opal_generic(datafile = datafile, datafile2 = datafile2, var = var, var2 = var2, cat = cat, cat2 = cat2, suppress_warnings = TRUE,
-                                       report_name = report_name, report_path = report_path, report_title = report_title, comparison = comparison)
+                                       report_name = report_name, report_path = report_path, report_title = report_title, comparison = comparison, ...)
 
     return(report)
   }
