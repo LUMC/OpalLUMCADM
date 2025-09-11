@@ -2,7 +2,7 @@
 #' Function to read a table from opal to R
 #'
 #' @param opal a working opalr::opal_login
-#' @param projname Origin opal project name
+#' @param project Origin opal project name
 #' @param tablename Origin opal table name
 #'
 #' @import opalr dplyr
@@ -11,24 +11,23 @@
 #'
 #' @export
 
-
 ## Retrieved from import_table_opal2R()
-adm.table_get <- function(opal, projname, tablename, ...) {
+adm.table_get <- function(opal, project, table, ...) {
   ## Get table from Opal
   df <- opal.table_get(
     opal = opal,
-    project = projname,
-    table = tablename,
+    project = project,
+    table = table,
     ...
   )
-  
+
   ## Get dictionary from Opal
   dict <- opal.table_dictionary_get(
-    opal = opal, 
-    project = projname,
-    table = tablename
+    opal = opal,
+    project = project,
+    table = table
   )
-  
+
   ## Combine output
   datalist <- list(
     datafile1 = df,
@@ -36,6 +35,6 @@ adm.table_get <- function(opal, projname, tablename, ...) {
     dictionary1 = dict,
     dictionary2 = dict
   )
-  
+
   return(datalist)
 }
