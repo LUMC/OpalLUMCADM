@@ -43,14 +43,15 @@ adm.check_columns <- function(datafile, variables) {
   ## Show differences
   if (is_empty(column_diff)) {
     message("Columns match with variables")
-  } else {
-    for (column in column_diff) {
-      warning(
-        "Column '", column,
-        "' in data: ", column %in% columns_data,
-        " in variables: ", column %in% columns_vars
-      )
-    }
+    break
+  }
+  
+  for (column in column_diff) {
+    warning(
+      "Column '", column,
+      "' in data: ", column %in% columns_data,
+      " in variables: ", column %in% columns_vars
+    )
   }
 }
 
@@ -103,7 +104,7 @@ adm.check_valuetype <- function(datafile, variables) {
 #' 
 #' @export
 
-## Retrieved from datafile_conform_var_change()
+## Retrieved from check_categoriesminmax_generic()
 adm.check_minmax <- function(datafile, variables) {
   ## Get min/max values
   min_values <- setNames(variables$max, variables$name)
