@@ -4,7 +4,8 @@ stages:
   - test
 
 Comparison:
-  stage: skip #test
+  stage: test
+  when: manual
   script:
     - |
       R -e '
