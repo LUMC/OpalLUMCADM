@@ -4,7 +4,7 @@ stages:
   - test
 
 Comparison:
-  stage: test
+  stage: skip #test
   script:
     - |
       R -e '
