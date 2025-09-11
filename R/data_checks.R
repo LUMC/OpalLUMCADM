@@ -94,6 +94,43 @@ adm.check_valuetype <- function(datafile, variables) {
 }
 
 
+#' Function to check data on minimum & maximum values if defined in variables
+#'
+#' @param datafile data input
+#' @param variables variables dataframe
+#'
+#' @import opalr
+#' 
+#' @export
+
+## Retrieved from datafile_conform_var_change()
+adm.check_minmax <- function(datafile, variables) {
+  ## Get min/max values
+  min_values <- setNames(variables$max, variables$name)
+  max_values <- setNames(variables$max, variables$name)
+  
+  ## Get numeric or integer columns
+  valuetypes_data <- sapply(datafile, function(x) tail(class(x), n = 1))
+  valuetypes_data <- valuetypes_data[valuetypes_data %in% c("numeric", "integer")]
+  
+  for (column in names(valuetypes_data)) {
+    get_min <- min(na.omit(datafile[[column]]))
+    get_max <- max(na.omit(datafile[[column]]))
+    
+    ## Compare min & max
+    if (get_min < min_values[[column]]) {
+      warning("'", column, "' minimum value to low: ", get_min, " < ", min_values[[column]])
+    }
+    if (get_max > max_values[[column]]) {
+      warning("'", column, "' maximum value to high: ", get_max, " > ", max_values[[column]])
+    }
+  }
+  
+  message("All min/max values checked")
+}
+
+
+
 #' Function to find differences in data
 #'
 #' @param dataframe1 dataframe
