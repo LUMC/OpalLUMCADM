@@ -147,7 +147,7 @@ adm.check_date <- function(datafile, variables) {
   ## Check content
   if (FALSE %in% is_date) {
     warning(
-      "Some date columns don't have format `yyyy-mm-dd`: ", 
+      "Some date columns don't have format: `yyyy-mm-dd`: ",
       paste(names(is_date)[is_date == FALSE], collapse = ", ")
     )
   }
@@ -182,11 +182,6 @@ adm.check_datetime <- function(datafile, variables) {
     )
   }
 }
-
-
-
-
-
 
 
 
