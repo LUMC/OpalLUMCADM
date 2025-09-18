@@ -85,10 +85,16 @@ adm.check_encrypted_values <- function(datafile, variables) {
   
   ## Check content
   if (FALSE %in% encrypted_yes) {
-    stop("Some columns are not encrypted (encrypted = yes): ", encrypted_yes[encrypted_yes == FALSE])
+    warning(
+      "Some columns are not encrypted (encrypted = yes): ",
+      paste(names(encrypted_yes)[encrypted_yes == FALSE], collapse = ", ")
+    )
   }
   if (FALSE %in% encrypted_si) {
-    stop("Some columns are not encrypted (encrypted = SI): ", encrypted_si[encrypted_si == FALSE])
+    warning(
+      "Some columns are not encrypted (encrypted = SI): ",
+      paste(names(encrypted_si)[encrypted_si == FALSE], collapse = ", ")
+    )
   }
 }
 
@@ -110,6 +116,92 @@ adm.check_infinite <- function(datafile) {
   
   ## Check content
   if (TRUE %in% get_inf) {
-    stop("Some columns have Infinite values: ", get_inf[get_inf == TRUE])
+    warning(
+      "Some columns have Infinite values: ", 
+      paste(names(get_inf)[get_inf == TRUE], collapse = ", ")
+    )
   }
 }
+
+
+#' Function to check date
+#' 
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @import lubridate
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_date <- function(datafile, variables) {
+  ## Get variables with date object
+  is_date <- apply(
+    datafile %>%
+      select(variables %>% filter(valueType == "date") %>% pull(name)), 2,
+    function(x) {
+      all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
+    }
+  )
+  
+  ## Check content
+  if (FALSE %in% is_date) {
+    warning(
+      "Some date columns don't have format `yyyy-mm-dd`: ", 
+      paste(names(is_date)[is_date == FALSE], collapse = ", ")
+    )
+  }
+}
+
+
+#' Function to check datetime
+#' 
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @import lubridate
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_datetime <- function(datafile, variables) {
+  ## Get variables with date object
+  is_datetime <- apply(
+    datafile %>%
+      select(variables %>% filter(valueType == "datetime") %>% pull(name)), 2,
+    function(x) {
+      all(!is.na(as.POSIXct(na.omit(x), format = "%Y-%m-%d %H:%M:%S")))
+    }
+  )
+  
+  ## Check content
+  if (FALSE %in% is_datetime) {
+    warning(
+      "Some datetime columns don't have POSIXct format: `yyyy-mm-dd hh:mm:ss`: ", 
+      paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
+    )
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
