@@ -83,11 +83,33 @@ adm.check_encrypted_values <- function(datafile, variables) {
     }
   )
   
-  ## Check content of output
+  ## Check content
   if (FALSE %in% encrypted_yes) {
     stop("Some columns are not encrypted (encrypted = yes): ", encrypted_yes[encrypted_yes == FALSE])
   }
   if (FALSE %in% encrypted_si) {
     stop("Some columns are not encrypted (encrypted = SI): ", encrypted_si[encrypted_si == FALSE])
+  }
+}
+
+
+#' Function to check on Inf values
+#' 
+#' @param datafile data input
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_infinite <- function(datafile) {
+  get_inf <- apply(
+    datafile, 2,
+    function(x) {
+      any(is.infinite(x))
+    }
+  )
+  
+  ## Check content
+  if (TRUE %in% get_inf) {
+    stop("Some columns have Infinite values: ", get_inf[get_inf == TRUE])
   }
 }
