@@ -40,7 +40,7 @@ adm.table_get <- function(opal, project, table, ...) {
 }
 
 
-#' Function to set force & overwrite
+#' Function to set method for force & overwrite
 #'
 #' @param method String: write, update or overwrite
 #'
