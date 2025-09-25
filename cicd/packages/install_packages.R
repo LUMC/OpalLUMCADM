@@ -8,4 +8,6 @@ install.packages("openxlsx")
 install.packages("stringr")
 install.packages("lubridate")
 install.packages("remotes")
-remotes::install_github("ZorgTTP/rtres")
+
+## Need to install local, due to API rate limits in GitHub
+remotes::install_local("./rtres-2.0.0.9000.zip")
