@@ -1,32 +1,13 @@
-image: rocker/tidyverse:latest
+
+default:
+  image: rocker/tidyverse:latest
 
 stages:
-  - test
+  - tables
 
-Comparison:
-  stage: test
-  when: manual
+tables:
+  stage: tables
+  before_script:
+    - Rscript ./cicd/install_packages.R
   script:
-    - |
-      R -e '
-        install.packages("opalr", repos = "http://cran.rstudio.com/")
-        install.packages("diffdf", repos = "http://cran.rstudio.com/")
-      '
-
-    - |
-      R -e '
-        ## Read in initializations
-        source("CI_CD/CICD_procedure.R")
-
-        ## Run the tests
-        source("CI_CD/CICD_check.R")
-
-        ## Check if there is an mismatch
-        if(length(fakedata_CICD_diffs) > 0){
-          stop("There are mismatches")
-        }
-      '
-  artifacts:
-    paths:
-      - fakedata_CICD_diffs.Rdata
-    when: always
+    - Rscript ./cicd/run_step_tables.R
