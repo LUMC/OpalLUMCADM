@@ -4,8 +4,6 @@
 #' @param connection Connection with RTRES
 #'
 #' @import rtres
-#' 
-#' @return 
 #'
 #' @export
 
@@ -42,7 +40,7 @@ adm.tres_connection <- function(connection, ...) {
 #'
 #' @import rtres
 #' 
-#' @return 
+#' @return datafile, encrypted datafile
 #'
 #' @export
 
@@ -81,7 +79,7 @@ adm.tres_encryption <- function(connection, datafile, columns = NULL, search_ima
 #'
 #' @import rtres dplyr
 #' 
-#' @return 
+#' @return datafile, decrypted datafile
 #'
 #' @export
 

@@ -7,7 +7,7 @@
 #'
 #' @import opalr dplyr
 #' 
-#' @return 
+#' @return datalist, list with datafiles & dictionary
 #'
 #' @export
 
@@ -46,7 +46,7 @@ adm.table_get <- function(opal, project, table, ...) {
 #'
 #' @import opalr dplyr
 #' 
-#' @return 
+#' @return method, vector with settings for force & overwrite
 #'
 #' @export
 
