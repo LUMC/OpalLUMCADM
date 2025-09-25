@@ -29,10 +29,9 @@ adm.tres_connection <- function(connection, ...) {
   if(!str_starts(test_connection, "3::")){
     stop(test_connection, call. = FALSE)
   } else {
-    message("TRES connection can be made!")
+    message("TRES connection succesfull!")
   }
 }
-
 
 
 #' Function to encrypt with tres
@@ -56,16 +55,17 @@ adm.tres_encryption <- function(connection, datafile, columns = NA, ...) {
   
   ## Encrypt for each column
   for (column in columns) {
-    datafile[column] <- tres_encrypt(
-      values = datafile[column],
+    datafile[[column]] <- tres_encrypt(
+      values = datafile[[column]],
       connection = connection,
       ...
     )
   }
   
+  
+  
   return(datafile)
 }
-
 
 
 #' Function to decrypt with tres
@@ -91,8 +91,8 @@ adm.tres_decryption <- function(connection, datafile, columns = NA, ...) {
   
   ## Encrypt for each column
   for (column in columns) {
-    datafile[column] <- tres_decrypt(
-      values = datafile[column],
+    datafile[[column]] <- tres_decrypt(
+      values = datafile[[column]],
       connection = connection,
       ...
     )
@@ -100,23 +100,3 @@ adm.tres_decryption <- function(connection, datafile, columns = NA, ...) {
   
   return(datafile)
 }
-
-
-temp <- adm.tres_decryption(
-  connection = connection,
-  datafile = datafile_encrypted
-)
-
-
-tres_decrypt(
-  values = datafile_encrypted[column],
-  connection = connection
-)
-
-## This returns a vector with all: ""
-vec_extract_search_image(
-  values = datafile_encrypted$LAB_TSC
-)
-
-datafile |> mutate(across(all_of(column), ~vec_extract_search_image(.x), .names = "{.col}"))
-
