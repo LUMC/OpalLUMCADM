@@ -29,7 +29,7 @@ adm.tres_connection <- function(connection, ...) {
   if(!str_starts(test_connection, "3::")){
     stop(test_connection, call. = FALSE)
   } else {
-    message("TRES connection succesfull!")
+    message("TRES connection successful!")
   }
 }
 
@@ -47,9 +47,9 @@ adm.tres_connection <- function(connection, ...) {
 #' @export
 
 ## Retrieved from encrypt_data()
-adm.tres_encryption <- function(connection, datafile, columns = NA, ...) {
+adm.tres_encryption <- function(connection, datafile, columns = NULL, search_image = FALSE, ...) {
   ## Select all columns if no columns are selected
-  if (is.na(columns)) {
+  if (is.null(columns)) {
     columns <- colnames(datafile)
   }
   
@@ -58,11 +58,16 @@ adm.tres_encryption <- function(connection, datafile, columns = NA, ...) {
     datafile[[column]] <- tres_encrypt(
       values = datafile[[column]],
       connection = connection,
+      search_image = search_image,
       ...
     )
+    
+    if(search_image) {
+      datafile[[column]] <- vec_extract_search_image(
+        values = datafile[[column]]
+      )
+    }
   }
-  
-  
   
   return(datafile)
 }
@@ -81,9 +86,9 @@ adm.tres_encryption <- function(connection, datafile, columns = NA, ...) {
 #' @export
 
 ## Retrieved from encrypt_data()
-adm.tres_decryption <- function(connection, datafile, columns = NA, ...) {
+adm.tres_decryption <- function(connection, datafile, columns = NULL, ...) {
   ## Select all columns if no columns are selected
-  if (is.na(columns)) {
+  if (is.null(columns)) {
     columns <- datafile %>% 
       select(where(~ any(grepl("^3::", .)))) %>%
       colnames()
