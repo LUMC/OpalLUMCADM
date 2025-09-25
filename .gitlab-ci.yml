@@ -10,10 +10,10 @@ Build:
   stage: build
   script:
     - R CMD build .
+    - PKG_FILE=$(ls *.tar.gz)
+    - R CMD INSTALL "$PKG_FILE"
 
 Tables:
   stage: tables
-  before_script:
-    - R CMD build .
   script:
     - Rscript ./cicd/run_step_tables.R
