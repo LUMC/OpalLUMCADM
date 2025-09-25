@@ -7,7 +7,7 @@ stages:
   - tables
 
 Build:
-  stage: Build
+  stage: build
   script:
     - R CMD build .
 
