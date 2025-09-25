@@ -9,17 +9,30 @@
 #' @export
 
 adm.run_all_checks <- function(datafile, variables) {
-  ## Check columns
-  adm.check_columns(
+  message("Checking...")
+  
+  ## Function containing all checks
+  start_checks <- function(...) {
+    adm.check_columns(...)
+    adm.check_valuetype(...)
+    adm.check_minmax(...)
+    adm.check_entitytype(...)
+    adm.check_labels(...)
+    adm.check_encrypted_columns(...)
+    adm.check_encrypted_values(...)
+    adm.check_infinite(...)
+    adm.check_date(...)
+    adm.check_datetime(...)
+  }
+  
+  ## Start all checks
+  start_checks(
     datafile = datafile,
     variables = variables
   )
   
-  ## Check valuetypes
-  adm.check_valuetype(
-    datafile = datafile,
-    variables = variables
-  )
+  ## Done
+  message("All checks done!")
 }
 
 
@@ -33,12 +46,14 @@ adm.run_all_checks <- function(datafile, variables) {
 #' @export
 
 adm.check_columns <- function(datafile, variables) {
+  message("  Checking columns...", appendLF = FALSE)
+  
   ## Get columns
   columns_data <- colnames(datafile)
   columns_vars <- variables$name
   
   ## Get differences
-  column_diff <- setdiff(columns_data, columns_variables)
+  column_diff <- setdiff(columns_data, columns_vars)
   
   ## Show differences
   if (is_empty(column_diff)) {
@@ -48,11 +63,13 @@ adm.check_columns <- function(datafile, variables) {
   
   for (column in column_diff) {
     warning(
-      "Column '", column,
-      "' in data: ", column %in% columns_data,
-      " in variables: ", column %in% columns_vars
+      "Column '", column, "' in data: ", column %in% columns_data,
+      " & column '", column, "' in variables: ", column %in% columns_vars
     )
   }
+  
+  ## Done
+  message(" All columns checked!")
 }
 
 
@@ -67,6 +84,8 @@ adm.check_columns <- function(datafile, variables) {
 
 ## Retrieved from datafile_conform_var_change()
 adm.check_valuetype <- function(datafile, variables) {
+  message("  Checking valueTypes...", appendLF = FALSE)
+  
   ## Type translation
   translation_opal <- c(
     integer = "integer",
@@ -91,7 +110,9 @@ adm.check_valuetype <- function(datafile, variables) {
       )
     }
   }
-  message("All valueTypes checked")
+  
+  ## Done
+  message("  All valueTypes checked!")
 }
 
 
@@ -106,6 +127,8 @@ adm.check_valuetype <- function(datafile, variables) {
 
 ## Retrieved from check_categoriesminmax_generic()
 adm.check_minmax <- function(datafile, variables) {
+  message("  Checking min/max values...", appendLF = FALSE)
+  
   ## Get min/max values
   min_values <- setNames(variables$max, variables$name)
   max_values <- setNames(variables$max, variables$name)
@@ -127,70 +150,228 @@ adm.check_minmax <- function(datafile, variables) {
     }
   }
   
-  message("All min/max values checked")
+  ## Done
+  message("  All min/max values checked!")
 }
 
 
 
-#' Function to find differences in data
-#'
-#' @param dataframe1 dataframe
-#' @param dataframe2 dataframe
-#' @param path path to output dir
+#' Function to check entity type
 #' 
-#' @import diffdf 
+#' @param variables variables dataframe
 #' 
 #' @export
 
-## Retrieved from check_diffdf_opal_generic()
-adm.check_diffdf <- function(dataframe1, dataframe2, path = NA, ...) {
-  ## Get differences
-  difference <- diffdf(
-    base = dataframe1,
-    compare = dataframe2
-  )
+## Retrieved from checks_opal_R()
+adm.check_entitytype <- function(variables) {
+  message("  Checking entity type...", appendLF = FALSE)
   
-  ## Merge all vardiffs
-  difference[["VarDiff"]] <- do.call(rbind, difference[grep("VarDiff_", names(difference))])
-  difference[grep("VarDiff_", names(difference))] <- NULL
+  ## Get entity types
+  entity <- unique(variables$entityType)
   
-  ## Return difference if no path is set
-  if (is.na(path)) {
-    return(difference)
+  if (length(entity) > 1) {
+    stop("More then one entity type in use!")
   }
   
-  ## Write to Excel
-  adm.write_to_excel(
-    df_list = difference,
-    path = path,
-    ...
-  )
+  ## Done
+  message("  Entity type checked!")
 }
 
 
-#' Function to write diffdf to excel
-#'
-#' @param df_list list of dataframes from diffdf
-#' @param path path to output dir
+#' Function to check presence of labels & descriptions in variables
 #' 
-#' @import openxlsx
+#' @param variables variables dataframe
+#' 
+#' @import stringr
 #' 
 #' @export
 
-adm.write_to_excel <- function(df_list, path, ...) {
-  ## Create a new workbook
-  wb <- createWorkbook()
+## Retrieved from checks_opal_R()
+adm.check_labels <- function(variables) {
+  message("  Checking labels...", appendLF = FALSE)
   
-  ## Add each dataframe as a sheet
-  for (sheet_name in names(df_list)) {
-    addWorksheet(wb, sheet_name)
-    writeData(wb, sheet = sheet_name, df_list[[sheet_name]])
+  ## Search for column labels & descriptions
+  col_labels <- str_detect(colnames(variables), "label")
+  col_description <- str_detect(colnames(variables), "description")
+  
+  if (!TRUE %in% col_labels) {
+    stop("There is no 'label' column in your variables object")
+  }
+  if (!TRUE %in% col_description) {
+    stop("There is no 'description' column in your variables object")
   }
   
-  ## Save workbook
-  saveWorkbook(
-    wb = wb,
-    file = paste0(path, format(Sys.Date(), "%Y%m%d"), ".xlsx"),
-    ...
+  ## Done
+  message("  Labels checked")
+}
+
+
+#' Function to check encryption of columns
+#' 
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_encrypted_columns <- function(datafile, variables) {
+  message("  Checking encrypted columns...", appendLF = FALSE)
+  
+  ## Get all columns that should be encrypted
+  encrypted_columns <- str_detect(colnames(variables), "encrypted")
+  if (!TRUE %in% encrypted_columns) {
+    stop("There is no 'encrypted' column in your variables object")
+  }
+  
+  ## Done
+  message("  Encrypted columns checked!")
+}
+
+
+#' Function to check encryption of values
+#' 
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_encrypted_values <- function(datafile, variables) {
+  message("  Checking encrypted values...", appendLF = FALSE)
+  
+  ## Check if all data is encrypted yes
+  encrypted_yes <- apply(
+    datafile %>%
+      select(variables %>% filter(encrypted == "yes") %>% pull(name)), 2,
+    function(x) {
+      all(grepl("^3::", na.omit(x)))
+    }
   )
+  
+  ## Check if all data is encrypted SI
+  encrypted_si <- apply(
+    datafile %>%
+      select(variables %>% filter(encrypted == "SI") %>% pull(name)), 2,
+    function(x) {
+      all(grepl("^1:", na.omit(x)))
+    }
+  )
+  
+  ## Check content
+  if (FALSE %in% encrypted_yes) {
+    warning(
+      "Some columns are not encrypted (encrypted = yes): ",
+      paste(names(encrypted_yes)[encrypted_yes == FALSE], collapse = ", ")
+    )
+  }
+  if (FALSE %in% encrypted_si) {
+    warning(
+      "Some columns are not encrypted (encrypted = SI): ",
+      paste(names(encrypted_si)[encrypted_si == FALSE], collapse = ", ")
+    )
+  }
+  
+  ## Done
+  message("  Encrypted values checked!")
+}
+
+
+#' Function to check on Inf values
+#' 
+#' @param datafile data input
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_infinite <- function(datafile) {
+  message("  Checking infinite values...", appendLF = FALSE)
+  
+  ## Search for infinite values
+  get_inf <- apply(
+    datafile, 2,
+    function(x) {
+      any(is.infinite(x))
+    }
+  )
+  
+  ## Check content
+  if (TRUE %in% get_inf) {
+    warning(
+      "Some columns have Infinite values: ", 
+      paste(names(get_inf)[get_inf == TRUE], collapse = ", ")
+    )
+  }
+  
+  ## Done
+  message("  Infinite values checked!")
+}
+
+
+#' Function to check date
+#' 
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @import lubridate
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_date <- function(datafile, variables) {
+  message("  Checking date format...", appendLF = FALSE)
+  
+  ## Get variables with date object
+  is_date <- apply(
+    datafile %>%
+      select(variables %>% filter(valueType == "date") %>% pull(name)), 2,
+    function(x) {
+      all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
+    }
+  )
+  
+  ## Check content
+  if (FALSE %in% is_date) {
+    warning(
+      "Some date columns don't have format: `yyyy-mm-dd`: ",
+      paste(names(is_date)[is_date == FALSE], collapse = ", ")
+    )
+  }
+  
+  ## Done
+  message("  Date format checked!")
+}
+
+
+#' Function to check datetime
+#' 
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @import lubridate
+#' 
+#' @export
+
+## Retrieved from checks_opal_R()
+adm.check_datetime <- function(datafile, variables) {
+  message("  Checking datetime format...", appendLF = FALSE)
+  
+  ## Get variables with date object
+  is_datetime <- apply(
+    datafile %>%
+      select(variables %>% filter(valueType == "datetime") %>% pull(name)), 2,
+    function(x) {
+      all(!is.na(as.POSIXct(na.omit(x), format = "%Y-%m-%d %H:%M:%S")))
+    }
+  )
+  
+  ## Check content
+  if (FALSE %in% is_datetime) {
+    warning(
+      "Some datetime columns don't have POSIXct format: `yyyy-mm-dd hh:mm:ss`: ", 
+      paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
+    )
+  }
+  
+  ## Done
+  message("  Datetime format checked!")
 }
