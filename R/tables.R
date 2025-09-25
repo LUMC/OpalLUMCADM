@@ -2,7 +2,7 @@
 #' Function to read a table from opal to R
 #'
 #' @param opal a working opalr::opal_login
-#' @param project Origin opal project name
+#' @param projname Origin opal project name
 #' @param tablename Origin opal table name
 #'
 #' @import opalr dplyr
@@ -12,20 +12,20 @@
 #' @export
 
 ## Retrieved from import_table_opal2R()
-adm.table_get <- function(opal, project, table, ...) {
+adm.table_get <- function(opal, projname, tablename, ...) {
   ## Get table from Opal
   df <- opal.table_get(
     opal = opal,
-    project = project,
-    table = table,
+    project = projname,
+    table = tablename,
     ...
   )
   
   ## Get dictionary from Opal
   dict <- opal.table_dictionary_get(
     opal = opal,
-    project = project,
-    table = table
+    project = projname,
+    table = tablename
   )
   
   ## Combine output
@@ -70,8 +70,8 @@ adm.set_method <- function(method) {
 #' Function to save a table from R to Opal
 #'
 #' @param opal a working opalr::opal_login
-#' @param project Origin opal project name
-#' @param table Origin opal table name
+#' @param projname Origin opal project name
+#' @param tablename Origin opal table name
 #' @param datafile data dataframe
 #' @param variables variables dataframe
 #' @param categories categories dataframe
@@ -82,7 +82,7 @@ adm.set_method <- function(method) {
 #' @export
 
 ## Retrieved from write_table_R2opal()
-adm.table_save <- function(opal, project, table, datafile, variables, categories = NULL, method,...) {
+adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method,...) {
   ## Set method
   method <- adm.set_method(method = method)
   
@@ -98,8 +98,8 @@ adm.table_save <- function(opal, project, table, datafile, variables, categories
   ## Save table to Opal
   opal.table_save(
     opal = opal,
-    project = project,
-    table = table,
+    project = projname,
+    table = tablename,
     tibble = datafile,
     force = method["force"],
     overwrite = method["overwrite"],
