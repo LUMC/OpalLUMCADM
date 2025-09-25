@@ -11,6 +11,7 @@ Build:
   script:
     - R CMD build .
     - PKG_FILE=$(ls *.tar.gz)
+    - Rscript ./cicd/install_packages.R
     - R CMD INSTALL "$PKG_FILE"
 
 Tables:
