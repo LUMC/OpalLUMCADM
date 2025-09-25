@@ -3,11 +3,17 @@ default:
   image: rocker/tidyverse:4.5.1
 
 stages:
+  - build
   - tables
+
+Build:
+  stage: Build
+  script:
+    - R CMD build .
 
 Tables:
   stage: tables
   before_script:
-    - Rscript ./cicd/install_packages.R
+    - R CMD build .
   script:
     - Rscript ./cicd/run_step_tables.R
