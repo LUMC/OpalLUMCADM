@@ -10,4 +10,4 @@ install.packages("lubridate")
 install.packages("remotes")
 
 ## Need to install local, due to API rate limits in GitHub
-remotes::install_local("./rtres-2.0.0.9000.zip")
+remotes::install_local("./cicd/packages/rtres-2.0.0.9000.zip")
