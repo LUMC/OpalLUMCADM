@@ -1,11 +1,11 @@
 
 default:
-  image: rocker/tidyverse:latest
+  image: r-base:latest
 
 stages:
   - tables
 
-tables:
+Tables:
   stage: tables
   before_script:
     - Rscript ./cicd/install_packages.R
