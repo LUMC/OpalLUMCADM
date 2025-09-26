@@ -22,4 +22,9 @@ Tables:
     - Rscript ./cicd/packages/install_packages.R
     - R CMD INSTALL "$PKG_FILE"
   script:
-    - Rscript ./cicd/01_run_step_tables.R
+    - Rscript ./cicd/01_tables/adm.table_get.R
+    - Rscript ./cicd/01_tables/adm.table_save_write.R
+    - Rscript ./cicd/01_tables/adm.table_save_update.R
+    - Rscript ./cicd/01_tables/adm.table_save_overwrite.R
+  after_script:
+    - Rscript ./cicd/01_tables/cleanup.R
