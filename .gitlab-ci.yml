@@ -26,6 +26,6 @@ Tables:
     - Rscript ./cicd/01_tables/adm.table_save_write.R
     - Rscript ./cicd/01_tables/adm.table_save_update.R
     - Rscript ./cicd/01_tables/adm.table_save_overwrite.R
-    - (! Rscript ./cicd/01_tables/adm.table_save_overwrite.R)
+    - (! Rscript ./cicd/01_tables/adm.table_save_write.R)
   after_script:
     - Rscript ./cicd/01_tables/cleanup.R
