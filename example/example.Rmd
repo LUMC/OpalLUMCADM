@@ -1,0 +1,96 @@
+---
+title: "Example script"
+author: "Tom Kuipers"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+    theme: paper
+always_allow_html: true
+---
+
+
+# Reading packages
+
+```{r setup}
+
+## Load required libraries
+suppressPackageStartupMessages({
+  library(OpalLUMCADM)
+})
+
+```
+
+
+# Connect to Opal
+
+```{r login}
+
+## Opal login (demo)
+opal <- opal.login(
+  username = "administrator",
+  password = "password",
+  url = "https://opal-demo.obiba.org/"
+)
+
+```
+
+
+# Get data from Opal
+
+```{r get_data}
+
+## Get table
+df <- adm.table_get(
+  opal = opal,
+  projname = "CNSIM",
+  tablename = "CNSIM1"
+)
+
+datafile <- df$datafile1
+variables <- df$dictionary1$variables
+
+```
+
+
+# Check data before upload
+
+```{r check}
+
+## Check dataset
+adm.run_all_checks(
+  datafile = datafile,
+  variables = variables
+)
+
+## Fix problems if error is triggered...
+
+```
+
+
+# Save data to Opal
+
+```{r save_data}
+
+## Save table
+adm.table_save(
+  opal = opal,
+  projname = "CNSIM",
+  tablename = "CNSIM_TEST",
+  datafile = df$datafile1,
+  method = "write"
+)
+
+```
+
+
+# Session info
+
+```{r session}
+
+## SessionInfo
+sessionInfo()
+
+```
