@@ -10,11 +10,11 @@
 #' @export
 
 ## Retrieved from check_diffdf_opal_generic()
-adm.check_diffdf <- function(dataframe1, dataframe2, path = NA, ...) {
+adm.check_diffdf <- function(datafile1, datafile2, path = NA, ...) {
   ## Get differences
   difference <- diffdf(
-    base = dataframe1,
-    compare = dataframe2
+    base = datafile1,
+    compare = datafile2
   )
   
   ## Merge all vardiffs
@@ -57,7 +57,7 @@ adm.write_to_excel <- function(df_list, path, ...) {
   ## Save workbook
   saveWorkbook(
     wb = wb,
-    file = paste0(path, format(Sys.Date(), "%Y%m%d"), ".xlsx"),
+    file = path,
     ...
   )
 }
