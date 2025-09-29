@@ -4,7 +4,7 @@
 \alias{adm.check_entitytype}
 \title{Function to check entity type}
 \usage{
-adm.check_entitytype(variables)
+adm.check_entitytype(variables, ...)
 }
 \arguments{
 \item{variables}{variables dataframe}

@@ -4,7 +4,7 @@
 \alias{adm.check_infinite}
 \title{Function to check on Inf values}
 \usage{
-adm.check_infinite(datafile)
+adm.check_infinite(datafile, ...)
 }
 \arguments{
 \item{datafile}{data input}

@@ -4,7 +4,7 @@
 \alias{adm.check_required_columns}
 \title{Function to check presence of required columns labels, descriptions & encrypted in variables}
 \usage{
-adm.check_required_columns(variables)
+adm.check_required_columns(variables, ...)
 }
 \arguments{
 \item{variables}{variables dataframe}
