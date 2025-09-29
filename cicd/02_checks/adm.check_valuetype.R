@@ -29,6 +29,6 @@ test_that("warning", {
       datafile = datafile,
       variables = variables
     ),
-    "ValueType of 'LAB_HDL' doesn't match: NA vs numeric"
+    "ValueType of 'LAB_HDL' doesn't match: NA vs decimal"
   )
 })
