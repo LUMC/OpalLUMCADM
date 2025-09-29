@@ -4,14 +4,14 @@
 \alias{adm.check_diffdf}
 \title{Function to find differences in data}
 \usage{
-adm.check_diffdf(dataframe1, dataframe2, path = NA, ...)
+adm.check_diffdf(datafile1, datafile2, path = NA, ...)
 }
 \arguments{
+\item{path}{path to output dir}
+
 \item{dataframe1}{dataframe}
 
 \item{dataframe2}{dataframe}
-
-\item{path}{path to output dir}
 }
 \description{
 Function to find differences in data
