@@ -6,8 +6,8 @@
 \usage{
 adm.table_save(
   opal,
-  project,
-  table,
+  projname,
+  tablename,
   datafile,
   variables,
   categories = NULL,
@@ -18,9 +18,9 @@ adm.table_save(
 \arguments{
 \item{opal}{a working opalr::opal_login}
 
-\item{project}{Origin opal project name}
+\item{projname}{Origin opal project name}
 
-\item{table}{Origin opal table name}
+\item{tablename}{Origin opal table name}
 
 \item{datafile}{data dataframe}
 

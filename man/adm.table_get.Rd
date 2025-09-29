@@ -4,12 +4,12 @@
 \alias{adm.table_get}
 \title{Function to read a table from opal to R}
 \usage{
-adm.table_get(opal, project, table, ...)
+adm.table_get(opal, projname, tablename, ...)
 }
 \arguments{
 \item{opal}{a working opalr::opal_login}
 
-\item{project}{Origin opal project name}
+\item{projname}{Origin opal project name}
 
 \item{tablename}{Origin opal table name}
 }
