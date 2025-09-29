@@ -6,6 +6,7 @@ stages:
   - build
   - tables
   - checks
+  - diffdf
 
 Build:
   stage: build
@@ -49,3 +50,14 @@ Checks:
     - Rscript ./cicd/02_checks/adm.check_minmax.R
     - Rscript ./cicd/02_checks/adm.check_required_columns.R
     - Rscript ./cicd/02_checks/adm.check_valuetype.R
+
+DiffDF:
+  stage: diffdf
+  before_script:
+    - R CMD build .
+    - PKG_FILE=$(ls *.tar.gz)
+    - Rscript ./cicd/packages/install_packages.R
+    - R CMD INSTALL "$PKG_FILE"
+    - Rscript ./cicd/03_diffdf/create_dataset.R
+  script:
+    - Rscript ./cicd/03_diffdf/adm.check_diffdf.R
