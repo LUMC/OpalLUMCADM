@@ -4,7 +4,7 @@ library(opalr)
 library(OpalLUMCADM)
 
 ## Set opal-demo login
-opal = opal.login(
+opal <- opal.login(
   username = "administrator",
   password = "password",
   url = "https://opal-demo.obiba.org/"
