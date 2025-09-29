@@ -56,16 +56,13 @@ adm.check_columns <- function(datafile, variables) {
   column_diff <- setdiff(columns_data, columns_vars)
   
   ## Show differences
-  if (is_empty(column_diff)) {
-    message("Columns match with variables")
-    break
-  }
-  
-  for (column in column_diff) {
-    warning(
-      "Column '", column, "' in data: ", column %in% columns_data,
-      " & column '", column, "' in variables: ", column %in% columns_vars
-    )
+  if (!is_empty(column_diff)) {
+    for (column in column_diff) {
+      warning(
+        "Column '", column, "' in data: ", column %in% columns_data,
+        " & column '", column, "' in variables: ", column %in% columns_vars
+      )
+    }
   }
   
   ## Done
@@ -105,14 +102,14 @@ adm.check_valuetype <- function(datafile, variables) {
     compare <- identical(valuetypes_vars[column], valuetypes_data[column])
     if (!compare) {
       warning(
-        "ValueType of ", column, " doesn't match: ",
+        "ValueType of '", column, "' doesn't match: ",
         valuetypes_vars[column], " vs ", valuetypes_data[column]
       )
     }
   }
   
   ## Done
-  message("  All valueTypes checked!")
+  message(" All valueTypes checked!")
 }
 
 
@@ -129,8 +126,13 @@ adm.check_valuetype <- function(datafile, variables) {
 adm.check_minmax <- function(datafile, variables) {
   message("  Checking min/max values...", appendLF = FALSE)
   
+  ## Check for min/max columns
+  if (!all(c("min", "max") %in% colnames(variables))) {
+    stop("There are no min/max columns in variables object")
+  }
+  
   ## Get min/max values
-  min_values <- setNames(variables$max, variables$name)
+  min_values <- setNames(variables$min, variables$name)
   max_values <- setNames(variables$max, variables$name)
   
   ## Get numeric or integer columns
@@ -151,7 +153,7 @@ adm.check_minmax <- function(datafile, variables) {
   }
   
   ## Done
-  message("  All min/max values checked!")
+  message(" All min/max values checked!")
 }
 
 
@@ -174,11 +176,11 @@ adm.check_entitytype <- function(variables) {
   }
   
   ## Done
-  message("  Entity type checked!")
+  message(" Entity type checked!")
 }
 
 
-#' Function to check presence of labels & descriptions in variables
+#' Function to check presence of required columns labels, descriptions & encrypted in variables
 #' 
 #' @param variables variables dataframe
 #' 
@@ -187,44 +189,26 @@ adm.check_entitytype <- function(variables) {
 #' @export
 
 ## Retrieved from checks_opal_R()
-adm.check_labels <- function(variables) {
-  message("  Checking labels...", appendLF = FALSE)
+adm.check_required_columns <- function(variables) {
+  message("  Checking required columns...", appendLF = FALSE)
   
   ## Search for column labels & descriptions
   col_labels <- str_detect(colnames(variables), "label")
   col_description <- str_detect(colnames(variables), "description")
+  col_encrypted <- str_detect(colnames(variables), "encrypted")
   
   if (!TRUE %in% col_labels) {
-    stop("There is no 'label' column in your variables object")
+    warning("There is no 'label' column in your variables object!")
   }
   if (!TRUE %in% col_description) {
-    stop("There is no 'description' column in your variables object")
+    warning("There is no 'description' column in your variables object!")
+  }
+  if (!TRUE %in% col_encrypted) {
+    warning("There is no 'encrypted' column in your variables object!")
   }
   
   ## Done
-  message("  Labels checked")
-}
-
-
-#' Function to check encryption of columns
-#' 
-#' @param datafile data input
-#' @param variables variables dataframe
-#' 
-#' @export
-
-## Retrieved from checks_opal_R()
-adm.check_encrypted_columns <- function(datafile, variables) {
-  message("  Checking encrypted columns...", appendLF = FALSE)
-  
-  ## Get all columns that should be encrypted
-  encrypted_columns <- str_detect(colnames(variables), "encrypted")
-  if (!TRUE %in% encrypted_columns) {
-    stop("There is no 'encrypted' column in your variables object")
-  }
-  
-  ## Done
-  message("  Encrypted columns checked!")
+  message(" Columns checked!")
 }
 
 
@@ -232,6 +216,8 @@ adm.check_encrypted_columns <- function(datafile, variables) {
 #' 
 #' @param datafile data input
 #' @param variables variables dataframe
+#' 
+#' @import dyplr
 #' 
 #' @export
 
@@ -259,13 +245,13 @@ adm.check_encrypted_values <- function(datafile, variables) {
   
   ## Check content
   if (FALSE %in% encrypted_yes) {
-    warning(
+    stop(
       "Some columns are not encrypted (encrypted = yes): ",
       paste(names(encrypted_yes)[encrypted_yes == FALSE], collapse = ", ")
     )
   }
   if (FALSE %in% encrypted_si) {
-    warning(
+    stop(
       "Some columns are not encrypted (encrypted = SI): ",
       paste(names(encrypted_si)[encrypted_si == FALSE], collapse = ", ")
     )
@@ -287,12 +273,9 @@ adm.check_infinite <- function(datafile) {
   message("  Checking infinite values...", appendLF = FALSE)
   
   ## Search for infinite values
-  get_inf <- apply(
-    datafile, 2,
-    function(x) {
-      any(is.infinite(x))
-    }
-  )
+  get_inf <- sapply(datafile, function(x) {
+    any(is.infinite(x))
+  })
   
   ## Check content
   if (TRUE %in% get_inf) {
@@ -303,7 +286,7 @@ adm.check_infinite <- function(datafile) {
   }
   
   ## Done
-  message("  Infinite values checked!")
+  message(" Infinite values checked!")
 }
 
 
@@ -321,24 +304,29 @@ adm.check_date <- function(datafile, variables) {
   message("  Checking date format...", appendLF = FALSE)
   
   ## Get variables with date object
-  is_date <- apply(
-    datafile %>%
-      select(variables %>% filter(valueType == "date") %>% pull(name)), 2,
-    function(x) {
-      all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
-    }
-  )
+  get_date <- datafile %>%
+    select(variables %>% filter(valueType == "date") %>% pull(name))
   
-  ## Check content
-  if (FALSE %in% is_date) {
-    warning(
-      "Some date columns don't have format: `yyyy-mm-dd`: ",
-      paste(names(is_date)[is_date == FALSE], collapse = ", ")
+  ## Check format
+  if (ncol(get_date) > 0) {
+    is_date <- apply(
+      get_date, 2,
+      function(x) {
+        all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
+      }
     )
+    
+    ## Check content
+    if (FALSE %in% is_date) {
+      warning(
+        "Some date columns don't have format: `yyyy-mm-dd`: ",
+        paste(names(is_date)[is_date == FALSE], collapse = ", ")
+      )
+    }
   }
   
   ## Done
-  message("  Date format checked!")
+  message(" Date format checked!")
 }
 
 
@@ -355,23 +343,28 @@ adm.check_date <- function(datafile, variables) {
 adm.check_datetime <- function(datafile, variables) {
   message("  Checking datetime format...", appendLF = FALSE)
   
-  ## Get variables with date object
-  is_datetime <- apply(
-    datafile %>%
-      select(variables %>% filter(valueType == "datetime") %>% pull(name)), 2,
-    function(x) {
-      all(!is.na(as.POSIXct(na.omit(x), format = "%Y-%m-%d %H:%M:%S")))
-    }
-  )
+  ## Get variables with datetime object
+  get_datetime <- datafile %>%
+    select(variables %>% filter(valueType == "datetime") %>% pull(name))
   
-  ## Check content
-  if (FALSE %in% is_datetime) {
-    warning(
-      "Some datetime columns don't have POSIXct format: `yyyy-mm-dd hh:mm:ss`: ", 
-      paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
+  ## Check format
+  if (ncol(get_datetime) > 0) {
+    is_datetime <- apply(
+      get_datetime, 2,
+      function(x) {
+        all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
+      }
     )
+    
+    ## Check content
+    if (FALSE %in% is_datetime) {
+      warning(
+        "Some datetime columns don't have POSIXct format: `yyyy-mm-dd hh:mm:ss`: ", 
+        paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
+      )
+    }
   }
   
   ## Done
-  message("  Datetime format checked!")
+  message(" Datetime format checked!")
 }
