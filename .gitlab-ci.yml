@@ -5,6 +5,7 @@ default:
 stages:
   - build
   - tables
+  - checks
 
 Build:
   stage: build
@@ -29,3 +30,22 @@ Tables:
     - (! Rscript ./cicd/01_tables/adm.table_save_write.R)
   after_script:
     - Rscript ./cicd/01_tables/cleanup.R
+
+Checks:
+  stage: checks
+  before_script:
+    - R CMD build .
+    - PKG_FILE=$(ls *.tar.gz)
+    - Rscript ./cicd/packages/install_packages.R
+    - R CMD INSTALL "$PKG_FILE"
+    - Rscript ./cicd/02_checks/create_dataset.R
+  script:
+    - Rscript ./cicd/02_checks/adm.check_columns.R
+    - Rscript ./cicd/02_checks/adm.check_date.R
+    - Rscript ./cicd/02_checks/adm.check_datetime.R
+    - Rscript ./cicd/02_checks/adm.check_encrypted_values.R
+    - Rscript ./cicd/02_checks/adm.check_entitytype.R
+    - Rscript ./cicd/02_checks/adm.check_infinite.R
+    - Rscript ./cicd/02_checks/adm.check_minmax.R
+    - Rscript ./cicd/02_checks/adm.check_required_columns.R
+    - Rscript ./cicd/02_checks/adm.check_valuetype.R
