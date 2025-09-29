@@ -136,10 +136,10 @@ adm.check_minmax <- function(datafile, variables) {
     get_max <- max(na.omit(datafile[[column]]))
     
     ## Compare min & max
-    if (get_min < min_values[[column]]) {
+    if (is.numeric(min_values[[column]]) && get_min < min_values[[column]]) {
       warning("'", column, "' minimum value to low: ", get_min, " < ", min_values[[column]])
     }
-    if (get_max > max_values[[column]]) {
+    if (is.numeric(min_values[[column]]) && get_max > max_values[[column]]) {
       warning("'", column, "' maximum value to high: ", get_max, " > ", max_values[[column]])
     }
   }
