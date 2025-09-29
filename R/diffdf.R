@@ -9,7 +9,6 @@
 #' 
 #' @export
 
-## Retrieved from check_diffdf_opal_generic()
 adm.check_diffdf <- function(datafile1, datafile2, path = NA, ...) {
   ## Get differences
   difference <- diffdf(

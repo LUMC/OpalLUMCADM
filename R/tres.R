@@ -7,7 +7,6 @@
 #'
 #' @export
 
-## Retrieved from encrypt_data()
 adm.tres_connection <- function(connection, ...) {
   ## Create a test connection
   test_connection <- tryCatch({
@@ -44,7 +43,6 @@ adm.tres_connection <- function(connection, ...) {
 #'
 #' @export
 
-## Retrieved from encrypt_data()
 adm.tres_encryption <- function(connection, datafile, columns = NULL, search_image = FALSE, ...) {
   ## Select all columns if no columns are selected
   if (is.null(columns)) {
@@ -83,7 +81,6 @@ adm.tres_encryption <- function(connection, datafile, columns = NULL, search_ima
 #'
 #' @export
 
-## Retrieved from encrypt_data()
 adm.tres_decryption <- function(connection, datafile, columns = NULL, ...) {
   ## Select all columns if no columns are selected
   if (is.null(columns)) {

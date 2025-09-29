@@ -76,7 +76,6 @@ adm.check_columns <- function(datafile, variables) {
 #' 
 #' @export
 
-## Retrieved from datafile_conform_var_change()
 adm.check_valuetype <- function(datafile, variables) {
   ## Type translation
   translation_opal <- c(
@@ -117,7 +116,6 @@ adm.check_valuetype <- function(datafile, variables) {
 #' 
 #' @export
 
-## Retrieved from check_categoriesminmax_generic()
 adm.check_minmax <- function(datafile, variables) {
   ## Check for min/max columns
   if (!all(c("min", "max") %in% colnames(variables))) {
@@ -157,7 +155,6 @@ adm.check_minmax <- function(datafile, variables) {
 #' 
 #' @export
 
-## Retrieved from checks_opal_R()
 adm.check_entitytype <- function(variables, ...) {
   ## Get entity types
   entity <- unique(variables$entityType)
@@ -179,7 +176,6 @@ adm.check_entitytype <- function(variables, ...) {
 #' 
 #' @export
 
-## Retrieved from checks_opal_R()
 adm.check_required_columns <- function(variables, ...) {
   ## Search for column labels & descriptions
   col_labels <- str_detect(colnames(variables), "label")
@@ -211,7 +207,6 @@ adm.check_required_columns <- function(variables, ...) {
 #' 
 #' @export
 
-## Retrieved from checks_opal_R()
 adm.check_encrypted_values <- function(datafile, variables) {
   ## Check for encrypted column
   col_encrypted <- str_detect(colnames(variables), "encrypted")
@@ -262,7 +257,6 @@ adm.check_encrypted_values <- function(datafile, variables) {
 #' 
 #' @export
 
-## Retrieved from checks_opal_R()
 adm.check_infinite <- function(datafile, ...) {
   ## Search for infinite values
   get_inf <- sapply(datafile, function(x) {
@@ -291,7 +285,6 @@ adm.check_infinite <- function(datafile, ...) {
 #' 
 #' @export
 
-## Retrieved from checks_opal_R()
 adm.check_date <- function(datafile, variables) {
   ## Get variables with date object
   get_date <- datafile %>%
@@ -328,7 +321,6 @@ adm.check_date <- function(datafile, variables) {
 #' 
 #' @export
 
-## Retrieved from checks_opal_R()
 adm.check_datetime <- function(datafile, variables) {
   ## Get variables with datetime object
   get_datetime <- datafile %>%

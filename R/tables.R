@@ -11,7 +11,6 @@
 #'
 #' @export
 
-## Retrieved from import_table_opal2R()
 adm.table_get <- function(opal, projname, tablename, ...) {
   ## Get table from Opal
   df <- opal.table_get(
@@ -50,7 +49,6 @@ adm.table_get <- function(opal, projname, tablename, ...) {
 #'
 #' @export
 
-## Retrieved from import_table_opal2R()
 adm.set_method <- function(method) {
   ## Set method
   if(method == "write"){
@@ -81,7 +79,6 @@ adm.set_method <- function(method) {
 #' 
 #' @export
 
-## Retrieved from write_table_R2opal()
 adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method,...) {
   ## Set method
   method <- adm.set_method(method = method)
@@ -126,7 +123,6 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
 #' 
 #' @export
 
-## Retrieved from import_copy_table_opal()
 adm.table_copy <- function(opal, projname, tablenames, ...) {
   ## Loop through each tablename
   for (name in tablenames) {

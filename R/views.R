@@ -12,7 +12,6 @@
 #' 
 #' @export
 
-## Retrieved from make_opal_view()
 adm.view_create <- function(opal, view_projname, view_tablename, source, variables, categories = NULL, ...) {
   ## Check if view already exists
   view_exists <- opal.table_exists(
@@ -64,7 +63,6 @@ adm.view_create <- function(opal, view_projname, view_tablename, source, variabl
 #' 
 #' @export
 
-## Retrieved from make_opal_view()
 adm.view_update <- function(opal, view_projname, view_tablename, source, variables, categories = NULL, ...) {
   ## Update existing view
   opal.table_view_update(
