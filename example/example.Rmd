@@ -65,7 +65,7 @@ adm.run_all_checks(
   variables = variables
 )
 
-## Fix problems if error is triggered...
+## Fix problems if warnings/errors are triggered...
 
 ```
 
