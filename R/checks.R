@@ -217,7 +217,7 @@ adm.check_required_columns <- function(variables) {
 #' @param datafile data input
 #' @param variables variables dataframe
 #' 
-#' @import dyplr
+#' @import dplyr
 #' 
 #' @export
 
