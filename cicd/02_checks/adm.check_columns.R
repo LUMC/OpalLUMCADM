@@ -27,16 +27,9 @@ datafile$id <- NULL
 test_that("success", {
   expect_message(
     adm.check_columns(
-      datafile = datafile, 
-      variables = variables
-    ),
-    "Checking columns..."
-  )
-  expect_message(
-    adm.check_columns(
       datafile = datafile,
       variables = variables
     ),
-    "All columns checked!"
+    "Checked columns between datafile & variables"
   )
 })

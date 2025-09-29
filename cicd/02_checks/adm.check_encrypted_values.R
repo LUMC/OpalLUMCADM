@@ -8,23 +8,29 @@ library(OpalLUMCADM)
 load("./cicd/02_checks/dataset_cnsim.Rdata")
 
 
+## Run test with error
+test_that("error", {
+  expect_error(
+    adm.check_encrypted_values(
+      datafile = datafile,
+      variables = variables
+    ),
+    "There is no 'encrypted' column in your variables object!"
+  )
+})
+
+
 ## Add 'encrypted' column for success
 variables$encrypted <- "no"
 
-test_that("error", {
+## Run test with success
+test_that("message", {
   expect_message(
     adm.check_encrypted_values(
       datafile = datafile,
       variables = variables
     ),
-    "Checking encrypted values..."
-  )
-  expect_message(
-    adm.check_encrypted_values(
-      datafile = datafile,
-      variables = variables
-    ),
-    "Encrypted values checked!"
+    "Checked encrypted values"
   )
 })
 
@@ -54,14 +60,7 @@ test_that("success", {
       datafile = datafile, 
       variables = variables
     ),
-    "Checking encrypted values..."
-  )
-  expect_message(
-    adm.check_encrypted_values(
-      datafile = datafile, 
-      variables = variables
-    ),
-    "Encrypted values checked!"
+    "Checked encrypted values"
   )
 })
 
@@ -91,13 +90,6 @@ test_that("success", {
       datafile = datafile, 
       variables = variables
     ),
-    "Checking encrypted values..."
-  )
-  expect_message(
-    adm.check_encrypted_values(
-      datafile = datafile, 
-      variables = variables
-    ),
-    "Encrypted values checked!"
+    "Checked encrypted values"
   )
 })

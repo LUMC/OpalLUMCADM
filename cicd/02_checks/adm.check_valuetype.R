@@ -11,17 +11,10 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 test_that("success", {
   expect_message(
     adm.check_valuetype(
-      datafile = datafile, 
-      variables = variables
-    ),
-    "Checking valueTypes..."
-  )
-  expect_message(
-    adm.check_valuetype(
       datafile = datafile,
       variables = variables
     ),
-    "All valueTypes checked!"
+    "Checked valuetypes"
   )
 })
 

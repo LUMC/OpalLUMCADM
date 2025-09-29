@@ -13,13 +13,7 @@ test_that("success", {
     adm.check_entitytype(
       variables = variables
     ),
-    "Checking entity type..."
-  )
-  expect_message(
-    adm.check_entitytype(
-      variables = variables
-    ),
-    "Entity type checked!"
+    "Checked entity type"
   )
 })
 

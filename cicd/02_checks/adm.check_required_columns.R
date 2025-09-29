@@ -56,12 +56,6 @@ test_that("success", {
     adm.check_required_columns(
       variables = variables
     ),
-    "Checking required columns..."
-  )
-  expect_message(
-    adm.check_required_columns(
-      variables = variables
-    ),
-    "Columns checked!"
+    "Checked required columns"
   )
 })

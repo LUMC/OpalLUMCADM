@@ -7,9 +7,9 @@ library(OpalLUMCADM)
 load("./cicd/02_checks/dataset_cnsim.Rdata")
 
 
-## Run check with error
-test_that("error", {
-  expect_error(
+## Run check with warning
+test_that("warning", {
+  expect_warning(
     adm.check_minmax(
       datafile = datafile,
       variables = variables
@@ -53,13 +53,6 @@ test_that("success", {
       datafile = datafile, 
       variables = variables
     ),
-    "Checking min/max values..."
-  )
-  expect_message(
-    adm.check_minmax(
-      datafile = datafile,
-      variables = variables
-    ),
-    "All min/max values checked!"
+    "Checked min/max values"
   )
 })

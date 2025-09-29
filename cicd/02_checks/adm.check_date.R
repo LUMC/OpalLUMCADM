@@ -15,14 +15,7 @@ test_that("success", {
       datafile = datafile,
       variables = variables
     ),
-    "Checking date format..."
-  )
-  expect_message(
-    adm.check_date(
-      datafile = datafile,
-      variables = variables
-    ),
-    "Date format checked!"
+    "Checked date format"
   )
 })
 
@@ -38,14 +31,7 @@ test_that("success", {
       datafile = datafile,
       variables = variables
     ),
-    "Checking date format..."
-  )
-  expect_message(
-    adm.check_date(
-      datafile = datafile,
-      variables = variables
-    ),
-    "Date format checked!"
+    "Checked date format"
   )
 })
 

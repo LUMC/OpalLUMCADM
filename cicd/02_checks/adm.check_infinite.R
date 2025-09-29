@@ -13,13 +13,7 @@ test_that("success", {
     adm.check_infinite(
       datafile = datafile
     ),
-    "Checking infinite values..."
-  )
-  expect_message(
-    adm.check_infinite(
-      datafile = datafile
-    ),
-    "Infinite values checked!"
+    "Checked infinite values"
   )
 })
 
