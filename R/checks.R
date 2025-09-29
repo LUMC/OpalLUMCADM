@@ -77,19 +77,28 @@ adm.check_columns <- function(datafile, variables) {
 #' @export
 
 adm.check_valuetype <- function(datafile, variables) {
-  ## Type translation
-  translation_opal <- c(
-    integer = "integer",
-    decimal = "numeric",
-    text = "character",
-    boolean = "logical",
-    datetime = "POSIXct",
-    date = "POSIXct"
-  )
+  ## Function to set class type
+  map_dtype <- function(column) {
+    ## Type translation to Opal
+    map_valuetype <- c(
+      "integer"   = "integer",
+      "numeric"   = "decimal",
+      "double"    = "decimal",
+      "character" = "text",
+      "logical"   = "boolean",
+      "POSIXct"   = "datetime",
+      "POSIXt"    = "datetime",
+      "Date"      = "date"
+    )
+    
+    ## Set class & translate to Opal class type
+    column_class <- tail(class(column), n = 1)
+    unname(map_valuetype[column_class])
+  }
   
   ## Get valuetypes
-  valuetypes_data <- sapply(datafile, function(x) tail(class(x), n = 1))
-  valuetypes_vars <- setNames(translation_opal[variables$valueType], variables$name)
+  valuetypes_data <- sapply(datafile, map_dtype)
+  valuetypes_vars <- setNames(variables$valueType, variables$name)
   
   ## Compare valuetypes
   for (column in names(valuetypes_vars)) {
