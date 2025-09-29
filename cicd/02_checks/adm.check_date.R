@@ -1,0 +1,66 @@
+
+## Load libraries
+library(testthat)
+library(lubridate)
+library(OpalLUMCADM)
+
+## Load dataset
+load("./cicd/02_checks/dataset_cnsim.Rdata")
+
+
+## Run test with success
+test_that("success", {
+  expect_message(
+    adm.check_date(
+      datafile = datafile,
+      variables = variables
+    ),
+    "Checking date format..."
+  )
+  expect_message(
+    adm.check_date(
+      datafile = datafile,
+      variables = variables
+    ),
+    "Date format checked!"
+  )
+})
+
+
+## Set date value for success
+datafile$LAB_TSC <- as.POSIXct("2025-05-05")
+variables$valueType[1] <- "date"
+
+## Run test with success
+test_that("success", {
+  expect_message(
+    adm.check_date(
+      datafile = datafile,
+      variables = variables
+    ),
+    "Checking date format..."
+  )
+  expect_message(
+    adm.check_date(
+      datafile = datafile,
+      variables = variables
+    ),
+    "Date format checked!"
+  )
+})
+
+
+## Set date value for warning
+datafile$LAB_TSC <- "2025-29-29"
+variables$valueType[1] <- "date"
+
+## Run test with warning
+test_that("warning", {
+  expect_warning(
+    adm.check_date(
+      datafile = datafile,
+      variables = variables
+    ),
+    "Some date columns don't have format: `yyyy-mm-dd`: LAB_TSC"
+  )
+})
