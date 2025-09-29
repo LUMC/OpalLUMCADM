@@ -7,6 +7,7 @@ stages:
   - tables
   - checks
   - diffdf
+  - views
 
 Build:
   stage: build
@@ -61,3 +62,15 @@ DiffDF:
     - Rscript ./cicd/03_diffdf/create_dataset.R
   script:
     - Rscript ./cicd/03_diffdf/adm.check_diffdf.R
+
+Views:
+  stage: views
+  before_script:
+    - R CMD build .
+    - PKG_FILE=$(ls *.tar.gz)
+    - Rscript ./cicd/packages/install_packages.R
+    - R CMD INSTALL "$PKG_FILE"
+  script:
+    - Rscript ./cicd/04_views/adm.view_create.R
+  after_script:
+    - Rscript ./cicd/04_views/cleanup.R
