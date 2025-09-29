@@ -1,8 +1,9 @@
 *.Rproj.user
 *.Rproj
 .Rhistory
-.RData
+*.RData
 .Ruserdata
 Data_generation
 .Rbuildignore
 .Rproj.user
+*.xlsx
