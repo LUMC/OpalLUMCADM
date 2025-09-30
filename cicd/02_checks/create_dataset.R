@@ -18,9 +18,9 @@ df <- adm.table_get(
 )
 
 ## Set datasets
-datafile <- df$datafile1
-variables <- df$dictionary1$variables
-categories <- df$dictionary1$categories
+datafile <- df$datafile
+variables <- df$dictionary$variables
+categories <- df$dictionary$categories
 
 ## Save as dataframe
 save(datafile, variables, categories, file = "./cicd/02_checks/dataset_cnsim.Rdata")

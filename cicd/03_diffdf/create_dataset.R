@@ -18,10 +18,10 @@ df <- adm.table_get(
 )
 
 ## Set datasets
-datafile1 <- df$datafile1
-datafile2 <- df$datafile2
-variables <- df$dictionary1$variables
-categories <- df$dictionary1$categories
+datafile1 <- df$datafile
+datafile2 <- df$datafile
+variables <- df$dictionary$variables
+categories <- df$dictionary$categories
 
 ## Save as dataframe
 save(datafile1, datafile2, variables, categories, file = "./cicd/03_diffdf/dataset_cnsim.Rdata")

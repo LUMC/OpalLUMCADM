@@ -35,7 +35,7 @@ df_get <- adm.table_get(
 )
 
 ## Check dimensions of object
-if (!all(dim(df_get$datafile1) == dim(df))) {
+if (!all(dim(df_get$datafile) == dim(df))) {
   stop("Wrong dimensions on 'overwrite'!")
 }
 

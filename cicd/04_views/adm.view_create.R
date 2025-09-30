@@ -35,7 +35,7 @@ df_get <- adm.table_get(
 )
 
 ## Check dimensions of object
-if (!all(dim(df_get$datafile1) == c(3088, 12))) {
+if (!all(dim(df_get$datafile) == c(3088, 12))) {
   stop("Wrong dimensions of view!")
 }
 

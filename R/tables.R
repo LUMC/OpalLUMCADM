@@ -29,10 +29,8 @@ adm.table_get <- function(opal, projname, tablename, ...) {
   
   ## Combine output
   datalist <- list(
-    datafile1 = df,
-    datafile2 = df,
-    dictionary1 = dict,
-    dictionary2 = dict
+    datafile = df,
+    dictionary = dict
   )
   
   return(datalist)

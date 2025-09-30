@@ -18,17 +18,11 @@ df <- adm.table_get(
 )
 
 ## Check dimensions of object
-if (!all(dim(df$datafile1) == c(2163, 12))) {
-  stop("Wrong dimensions!", dim(df$datafile1))
+if (!all(dim(df$datafile) == c(2163, 12))) {
+  stop("Wrong dimensions!", dim(df$datafile))
 }
-if (!all(dim(df$datafile2) == c(2163, 12))) {
-  stop("Wrong dimensions!", dim(df$datafile1))
-}
-if (!all(dim(df$dictionary1$variables) == c(11, 10))) {
-  stop("Wrong dimensions!", dim(df$datafile1))
-}
-if (!all(dim(df$dictionary1$categories) == c(13, 4))) {
-  stop("Wrong dimensions!", dim(df$datafile1))
+if (!all(dim(df$dictionary$variables) == c(11, 10))) {
+  stop("Wrong dimensions!", dim(df$datafile))
 }
 
 message("Table is loaded correctly")
