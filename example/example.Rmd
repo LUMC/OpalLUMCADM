@@ -18,6 +18,7 @@ always_allow_html: true
 
 ## Load required libraries
 suppressPackageStartupMessages({
+  library(opalr)
   library(OpalLUMCADM)
 })
 
@@ -49,8 +50,8 @@ df <- adm.table_get(
   tablename = "CNSIM1"
 )
 
-datafile <- df$datafile1
-variables <- df$dictionary1$variables
+datafile <- df$datafile
+variables <- df$dictionary$variables
 
 ```
 
@@ -79,7 +80,7 @@ adm.table_save(
   opal = opal,
   projname = "CNSIM",
   tablename = "CNSIM_TEST",
-  datafile = df$datafile1,
+  datafile = datafile,
   method = "write"
 )
 
