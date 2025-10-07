@@ -104,6 +104,7 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
         overwrite = method["overwrite"],
         ...
       )
+      break
     }, error = function(e) {
       warning(paste("Attempt", attempt, "failed:", e$message))
       attempt <<- attempt + 1
