@@ -72,12 +72,13 @@ adm.set_method <- function(method) {
 #' @param variables variables dataframe
 #' @param categories categories dataframe
 #' @param method String: write, update or overwrite
+#' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @import opalr dplyr
 #' 
 #' @export
 
-adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write",...) {
+adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", max_retries = 3, ...) {
   ## Set method
   method <- adm.set_method(method = method)
   
@@ -90,16 +91,24 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
     )
   }
   
-  ## Save table to Opal
-  opal.table_save(
-    opal = opal,
-    project = projname,
-    table = tablename,
-    tibble = datafile,
-    force = method["force"],
-    overwrite = method["overwrite"],
-    ...
-  )
+  ## Save table to Opal with x number of max_retries
+  attempt <- 1
+  while (attempt <= max_retries) {
+    tryCatch({
+      opal.table_save(
+        opal = opal,
+        project = projname,
+        table = tablename,
+        tibble = datafile,
+        force = method["force"],
+        overwrite = method["overwrite"],
+        ...
+      )
+    }, error = function(e) {
+      warning(paste("Attempt", attempt, "failed:", e$message))
+      attempt <<- attempt + 1
+    })
+  }
   
   ## Remove user own permissions (if you can make a table, you have to have project rights)
   opal.table_perm_delete(
