@@ -225,36 +225,30 @@ adm.check_encrypted_values <- function(datafile, variables) {
     stop("There is no 'encrypted' column in your variables object!")
   }
   
-  ## Check if all data is encrypted yes
-  encrypted_yes <- apply(
-    datafile %>%
-      select(variables %>% filter(encrypted == "yes") %>% pull(name)), 2,
-    function(x) {
-      all(grepl("^3::", na.omit(x)))
-    }
+  ## Tres options
+  tres_values <- list(
+    c("yes", "^3::"),
+    c("SI", "^1:")
   )
   
-  ## Check if all data is encrypted SI
-  encrypted_si <- apply(
-    datafile %>%
-      select(variables %>% filter(encrypted == "SI") %>% pull(name)), 2,
-    function(x) {
-      all(grepl("^1:", na.omit(x)))
+  ## Check for each tres option
+  for (value in tres_values) {
+    ## Check if all data is encrypted
+    encrypted <- apply(
+      datafile %>%
+        select(variables %>% filter(encrypted == value[1]) %>% pull(name)), 2,
+      function(x) {
+        all(grepl(value[2], na.omit(x)))
+      }
+    )
+    
+    ## Check content
+    if (FALSE %in% encrypted) {
+      stop(
+        paste0("Some columns are not encrypted (encrypted =", value[1], "): "),
+        paste(names(encrypted)[encrypted == FALSE], collapse = ", ")
+      )
     }
-  )
-  
-  ## Check content
-  if (FALSE %in% encrypted_yes) {
-    stop(
-      "Some columns are not encrypted (encrypted = yes): ",
-      paste(names(encrypted_yes)[encrypted_yes == FALSE], collapse = ", ")
-    )
-  }
-  if (FALSE %in% encrypted_si) {
-    stop(
-      "Some columns are not encrypted (encrypted = SI): ",
-      paste(names(encrypted_si)[encrypted_si == FALSE], collapse = ", ")
-    )
   }
   
   ## Done
