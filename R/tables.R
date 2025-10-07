@@ -77,7 +77,7 @@ adm.set_method <- function(method) {
 #' 
 #' @export
 
-adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method,...) {
+adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write",...) {
   ## Set method
   method <- adm.set_method(method = method)
   
