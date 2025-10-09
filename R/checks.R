@@ -44,7 +44,8 @@ adm.run_all_checks <- function(datafile, variables) {
 #' 
 #' @export
 
-adm.check_columns <- function(datafile, variables) {
+## TODO categories compare with the datafile
+adm.check_columns <- function(datafile, variables, categories = NULL) {
   ## Get columns
   columns_data <- colnames(datafile)
   columns_vars <- variables$name
@@ -351,3 +352,23 @@ adm.check_datetime <- function(datafile, variables) {
   ## Done
   message(" Checked datetime format")
 }
+
+
+#' Function to check if datafile has duplicated ids
+#'
+#' @param datafile data input
+#' @param id The name of the column representing the entity identifiers. Default is 'id'.
+#' 
+#' @export
+
+adm.check_ids <- function(datafile, id.name = "id") {
+  check_duplicated <- datafile |> select(all_of(id.name)) |> duplicated()
+  
+  if(TRUE %in% check_duplicated) {
+    warning("There are some duplicated IDs in column `", id.name, "`")
+  }
+  
+  ## Done
+  message(" Checked for duplicated IDs")
+}
+
