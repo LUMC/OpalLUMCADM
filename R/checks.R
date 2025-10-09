@@ -191,15 +191,11 @@ adm.check_entitytype <- function(variables, ...) {
 adm.check_required_columns <- function(variables, ...) {
   ## Search for column labels & descriptions
   col_labels <- str_detect(colnames(variables), "label")
-  col_description <- str_detect(colnames(variables), "description")
   col_encrypted <- str_detect(colnames(variables), "encrypted")
   
   ## Show warning if something is missing
   if (!TRUE %in% col_labels) {
     warning("There is no 'label' column in your variables object!")
-  }
-  if (!TRUE %in% col_description) {
-    warning("There is no 'description' column in your variables object!")
   }
   if (!TRUE %in% col_encrypted) {
     warning("There is no 'encrypted' column in your variables object!")
