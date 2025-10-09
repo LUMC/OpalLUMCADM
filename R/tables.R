@@ -30,7 +30,8 @@ adm.table_get <- function(opal, projname, tablename, ...) {
   ## Combine output
   datalist <- list(
     datafile = df,
-    dictionary = dict
+    variables = dict$variables,
+    categories = dict$categories
   )
   
   return(datalist)
