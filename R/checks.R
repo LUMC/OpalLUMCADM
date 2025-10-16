@@ -44,7 +44,6 @@ adm.run_all_checks <- function(datafile, variables) {
 #' 
 #' @export
 
-## TODO categories compare with the datafile
 adm.check_columns <- function(datafile, variables, categories = NULL) {
   ## Get columns
   columns_data <- colnames(datafile)
@@ -189,13 +188,17 @@ adm.check_entitytype <- function(variables, ...) {
 #' @export
 
 adm.check_required_columns <- function(variables, ...) {
-  ## Search for column labels & descriptions
+  ## Search for specific columns
   col_labels <- str_detect(colnames(variables), "label")
+  col_entitytype <- str_detect(colnames(variables), "entityType")
   col_encrypted <- str_detect(colnames(variables), "encrypted")
   
   ## Show warning if something is missing
   if (!TRUE %in% col_labels) {
     warning("There is no 'label' column in your variables object!")
+  }
+  if (!TRUE %in% col_entitytype) {
+    warning("There is no 'entityType' column in your variables object!")
   }
   if (!TRUE %in% col_encrypted) {
     warning("There is no 'encrypted' column in your variables object!")
@@ -367,4 +370,3 @@ adm.check_ids <- function(datafile, id.name = "id") {
   ## Done
   message(" Checked for duplicated IDs")
 }
-
