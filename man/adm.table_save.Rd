@@ -11,7 +11,8 @@ adm.table_save(
   datafile,
   variables,
   categories = NULL,
-  method,
+  method = "write",
+  max_retries = 3,
   ...
 )
 }
@@ -29,6 +30,8 @@ adm.table_save(
 \item{categories}{categories dataframe}
 
 \item{method}{String: write, update or overwrite}
+
+\item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
 }
 \description{
 Function to save a table from R to Opal

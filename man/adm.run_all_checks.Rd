@@ -4,7 +4,7 @@
 \alias{adm.run_all_checks}
 \title{Function to check run all checks}
 \usage{
-adm.run_all_checks(datafile, variables)
+adm.run_all_checks(datafile, variables, categories = NULL)
 }
 \arguments{
 \item{datafile}{data input}

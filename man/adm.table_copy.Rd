@@ -4,14 +4,28 @@
 \alias{adm.table_copy}
 \title{Function to copy a table within Opal}
 \usage{
-adm.table_copy(opal, projname, tablenames, ...)
+adm.table_copy(
+  opal_src,
+  opal_dst,
+  project_src,
+  project_dst,
+  tables_src,
+  tables_dst,
+  ...
+)
 }
 \arguments{
-\item{opal}{a working opalr::opal_login}
+\item{opal_src}{A working opalr::opal_login as source}
 
-\item{projname}{Origin opal project name}
+\item{opal_dst}{A working opalr::opal_login as destination}
 
-\item{tablename}{Origin opal table name}
+\item{project_src}{Origin opal project name from source Opal}
+
+\item{project_dst}{Origin opal project name for destination Opal}
+
+\item{tables_src}{Origin opal table name from source Opal}
+
+\item{tables_dst}{Origin opal table name for destination Opal}
 }
 \description{
 Function to copy a table within Opal
