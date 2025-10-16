@@ -14,13 +14,14 @@ test_that("warning", {
     adm.check_required_columns(
       variables = variables
     ),
-    "There is no 'description' column in your variables object!"
+    "There is no 'encrypted' column in your variables object!"
   )
 })
 
 
-## Add description for warning
-variables$description <- "test description"
+## Add encrypted for warning & remove entitytype for warning
+variables$encrypted <- "test encrypted"
+variables$entityType <- NULL
 
 ## Run test with warning
 test_that("warning", {
@@ -28,12 +29,12 @@ test_that("warning", {
     adm.check_required_columns(
       variables = variables
     ),
-    "There is no 'encrypted' column in your variables object!"
+    "There is no 'entityType' column in your variables object!"
   )
 })
 
-## Add encrypted & remove label for warning
-variables$encrypted <- "test encrypted"
+## Add entityType & remove label for warning
+variables$entityType <- "test entityType"
 variables$`label:en` <- NULL
 
 ## Run test with warning
