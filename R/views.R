@@ -30,13 +30,15 @@ adm.view_create <- function(opal, view_projname, view_tablename, source, variabl
       ...
     )
     
-    ## Update dictionary
-    opal.table_dictionary_update(
+    ## Update view with data & dictionary
+    adm.view_update(
       opal = opal,
-      project = view_projname, 
-      table = view_tablename,
+      view_projname = view_projname,
+      view_tablename = view_tablename,
+      source = source,
       variables = variables,
-      categories = categories
+      categories = categories,
+      ...
     )
     
     ## Remove own user permissions
@@ -64,6 +66,9 @@ adm.view_create <- function(opal, view_projname, view_tablename, source, variabl
 #' @export
 
 adm.view_update <- function(opal, view_projname, view_tablename, source, variables, categories = NULL, ...) {
+  ## Set script column as required for views
+  variables$script <- paste0("$('", variables$name, "')")
+  
   ## Update existing view
   opal.table_view_update(
     opal = opal,
