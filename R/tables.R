@@ -120,7 +120,7 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
     })
   }
   
-  ## Remove user own permissions (if you can make a table, you have to have project rights)
+  ## Remove user own permissions
   opal.table_perm_delete(
     opal = opal,
     project = projname,
