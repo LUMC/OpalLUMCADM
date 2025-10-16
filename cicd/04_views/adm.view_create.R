@@ -35,8 +35,13 @@ df_get <- adm.table_get(
 )
 
 ## Check dimensions of object
-if (!all(dim(df_get$datafile) == c(3088, 12))) {
+if (!all(dim(df_get$datafile) == c(2163, 12))) {
   stop("Wrong dimensions of view!")
+}
+
+## Check content of object
+if (round(mean(df_get$datafile$LAB_TSC, na.rm = TRUE), 2) != 5.87) {
+  stop("Content of data is wrong!")
 }
 
 message("View is loaded correctly")
