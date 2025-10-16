@@ -132,31 +132,38 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
 
 #' Function to copy a table within Opal
 #'
-#' @param opal a working opalr::opal_login
-#' @param projname Origin opal project name
-#' @param tablename Origin opal table name
+#' @param opal_src A working opalr::opal_login as source
+#' @param opal_dst A working opalr::opal_login as destination
+#' @param project_src Origin opal project name from source Opal
+#' @param project_dst Origin opal project name for destination Opal
+#' @param tables_src Origin opal table name from source Opal
+#' @param tables_dst Origin opal table name for destination Opal
 #'
 #' @import opalr dplyr
 #' 
 #' @export
 
-adm.table_copy <- function(opal, projname, tablenames, ...) {
-  ## Loop through each tablename
-  for (name in tablenames) {
+adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, tables_src, tables_dst, ...) {
+  if (length(tables_dst) != length(tables_src)) {
+    stop("Number of tablenames from source not equal to destination!")
+  }
+  
+  ## Loop through each tablename from source
+  for (item in 1:length(tables_src)) {
     ## Get table from Opal
     df <- adm.table_get(
-      opal = opal,
-      projname = projname,
-      tablename = name
+      opal = opal_src,
+      projname = project_src,
+      tablename = tables_src[item]
     )
 
     ## Save a copy of table in Opal
     adm.table_save(
-      opal = opal,
-      projname = projname,
-      tablename = paste0(name, "_COPY"),
-      vars = df$dictionary1$variables,
-      cats = df$dictionary1$categories,
+      opal = opal_dst,
+      projname = project_dst,
+      tablename = tables_dst[item],
+      vars = df$variables,
+      cats = df$categories,
       ...
     )
   }
