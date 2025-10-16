@@ -31,7 +31,7 @@ adm.table_get <- function(opal, projname, tablename, ...) {
   datalist <- list(
     datafile = df,
     variables = dict$variables,
-    categories = dict$categories
+    categories = if (nrow(dict$categories)) dict$categories else NULL
   )
   
   return(datalist)
@@ -90,6 +90,8 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
       variables = variables,
       categories = categories
     )
+    
+    type = ""
   }
   
   ## Save table to Opal with x number of max_retries
