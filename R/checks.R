@@ -133,25 +133,27 @@ adm.check_minmax <- function(datafile, variables) {
   }
   
   ## Get min/max values
-  min_values <- suppressWarnings(setNames(as.numeric(variables$min), variables$name))
-  max_values <- suppressWarnings(setNames(as.numeric(variables$max), variables$name))
+  min_values <- setNames(variables$min, variables$name)
+  max_values <- setNames(variables$max, variables$name)
   
   ## Get numeric or integer columns (exclude columns with all NA)
   datafile <- datafile[, colSums(is.na(datafile)) < nrow(datafile)]
   valuetypes_data <- sapply(datafile, function(x) tail(class(x), n = 1))
-  valuetypes_data <- valuetypes_data[valuetypes_data %in% c("numeric", "integer", "double", "")]
+  valuetypes_data <- valuetypes_data[valuetypes_data %in% c("numeric", "integer", "double", "POSIXct", "POSIXt", "Date")]
   
-  ## Check min/max for each column
+  ## Check min/max for each numeric column
   for (column in names(valuetypes_data)) {
-    get_min <- as.numeric(min(datafile[[column]], na.rm = TRUE))
-    get_max <- as.numeric(max(datafile[[column]], na.rm = TRUE))
+    var_min <- type.convert(as.character(min_values[[column]]), as.is = TRUE)
+    var_max <- type.convert(as.character(max_values[[column]]), as.is = TRUE)
+    data_min <- min(datafile[[column]], na.rm = TRUE)
+    data_max <- max(datafile[[column]], na.rm = TRUE)
     
     ## Compare min & max
-    if (!is.na(min_values[[column]]) & get_min < min_values[[column]]) {
-      warning("'", column, "' minimum value to low: ", get_min, " < ", min_values[[column]])
+    if (data_min < var_min) {
+      warning("'", column, "' minimum value to low: ", data_min, " < ", var_max)
     }
-    if (!is.na(max_values[[column]]) & get_max > max_values[[column]]) {
-      warning("'", column, "' maximum value to high: ", get_max, " > ", max_values[[column]])
+    if (data_max > var_max) {
+      warning("'", column, "' maximum value to high: ", data_max, " > ", var_max)
     }
   }
   
