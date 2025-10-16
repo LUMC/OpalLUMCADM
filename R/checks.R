@@ -139,12 +139,12 @@ adm.check_minmax <- function(datafile, variables) {
   ## Get numeric or integer columns (exclude columns with all NA)
   datafile <- datafile[, colSums(is.na(datafile)) < nrow(datafile)]
   valuetypes_data <- sapply(datafile, function(x) tail(class(x), n = 1))
-  valuetypes_data <- valuetypes_data[valuetypes_data %in% c("numeric", "integer", "double")]
+  valuetypes_data <- valuetypes_data[valuetypes_data %in% c("numeric", "integer", "double", "")]
   
   ## Check min/max for each column
   for (column in names(valuetypes_data)) {
-    get_min <- as.numeric(min(datafile[[column]], na.rm=TRUE))
-    get_max <- as.numeric(max(datafile[[column]], na.rm=TRUE))
+    get_min <- as.numeric(min(datafile[[column]], na.rm = TRUE))
+    get_max <- as.numeric(max(datafile[[column]], na.rm = TRUE))
     
     ## Compare min & max
     if (!is.na(min_values[[column]]) & get_min < min_values[[column]]) {
