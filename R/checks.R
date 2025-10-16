@@ -189,7 +189,7 @@ adm.check_minmax <- function(datafile, variables) {
     
     ## Compare min & max
     if (data_min < var_min) {
-      warning("'", column, "' minimum value to low: ", data_min, " < ", var_max)
+      warning("'", column, "' minimum value to low: ", data_min, " < ", var_min)
     }
     if (data_max > var_max) {
       warning("'", column, "' maximum value to high: ", data_max, " > ", var_max)
