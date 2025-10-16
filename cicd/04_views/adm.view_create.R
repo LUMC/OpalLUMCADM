@@ -22,7 +22,7 @@ adm.view_create(
   opal = opal,
   view_projname = "CNSIM",
   view_tablename = "CNSIM_TEST_VIEW",
-  source = c("CNSIM.CNSIM1", "CNSIM.CNSIM2"),
+  source = c("CNSIM.CNSIM1"),
   variables = dict$variables,
   categories = dict$categories
 )
