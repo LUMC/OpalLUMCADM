@@ -83,6 +83,9 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
   ## Set method
   method <- adm.set_method(method = method)
   
+  ## Set default entitytype
+  type <- "Participant"
+  
   ## Apply dictionary if variables are present
   if (!missing(variables)) {
     datafile <- dictionary.apply(
@@ -91,7 +94,9 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
       categories = categories
     )
     
-    type = ""
+    if ("entityType" %in% colnames(variables)) {
+      type <- unique(variables$entityType)[1]
+    }
   }
   
   ## Save table to Opal with x number of max_retries
@@ -103,6 +108,7 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
         project = projname,
         table = tablename,
         tibble = datafile,
+        type = type,
         force = method["force"],
         overwrite = method["overwrite"],
         ...
