@@ -7,3 +7,4 @@ Data_generation
 .Rbuildignore
 .Rproj.user
 *.xlsx
+temp.R
