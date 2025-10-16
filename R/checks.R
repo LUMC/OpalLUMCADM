@@ -8,12 +8,13 @@
 #' 
 #' @export
 
-adm.run_all_checks <- function(datafile, variables) {
+adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   message("Running all checks...")
   
   ## Function containing all checks
   start_checks <- function(...) {
-    adm.check_columns(...)
+    adm.check_columns_var(...)
+    adm.check_columns_cat(...)
     adm.check_valuetype(...)
     adm.check_minmax(...)
     adm.check_entitytype(...)
@@ -27,7 +28,8 @@ adm.run_all_checks <- function(datafile, variables) {
   ## Start all checks
   start_checks(
     datafile = datafile,
-    variables = variables
+    variables = variables,
+    categories = categories
   )
   
   ## Done
@@ -44,7 +46,7 @@ adm.run_all_checks <- function(datafile, variables) {
 #' 
 #' @export
 
-adm.check_columns <- function(datafile, variables, categories = NULL) {
+adm.check_columns_var <- function(datafile, variables) {
   ## Get columns
   columns_data <- colnames(datafile)
   columns_vars <- variables$name
@@ -64,6 +66,43 @@ adm.check_columns <- function(datafile, variables, categories = NULL) {
   
   ## Done
   message(" Checked columns between datafile & variables")
+}
+
+
+#' Function to check if all columns listed in categories are also in the dataset
+#'
+#' @param datafile data input
+#' @param categories categories dataframe
+#'
+#' @import opalr rlang
+#' 
+#' @export
+
+adm.check_columns_cat <- function(datafile, categories = NULL) {
+  if (is.null(categories)) {
+    warning("There is no categorie object")
+    return()
+  }
+  
+  ## Get columns
+  columns_data <- colnames(datafile)
+  columns_cats <- categories$variable
+  
+  ## Get differences
+  column_diff <- setdiff(columns_cats, columns_data)
+  
+  ## Show differences
+  if (!is_empty(column_diff)) {
+    for (column in column_diff) {
+      warning(
+        "Column '", column, "' in data: ", column %in% columns_data,
+        " & column '", column, "' in categories: ", column %in% columns_cats
+      )
+    }
+  }
+  
+  ## Done
+  message(" Checked columns between datafile & categories")
 }
 
 
