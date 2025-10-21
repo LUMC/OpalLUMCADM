@@ -14,17 +14,17 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   
   ## Function containing all checks
   start_checks <- function(...) {
-    logs[01] <- capture_logs(adm.check_columns_var)(...)
-    logs[02] <- capture_logs(adm.check_columns_cat)(...)
-    logs[03] <- capture_logs(adm.check_valuetype)(...)
-    logs[04] <- capture_logs(adm.check_minmax)(...)
-    logs[05] <- capture_logs(adm.check_entitytype)(...)
-    logs[06] <- capture_logs(adm.check_required_columns)(...)
-    logs[07] <- capture_logs(adm.check_encrypted_values)(...)
-    logs[08] <- capture_logs(adm.check_infinite)(...)
-    logs[09] <- capture_logs(adm.check_date)(...)
-    logs[10] <- capture_logs(adm.check_datetime)(...)
-    logs[11] <- capture_logs(adm.check_ids)(...)
+    logs[01] <- .capture_logs(adm.check_columns_var)(...)
+    logs[02] <- .capture_logs(adm.check_columns_cat)(...)
+    logs[03] <- .capture_logs(adm.check_valuetype)(...)
+    logs[04] <- .capture_logs(adm.check_minmax)(...)
+    logs[05] <- .capture_logs(adm.check_entitytype)(...)
+    logs[06] <- .capture_logs(adm.check_required_columns)(...)
+    logs[07] <- .capture_logs(adm.check_encrypted_values)(...)
+    logs[08] <- .capture_logs(adm.check_infinite)(...)
+    logs[09] <- .capture_logs(adm.check_date)(...)
+    logs[10] <- .capture_logs(adm.check_datetime)(...)
+    logs[11] <- .capture_logs(adm.check_ids)(...)
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -41,53 +41,6 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   ## Done
   message("All checks done!")
   return(df_logs)
-}
-
-
-#' Function to capture all warnings & errors when running all check functions
-#'
-#' @param datafile data input
-#' @param variables variables dataframe
-#'
-#' @import opalr rlang
-#' 
-#' @export
-
-capture_logs <- function(run_function) {
-  func_name <- deparse(substitute(run_function))
-  
-  function(...) {
-    logs <- list()
-    
-    ## Add warnings & errors to logs list
-    add_log <- function(type, message) {
-      logs[[length(logs) + 1]] <<- list(
-        function_name = func_name,
-        type = type,
-        message = message
-      )
-    }
-    
-    ## Run function and catch errors & warnings
-    withCallingHandlers(
-      tryCatch(
-        run_function(...),
-        error = function(e) {
-          add_log("ERROR", conditionMessage(e))
-        }
-      ),
-      warning = function(w) {
-        add_log("WARNING", conditionMessage(w))
-        invokeRestart("muffleWarning")
-      }
-    )
-    
-    ## Set ok if logs are empty
-    if (!length(logs)) (
-      add_log("OK", "No issues found")
-    )
-    return(logs)
-  }
 }
 
 
@@ -171,23 +124,7 @@ adm.check_columns_cat <- function(datafile, categories = NULL, ...) {
 
 adm.check_valuetype <- function(datafile, variables, ...) {
   ## Function to set class type
-  map_dtype <- function(column) {
-    ## Type translation to Opal
-    map_valuetype <- c(
-      "integer"   = "integer",
-      "numeric"   = "decimal",
-      "double"    = "decimal",
-      "character" = "text",
-      "logical"   = "boolean",
-      "POSIXct"   = "datetime",
-      "POSIXt"    = "datetime",
-      "Date"      = "date"
-    )
-    
-    ## Set class & translate to Opal class type
-    column_class <- tail(class(column), n = 1)
-    unname(map_valuetype[column_class])
-  }
+  
   
   ## Get valuetypes
   valuetypes_data <- sapply(datafile, map_dtype)
