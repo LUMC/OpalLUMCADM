@@ -4,7 +4,7 @@
 \alias{adm.check_minmax}
 \title{Function to check data on minimum & maximum values if defined in variables}
 \usage{
-adm.check_minmax(datafile, variables)
+adm.check_minmax(datafile, variables, ...)
 }
 \arguments{
 \item{datafile}{data input}

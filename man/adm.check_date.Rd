@@ -4,7 +4,7 @@
 \alias{adm.check_date}
 \title{Function to check date}
 \usage{
-adm.check_date(datafile, variables)
+adm.check_date(datafile, variables, ...)
 }
 \arguments{
 \item{datafile}{data input}

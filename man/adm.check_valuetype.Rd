@@ -4,7 +4,7 @@
 \alias{adm.check_valuetype}
 \title{Function to check valuetypes of data vs variables}
 \usage{
-adm.check_valuetype(datafile, variables)
+adm.check_valuetype(datafile, variables, ...)
 }
 \arguments{
 \item{datafile}{data input}

@@ -4,7 +4,7 @@
 \alias{adm.check_columns_var}
 \title{Function to check if all columns listed in variables are also in the dataset and vice-versa}
 \usage{
-adm.check_columns_var(datafile, variables)
+adm.check_columns_var(datafile, variables, ...)
 }
 \arguments{
 \item{datafile}{data input}

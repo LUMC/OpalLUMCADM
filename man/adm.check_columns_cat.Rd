@@ -4,7 +4,7 @@
 \alias{adm.check_columns_cat}
 \title{Function to check if all columns listed in categories are also in the dataset}
 \usage{
-adm.check_columns_cat(datafile, categories = NULL)
+adm.check_columns_cat(datafile, categories = NULL, ...)
 }
 \arguments{
 \item{datafile}{data input}

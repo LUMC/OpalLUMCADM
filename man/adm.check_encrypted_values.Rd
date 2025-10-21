@@ -4,7 +4,7 @@
 \alias{adm.check_encrypted_values}
 \title{Function to check encryption of values}
 \usage{
-adm.check_encrypted_values(datafile, variables)
+adm.check_encrypted_values(datafile, variables, ...)
 }
 \arguments{
 \item{datafile}{data input}

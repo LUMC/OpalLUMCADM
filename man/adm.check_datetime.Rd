@@ -4,7 +4,7 @@
 \alias{adm.check_datetime}
 \title{Function to check datetime}
 \usage{
-adm.check_datetime(datafile, variables)
+adm.check_datetime(datafile, variables, ...)
 }
 \arguments{
 \item{datafile}{data input}

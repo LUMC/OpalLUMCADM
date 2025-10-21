@@ -4,7 +4,7 @@
 \alias{adm.check_ids}
 \title{Function to check if datafile has duplicated ids}
 \usage{
-adm.check_ids(datafile, id.name = "id")
+adm.check_ids(datafile, id.name = "id", ...)
 }
 \arguments{
 \item{datafile}{data input}
