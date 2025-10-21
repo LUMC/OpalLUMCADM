@@ -67,3 +67,27 @@
   unname(map_valuetype[column_class])
 }
 
+
+#' Function to set the correct valuetype of data vs variables
+#'
+#' @param datafile data input
+#' @param variables variables dataframe
+#' 
+#' @export
+
+adm.fix_valuetype <- function(datafile, variables) {
+  ## Get valuetypes
+  valuetypes_data <- sapply(datafile, .map_dtype)
+  valuetypes_vars <- setNames(variables$valueType, variables$name)
+  
+  ## Compare valuetypes
+  for (column in names(valuetypes_vars)) {
+    compare <- identical(valuetypes_vars[column], valuetypes_data[column])
+    if (!compare) {
+      message("Changed valuetype of `", column, "` from ", valuetypes_vars[column], " to ", valuetypes_data[column])
+      variables$valueType[variables$name == column] <- valuetypes_data[[column]]
+    }
+  }
+  
+  return(variables)
+}
