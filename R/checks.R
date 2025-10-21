@@ -47,6 +47,8 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
 #' @param datafile data input
 #' @param variables variables dataframe
 #' 
+#' @import purrr
+#' 
 #' @export
 
 adm.check_columns_var <- function(datafile, variables, ...) {
@@ -76,6 +78,8 @@ adm.check_columns_var <- function(datafile, variables, ...) {
 #'
 #' @param datafile data input
 #' @param categories categories dataframe
+#' 
+#' @import purrr
 #' 
 #' @export
 
