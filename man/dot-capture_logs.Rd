@@ -9,6 +9,9 @@
 \arguments{
 \item{run_function}{Function to run}
 }
+\value{
+logs Return list with warnings & errors
+}
 \description{
 Function to capture all warnings & errors when running all check functions
 }
