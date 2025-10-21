@@ -127,7 +127,7 @@ adm.check_valuetype <- function(datafile, variables, ...) {
   
   
   ## Get valuetypes
-  valuetypes_data <- sapply(datafile, map_dtype)
+  valuetypes_data <- sapply(datafile, .map_dtype)
   valuetypes_vars <- setNames(variables$valueType, variables$name)
   
   ## Compare valuetypes
