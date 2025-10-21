@@ -14,16 +14,17 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   
   ## Function containing all checks
   start_checks <- function(...) {
-    logs[1] <- capture_logs(adm.check_columns_var)(...)
-    logs[2] <- capture_logs(adm.check_columns_cat)(...)
-    logs[3] <- capture_logs(adm.check_valuetype)(...)
-    logs[4] <- capture_logs(adm.check_minmax)(...)
-    logs[5] <- capture_logs(adm.check_entitytype)(...)
-    logs[6] <- capture_logs(adm.check_required_columns)(...)
-    logs[7] <- capture_logs(adm.check_encrypted_values)(...)
-    logs[8] <- capture_logs(adm.check_infinite)(...)
-    logs[9] <- capture_logs(adm.check_date)(...)
+    logs[01] <- capture_logs(adm.check_columns_var)(...)
+    logs[02] <- capture_logs(adm.check_columns_cat)(...)
+    logs[03] <- capture_logs(adm.check_valuetype)(...)
+    logs[04] <- capture_logs(adm.check_minmax)(...)
+    logs[05] <- capture_logs(adm.check_entitytype)(...)
+    logs[06] <- capture_logs(adm.check_required_columns)(...)
+    logs[07] <- capture_logs(adm.check_encrypted_values)(...)
+    logs[08] <- capture_logs(adm.check_infinite)(...)
+    logs[09] <- capture_logs(adm.check_date)(...)
     logs[10] <- capture_logs(adm.check_datetime)(...)
+    logs[11] <- capture_logs(adm.check_ids)(...)
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
