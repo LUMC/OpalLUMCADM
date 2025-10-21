@@ -27,6 +27,6 @@ test_that("error", {
     adm.check_entitytype(
       variables = variables
     ),
-    "More then one entity type in use!"
+    "More then one entity type in use"
   )
 })

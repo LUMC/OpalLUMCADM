@@ -14,7 +14,7 @@ test_that("warning", {
     adm.check_required_columns(
       variables = variables
     ),
-    "There is no 'encrypted' column in your variables object!"
+    "There is no 'encrypted' column in variables object"
   )
 })
 
@@ -29,7 +29,7 @@ test_that("warning", {
     adm.check_required_columns(
       variables = variables
     ),
-    "There is no 'entityType' column in your variables object!"
+    "There is no 'entityType' column in variables object"
   )
 })
 
@@ -43,7 +43,7 @@ test_that("warning", {
     adm.check_required_columns(
       variables = variables
     ),
-    "There is no 'label' column in your variables object!"
+    "There is no 'label' column in variables object"
   )
 })
 

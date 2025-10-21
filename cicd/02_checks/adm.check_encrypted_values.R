@@ -15,7 +15,7 @@ test_that("error", {
       datafile = datafile,
       variables = variables
     ),
-    "There is no 'encrypted' column in your variables object!"
+    "There is no 'encrypted' column in variables object"
   )
 })
 
