@@ -2,7 +2,7 @@
 % Please edit documentation in R/processing.R
 \name{.map_dtype}
 \alias{.map_dtype}
-\title{Function to capture all warnings & errors when running all check functions}
+\title{Function to set class type based on data in column}
 \usage{
 .map_dtype(column)
 }
@@ -10,5 +10,5 @@
 \item{column}{Data column}
 }
 \description{
-Function to capture all warnings & errors when running all check functions
+Function to set class type based on data in column
 }
