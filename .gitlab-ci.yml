@@ -52,6 +52,7 @@ Checks:
     - Rscript ./cicd/02_checks/adm.check_minmax.R
     - Rscript ./cicd/02_checks/adm.check_required_columns.R
     - Rscript ./cicd/02_checks/adm.check_valuetype.R
+    - Rscript ./cicd/02_checks/adm.run_all_checks.R
 
 DiffDF:
   stage: diffdf
