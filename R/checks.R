@@ -289,13 +289,13 @@ adm.check_required_columns <- function(variables, ...) {
   
   ## Show warning if something is missing
   if (!TRUE %in% col_labels) {
-    warning("There is no 'label' column in your variables object")
+    warning("There is no 'label' column in variables object")
   }
   if (!TRUE %in% col_entitytype) {
-    warning("There is no 'entityType' column in your variables object")
+    warning("There is no 'entityType' column in variables object")
   }
   if (!TRUE %in% col_encrypted) {
-    warning("There is no 'encrypted' column in your variables object")
+    warning("There is no 'encrypted' column in variables object")
   }
   
   ## Done
@@ -316,7 +316,7 @@ adm.check_encrypted_values <- function(datafile, variables, ...) {
   ## Check for encrypted column
   col_encrypted <- str_detect(colnames(variables), "encrypted")
   if (!TRUE %in% col_encrypted) {
-    stop("There is no 'encrypted' column in your variables object")
+    stop("There is no 'encrypted' column in variables object")
   }
   
   ## Tres options
