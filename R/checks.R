@@ -10,23 +10,28 @@
 
 adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   message("Running all checks...")
+  logs <- list()
   
   ## Function containing all checks
   start_checks <- function(...) {
-    adm.check_columns_var(...)
-    adm.check_columns_cat(...)
-    adm.check_valuetype(...)
-    adm.check_minmax(...)
-    adm.check_entitytype(...)
-    adm.check_required_columns(...)
-    adm.check_encrypted_values(...)
-    adm.check_infinite(...)
-    adm.check_date(...)
-    adm.check_datetime(...)
+    logs[1] <- capture_logs(adm.check_columns_var)(...)
+    logs[2] <- capture_logs(adm.check_columns_cat)(...)
+    logs[3] <- capture_logs(adm.check_valuetype)(...)
+    logs[4] <- capture_logs(adm.check_minmax)(...)
+    logs[5] <- capture_logs(adm.check_entitytype)(...)
+    logs[6] <- capture_logs(adm.check_required_columns)(...)
+    logs[7] <- capture_logs(adm.check_encrypted_values)(...)
+    logs[8] <- capture_logs(adm.check_infinite)(...)
+    logs[9] <- capture_logs(adm.check_date)(...)
+    logs[10] <- capture_logs(adm.check_datetime)(...)
+    
+    ## Create dataframe from all logs
+    logs <- do.call(rbind.data.frame, logs)
+    return(logs)
   }
   
   ## Start all checks
-  start_checks(
+  df_logs <- start_checks(
     datafile = datafile,
     variables = variables,
     categories = categories
@@ -34,6 +39,54 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   
   ## Done
   message("All checks done!")
+  return(df_logs)
+}
+
+
+#' Function to capture all warnings & errors when running all check functions
+#'
+#' @param datafile data input
+#' @param variables variables dataframe
+#'
+#' @import opalr rlang
+#' 
+#' @export
+
+capture_logs <- function(run_function) {
+  func_name <- deparse(substitute(run_function))
+  
+  function(...) {
+    logs <- list()
+    
+    ## Add warnings & errors to logs list
+    add_log <- function(type, message) {
+      logs[[length(logs) + 1]] <<- list(
+        function_name = func_name,
+        type = type,
+        message = message
+      )
+    }
+    
+    ## Run function and catch errors & warnings
+    withCallingHandlers(
+      tryCatch(
+        run_function(...),
+        error = function(e) {
+          add_log("ERROR", conditionMessage(e))
+        }
+      ),
+      warning = function(w) {
+        add_log("WARNING", conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }
+    )
+    
+    ## Set ok if logs are empty
+    if (!length(logs)) (
+      add_log("OK", "No issues found")
+    )
+    return(logs)
+  }
 }
 
 
@@ -46,7 +99,7 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
 #' 
 #' @export
 
-adm.check_columns_var <- function(datafile, variables) {
+adm.check_columns_var <- function(datafile, variables, ...) {
   ## Get columns
   columns_data <- colnames(datafile)
   columns_vars <- variables$name
@@ -78,7 +131,7 @@ adm.check_columns_var <- function(datafile, variables) {
 #' 
 #' @export
 
-adm.check_columns_cat <- function(datafile, categories = NULL) {
+adm.check_columns_cat <- function(datafile, categories = NULL, ...) {
   if (is.null(categories)) {
     warning("There is no categorie object")
     return()
@@ -115,7 +168,7 @@ adm.check_columns_cat <- function(datafile, categories = NULL) {
 #' 
 #' @export
 
-adm.check_valuetype <- function(datafile, variables) {
+adm.check_valuetype <- function(datafile, variables, ...) {
   ## Function to set class type
   map_dtype <- function(column) {
     ## Type translation to Opal
@@ -164,7 +217,7 @@ adm.check_valuetype <- function(datafile, variables) {
 #' 
 #' @export
 
-adm.check_minmax <- function(datafile, variables) {
+adm.check_minmax <- function(datafile, variables, ...) {
   ## Check for min/max columns
   if (!all(c("min", "max") %in% colnames(variables))) {
     warning("There are no min/max columns in variables object")
@@ -212,7 +265,7 @@ adm.check_entitytype <- function(variables, ...) {
   entity <- unique(variables$entityType)
   
   if (length(entity) > 1) {
-    stop("More then one entity type in use!")
+    stop("More then one entity type in use")
   }
   
   ## Done
@@ -236,13 +289,13 @@ adm.check_required_columns <- function(variables, ...) {
   
   ## Show warning if something is missing
   if (!TRUE %in% col_labels) {
-    warning("There is no 'label' column in your variables object!")
+    warning("There is no 'label' column in your variables object")
   }
   if (!TRUE %in% col_entitytype) {
-    warning("There is no 'entityType' column in your variables object!")
+    warning("There is no 'entityType' column in your variables object")
   }
   if (!TRUE %in% col_encrypted) {
-    warning("There is no 'encrypted' column in your variables object!")
+    warning("There is no 'encrypted' column in your variables object")
   }
   
   ## Done
@@ -259,11 +312,11 @@ adm.check_required_columns <- function(variables, ...) {
 #' 
 #' @export
 
-adm.check_encrypted_values <- function(datafile, variables) {
+adm.check_encrypted_values <- function(datafile, variables, ...) {
   ## Check for encrypted column
   col_encrypted <- str_detect(colnames(variables), "encrypted")
   if (!TRUE %in% col_encrypted) {
-    stop("There is no 'encrypted' column in your variables object!")
+    stop("There is no 'encrypted' column in your variables object")
   }
   
   ## Tres options
@@ -331,7 +384,7 @@ adm.check_infinite <- function(datafile, ...) {
 #' 
 #' @export
 
-adm.check_date <- function(datafile, variables) {
+adm.check_date <- function(datafile, variables, ...) {
   ## Get variables with date object
   get_date <- datafile %>%
     select(variables %>% filter(valueType == "date") %>% pull(name))
@@ -367,7 +420,7 @@ adm.check_date <- function(datafile, variables) {
 #' 
 #' @export
 
-adm.check_datetime <- function(datafile, variables) {
+adm.check_datetime <- function(datafile, variables, ...) {
   ## Get variables with datetime object
   get_datetime <- datafile %>%
     select(variables %>% filter(valueType == "datetime") %>% pull(name))
@@ -401,7 +454,7 @@ adm.check_datetime <- function(datafile, variables) {
 #' 
 #' @export
 
-adm.check_ids <- function(datafile, id.name = "id") {
+adm.check_ids <- function(datafile, id.name = "id", ...) {
   check_duplicated <- datafile |> select(all_of(id.name)) |> duplicated()
   
   if(TRUE %in% check_duplicated) {
