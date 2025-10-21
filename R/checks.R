@@ -3,8 +3,6 @@
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
-#'
-#' @import opalr rlang
 #' 
 #' @export
 
@@ -48,8 +46,6 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
-#'
-#' @import opalr rlang
 #' 
 #' @export
 
@@ -80,8 +76,6 @@ adm.check_columns_var <- function(datafile, variables, ...) {
 #'
 #' @param datafile data input
 #' @param categories categories dataframe
-#'
-#' @import opalr rlang
 #' 
 #' @export
 
@@ -117,15 +111,10 @@ adm.check_columns_cat <- function(datafile, categories = NULL, ...) {
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
-#'
-#' @import opalr
 #' 
 #' @export
 
 adm.check_valuetype <- function(datafile, variables, ...) {
-  ## Function to set class type
-  
-  
   ## Get valuetypes
   valuetypes_data <- sapply(datafile, .map_dtype)
   valuetypes_vars <- setNames(variables$valueType, variables$name)
@@ -150,8 +139,6 @@ adm.check_valuetype <- function(datafile, variables, ...) {
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
-#'
-#' @import opalr
 #' 
 #' @export
 

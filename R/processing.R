@@ -3,6 +3,8 @@
 #'
 #' @param run_function Function to run
 #' 
+#' @return logs Return list with warnings & errors
+#' 
 #' @export
 
 .capture_logs <- function(run_function) {
@@ -72,6 +74,8 @@
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
+#' 
+#' @return variables Return variables with corrected valuetypes
 #' 
 #' @export
 

@@ -42,8 +42,6 @@ adm.table_get <- function(opal, projname, tablename, ...) {
 #'
 #' @param method String: write, update or overwrite
 #'
-#' @import opalr dplyr
-#' 
 #' @return method, vector with settings for force & overwrite
 #'
 #' @export
