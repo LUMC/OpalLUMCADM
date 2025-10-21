@@ -41,11 +41,13 @@ Checks:
     - R CMD INSTALL "$PKG_FILE"
     - Rscript ./cicd/02_checks/create_dataset.R
   script:
-    - Rscript ./cicd/02_checks/adm.check_columns.R
+    - Rscript ./cicd/02_checks/adm.check_columns_cat.R
+    - Rscript ./cicd/02_checks/adm.check_columns_var.R
     - Rscript ./cicd/02_checks/adm.check_date.R
     - Rscript ./cicd/02_checks/adm.check_datetime.R
     - Rscript ./cicd/02_checks/adm.check_encrypted_values.R
     - Rscript ./cicd/02_checks/adm.check_entitytype.R
+    - Rscript ./cicd/02_checks/adm.check_ids.R
     - Rscript ./cicd/02_checks/adm.check_infinite.R
     - Rscript ./cicd/02_checks/adm.check_minmax.R
     - Rscript ./cicd/02_checks/adm.check_required_columns.R
