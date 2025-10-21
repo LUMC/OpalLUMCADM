@@ -1,5 +1,4 @@
 
-
 #' Function to capture all warnings & errors when running all check functions
 #'
 #' @param run_function Function to run
@@ -44,12 +43,12 @@
 }
 
 
-#' Function to capture all warnings & errors when running all check functions
+#' Function to set class type based on data in column
 #'
 #' @param column Data column
 #' 
 #' @export
-#' 
+
 .map_dtype <- function(column) {
   ## Type translation to Opal
   map_valuetype <- c(
