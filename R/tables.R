@@ -71,13 +71,14 @@ adm.set_method <- function(method) {
 #' @param variables variables dataframe
 #' @param categories categories dataframe
 #' @param method String: write, update or overwrite
+#' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
 #' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @import opalr dplyr
 #' 
 #' @export
 
-adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", max_retries = 3, ...) {
+adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, max_retries = 3, ...) {
   ## Set method
   method <- adm.set_method(method = method)
   
@@ -125,6 +126,20 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
     table = tablename,
     subject = opal$username
   )
+  
+  ## Run diffdf
+  if (diffdf) {
+    findings <- .table_save_diffdf(
+      opal = opal,
+      projname = projname,
+      tablename = tablename,
+      datafile = datafile, 
+      variables = variables,
+      categories = categories,
+      ...
+    )
+    return(findings)
+  }
 }
 
 
