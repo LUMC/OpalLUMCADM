@@ -95,3 +95,51 @@ adm.fix_valuetype <- function(datafile, variables) {
   
   return(variables)
 }
+
+
+#' Function to save a table from R to Opal + a table_get() + diffdf
+#'
+#' @import opalr dplyr
+#' 
+#' @export
+
+.table_save_diffdf <- function(opal, projname, tablename, datafile, variables, categories = NULL, ...) {
+  ## Get table
+  df <- adm.table_get(
+    opal = opal,
+    projname = projname,
+    tablename = tablename,
+    ...
+  )
+  
+  ## Create diffdf output list
+  findings <- list()
+  
+  ## Run diffdf for datafile
+  findings$datafile <- adm.check_diffdf(
+    datafile1 = datafile,
+    datafile2 = df$datafile,
+    keys = colnames(df$datafile)[1],
+    ...
+  )
+  
+  ## Run diffdf for variables
+  findings$variables <- adm.check_diffdf(
+    datafile1 = variables,
+    datafile2 = df$variables,
+    keys = "name",
+    ...
+  )
+  
+  ## Run diffdf for categories
+  if (!is.null(categories)) {
+    findings$categories <- adm.check_diffdf(
+      datafile1 = categories,
+      datafile2 = df$categories,
+      keys = c("variable", "name"),
+      ...
+    )
+  }
+  
+  return(findings)
+}
