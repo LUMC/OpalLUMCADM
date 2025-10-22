@@ -4,16 +4,23 @@
 #' @param dataframe1 dataframe
 #' @param dataframe2 dataframe
 #' @param path path to output dir
+#' @param keys vector of variables (as strings) that defines a unique row in the base and compare dataframes
 #' 
 #' @import diffdf 
 #' 
 #' @export
 
-adm.check_diffdf <- function(datafile1, datafile2, path = NA, ...) {
+adm.check_diffdf <- function(datafile1, datafile2, path = NA, keys = NA, ...) {
+  ## Lars converts everything to text, not used for now
+  ## datafile1 <- datafile1 |> dplyr::mutate(across(everything(), as.character))
+  ## datafile2 <- datafile2 |> dplyr::mutate(across(everything(), as.character))
+  
   ## Get differences
   difference <- diffdf(
     base = datafile1,
-    compare = datafile2
+    compare = datafile2,
+    keys = keys,
+    ...
   )
   
   ## Merge all vardiffs
