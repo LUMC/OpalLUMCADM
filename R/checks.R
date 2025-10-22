@@ -8,10 +8,10 @@
 
 adm.run_all_checks <- function(datafile, variables, categories = NULL) {
   message("Running all checks...")
-  logs <- list()
   
   ## Function containing all checks
   start_checks <- function(...) {
+    logs <- list()
     logs[01] <- .capture_logs(adm.check_columns_var)(...)
     logs[02] <- .capture_logs(adm.check_columns_cat)(...)
     logs[03] <- .capture_logs(adm.check_valuetype)(...)
