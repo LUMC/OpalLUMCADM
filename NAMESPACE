@@ -3,6 +3,7 @@
 export(.capture_logs)
 export(.map_dtype)
 export(.onLoad)
+export(.table_save_diffdf)
 export(adm.check_columns_cat)
 export(adm.check_columns_var)
 export(adm.check_date)
