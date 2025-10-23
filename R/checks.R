@@ -143,10 +143,11 @@ adm.check_valuetype <- function(datafile, variables, ...) {
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
+#' @param categories categories dataframe
 #' 
 #' @export
 
-adm.check_minmax <- function(datafile, variables, ...) {
+adm.check_minmax <- function(datafile, variables, categories = NULL) {
   ## Check for min/max columns
   if (!all(c("min", "max") %in% colnames(variables))) {
     warning("There are no min/max columns in variables object")
@@ -157,6 +158,10 @@ adm.check_minmax <- function(datafile, variables, ...) {
   min_values <- setNames(variables$min, variables$name)
   max_values <- setNames(variables$max, variables$name)
   
+  ## Set null to NA
+  min_values[min_values == "null"] <- NA
+  max_values[max_values == "null"] <- NA
+  
   ## Get numeric or integer columns (exclude columns with all NA)
   datafile <- datafile[, colSums(is.na(datafile)) < nrow(datafile)]
   valuetypes_data <- sapply(datafile, function(x) tail(class(x), n = 1))
@@ -164,18 +169,29 @@ adm.check_minmax <- function(datafile, variables, ...) {
   
   ## Check min/max for each numeric column
   for (column in names(valuetypes_data)) {
+    ## Ignore missing values in min/max check
+    if (!is.null(categories)) {
+      missing <- categories$name[categories$variable == column & categories$missing == TRUE]
+      datafile[[column]][datafile[[column]] %in% missing] <- NA
+    }
+    
+    ## Get min/max values from datafile & variables objects
+    data_min <- type.convert(as.character(min(datafile[[column]], na.rm = TRUE)), as.is = TRUE)
+    data_max <- type.convert(as.character(max(datafile[[column]], na.rm = TRUE)), as.is = TRUE)
     var_min <- type.convert(as.character(min_values[[column]]), as.is = TRUE)
     var_max <- type.convert(as.character(max_values[[column]]), as.is = TRUE)
-    data_min <- min(datafile[[column]], na.rm = TRUE)
-    data_max <- max(datafile[[column]], na.rm = TRUE)
     
     ## Compare min & max
-    if (data_min < var_min) {
-      warning("'", column, "' minimum value to low: ", data_min, " < ", var_min)
-    }
-    if (data_max > var_max) {
-      warning("'", column, "' maximum value to high: ", data_max, " > ", var_max)
-    }
+    tryCatch({
+      if (data_min < var_min) {
+        warning("'", column, "' minimum value to low: ", data_min, " < ", var_min)
+      }
+    }, error = function(e) {})
+    tryCatch({
+      if (data_max > var_max) {
+        warning("'", column, "' maximum value to high: ", data_max, " > ", var_max)
+      }
+    }, error = function(e) {})
   }
   
   ## Done
