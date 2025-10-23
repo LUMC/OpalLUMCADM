@@ -10,7 +10,7 @@
 #' 
 #' @export
 
-adm.check_diffdf <- function(datafile1, datafile2, path = NA, keys = NA, ...) {
+adm.check_diffdf <- function(datafile1, datafile2, path = NA, keys = NULL, ...) {
   ## Lars converts everything to text, not used for now
   ## datafile1 <- datafile1 |> dplyr::mutate(across(everything(), as.character))
   ## datafile2 <- datafile2 |> dplyr::mutate(across(everything(), as.character))
