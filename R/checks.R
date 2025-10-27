@@ -3,6 +3,7 @@
 #'
 #' @param datafile data input
 #' @param variables variables dataframe
+#' @param categories categories dataframe
 #' 
 #' @export
 
@@ -395,7 +396,7 @@ adm.check_datetime <- function(datafile, variables, ...) {
 #' Function to check if datafile has duplicated ids
 #'
 #' @param datafile data input
-#' @param id The name of the column representing the entity identifiers. Default is 'id'.
+#' @param id.name The name of the column representing the entity identifiers. Default is 'id'.
 #' 
 #' @export
 

@@ -36,6 +36,7 @@ adm.tres_connection <- function(connection, ...) {
 #' @param connection Connection with RTRES
 #' @param datafile data input
 #' @param columns selected columns for encryption
+#' @param boolean. Whether or not the search_image needs to be included when encrypting
 #'
 #' @import rtres
 #' 

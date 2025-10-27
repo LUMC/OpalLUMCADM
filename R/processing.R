@@ -1,14 +1,14 @@
 
 #' Function to capture all warnings & errors when running all check functions
 #'
-#' @param run_function Function to run
+#' @param function_name Function to run & catch logs from
 #' 
 #' @return logs Return list with warnings & errors
 #' 
 #' @export
 
-.capture_logs <- function(run_function) {
-  func_name <- deparse(substitute(run_function))
+.capture_logs <- function(function_name) {
+  func_name <- deparse(substitute(function_name))
   
   function(...) {
     logs <- list()
@@ -25,7 +25,7 @@
     ## Run function and catch errors & warnings
     withCallingHandlers(
       tryCatch(
-        run_function(...),
+        function_name(...),
         error = function(e) {
           add_log("ERROR", conditionMessage(e))
         }
@@ -99,7 +99,14 @@ adm.fix_valuetype <- function(datafile, variables) {
 
 #' Function to save a table from R to Opal + a table_get() + diffdf
 #'
-#' @import opalr dplyr
+#' @param opal a working opalr::opal_login
+#' @param projname Origin opal project name
+#' @param tablename Origin opal table name
+#' @param datafile data dataframe
+#' @param variables variables dataframe
+#' @param categories categories dataframe
+#' 
+#' @import opalr
 #' 
 #' @export
 
