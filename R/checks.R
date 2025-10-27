@@ -150,7 +150,7 @@ adm.check_valuetype <- function(datafile, variables, ...) {
 adm.check_minmax <- function(datafile, variables, categories = NULL) {
   ## Check for min/max columns
   if (!all(c("min", "max") %in% colnames(variables))) {
-    warning("There are no min/max columns in variables object")
+    warning("There is no min/max column in variables object")
     return()
   }
   

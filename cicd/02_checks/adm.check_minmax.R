@@ -14,7 +14,7 @@ test_that("warning", {
       datafile = datafile,
       variables = variables
     ),
-    "There are no min/max columns in variables object"
+    "There is no min/max column in variables object"
   )
 })
 
