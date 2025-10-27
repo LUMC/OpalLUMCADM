@@ -14,6 +14,19 @@
   ...
 )
 }
+\arguments{
+\item{opal}{a working opalr::opal_login}
+
+\item{projname}{Origin opal project name}
+
+\item{tablename}{Origin opal table name}
+
+\item{datafile}{data dataframe}
+
+\item{variables}{variables dataframe}
+
+\item{categories}{categories dataframe}
+}
 \description{
 Function to save a table from R to Opal + a table_get() + diffdf
 }

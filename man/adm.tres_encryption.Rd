@@ -18,6 +18,8 @@ adm.tres_encryption(
 \item{datafile}{data input}
 
 \item{columns}{selected columns for encryption}
+
+\item{boolean.}{Whether or not the search_image needs to be included when encrypting}
 }
 \value{
 datafile, encrypted datafile

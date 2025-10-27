@@ -10,6 +10,8 @@ adm.run_all_checks(datafile, variables, categories = NULL)
 \item{datafile}{data input}
 
 \item{variables}{variables dataframe}
+
+\item{categories}{categories dataframe}
 }
 \description{
 Function to check run all checks

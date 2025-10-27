@@ -9,7 +9,7 @@ adm.check_ids(datafile, id.name = "id", ...)
 \arguments{
 \item{datafile}{data input}
 
-\item{id}{The name of the column representing the entity identifiers. Default is 'id'.}
+\item{id.name}{The name of the column representing the entity identifiers. Default is 'id'.}
 }
 \description{
 Function to check if datafile has duplicated ids

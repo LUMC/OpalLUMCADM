@@ -6,8 +6,8 @@
 \usage{
 adm.view_update(
   opal,
-  view_projname,
-  view_tablename,
+  projname_view,
+  tablename_view,
   source,
   variables,
   categories = NULL,
@@ -17,9 +17,9 @@ adm.view_update(
 \arguments{
 \item{opal}{a working opalr::opal_login}
 
-\item{view_projname}{Origin opal project name}
+\item{projname_view}{Origin opal project name}
 
-\item{view_tablename}{Origin opal table name}
+\item{tablename_view}{Origin opal table name}
 
 \item{source}{Vector with project and table names: project.table: CNSIM.CNSIM1}
 

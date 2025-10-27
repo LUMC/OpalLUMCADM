@@ -4,10 +4,10 @@
 \alias{.capture_logs}
 \title{Function to capture all warnings & errors when running all check functions}
 \usage{
-.capture_logs(run_function)
+.capture_logs(function_name)
 }
 \arguments{
-\item{run_function}{Function to run}
+\item{function_name}{Function to run & catch logs from}
 }
 \value{
 logs Return list with warnings & errors

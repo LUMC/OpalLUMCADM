@@ -4,7 +4,7 @@
 \alias{adm.check_diffdf}
 \title{Function to find differences in data}
 \usage{
-adm.check_diffdf(datafile1, datafile2, path = NA, keys = NA, ...)
+adm.check_diffdf(datafile1, datafile2, path = NA, keys = NULL, ...)
 }
 \arguments{
 \item{path}{path to output dir}
