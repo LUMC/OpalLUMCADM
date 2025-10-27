@@ -20,8 +20,8 @@ dict <- opal.table_dictionary_get(
 ## Create view
 adm.view_create(
   opal = opal,
-  view_projname = "CNSIM",
-  view_tablename = "CNSIM_TEST_VIEW",
+  projname_view = "CNSIM",
+  tablename_view = "CNSIM_TEST_VIEW",
   source = c("CNSIM.CNSIM1"),
   variables = dict$variables,
   categories = dict$categories

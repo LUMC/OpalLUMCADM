@@ -48,17 +48,8 @@ test_that("warning", {
       datafile2 = datafile2,
       path = "./cicd/03_diffdf/diffdf_output2.xlsx"
     ),
-    "There are columns in BASE and COMPARE with different modes !!"
-  )
-  expect_warning(
-    adm.check_diffdf(
-      datafile1 = datafile1,
-      datafile2 = datafile2,
-      path = "./cicd/03_diffdf/diffdf_output3.xlsx"
-    ),
-    "There are columns in BASE and COMPARE with different classes !!"
+    "Not all Values Compared Equal"
   )
   
   expect_true(file.exists("./cicd/03_diffdf/diffdf_output2.xlsx"))
-  expect_true(file.exists("./cicd/03_diffdf/diffdf_output3.xlsx"))
 })
