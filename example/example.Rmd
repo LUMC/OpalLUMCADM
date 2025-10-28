@@ -51,7 +51,8 @@ df <- adm.table_get(
 )
 
 datafile <- df$datafile
-variables <- df$dictionary$variables
+variables <- df$variables
+categories <- df$categories
 
 ```
 
