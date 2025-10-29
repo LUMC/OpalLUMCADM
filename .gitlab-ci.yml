@@ -41,18 +41,18 @@ Checks:
     - R CMD INSTALL "$PKG_FILE"
     - Rscript ./cicd/02_checks/create_dataset.R
   script:
-    - Rscript ./cicd/02_checks/adm.check_columns_cat.R
-    - Rscript ./cicd/02_checks/adm.check_columns_var.R
-    - Rscript ./cicd/02_checks/adm.check_date.R
-    - Rscript ./cicd/02_checks/adm.check_datetime.R
-    - Rscript ./cicd/02_checks/adm.check_encrypted_values.R
-    - Rscript ./cicd/02_checks/adm.check_entitytype.R
-    - Rscript ./cicd/02_checks/adm.check_ids.R
-    - Rscript ./cicd/02_checks/adm.check_infinite.R
-    - Rscript ./cicd/02_checks/adm.check_minmax.R
-    - Rscript ./cicd/02_checks/adm.check_required_columns.R
-    - Rscript ./cicd/02_checks/adm.check_valuetype.R
-    - Rscript ./cicd/02_checks/adm.run_all_checks.R
+    - Rscript ./cicd/02_checks/check.columns_cat.R
+    - Rscript ./cicd/02_checks/check.columns_var.R
+    - Rscript ./cicd/02_checks/check.date.R
+    - Rscript ./cicd/02_checks/check.datetime.R
+    - Rscript ./cicd/02_checks/check.encrypted_values.R
+    - Rscript ./cicd/02_checks/check.entitytype.R
+    - Rscript ./cicd/02_checks/check.ids.R
+    - Rscript ./cicd/02_checks/check.infinite.R
+    - Rscript ./cicd/02_checks/check.minmax.R
+    - Rscript ./cicd/02_checks/check.required_columns.R
+    - Rscript ./cicd/02_checks/check.valuetype.R
+    - Rscript ./cicd/02_checks/check.run_all.R
 
 DiffDF:
   stage: diffdf
@@ -63,7 +63,7 @@ DiffDF:
     - R CMD INSTALL "$PKG_FILE"
     - Rscript ./cicd/03_diffdf/create_dataset.R
   script:
-    - Rscript ./cicd/03_diffdf/adm.check_diffdf.R
+    - Rscript ./cicd/03_diffdf/adm.diffdf.R
 
 Views:
   stage: views
