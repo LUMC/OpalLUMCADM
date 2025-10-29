@@ -24,6 +24,7 @@ check.run_all <- function(datafile, variables, categories = NULL) {
     logs[09] <- .capture_logs(check.date)(...)
     logs[10] <- .capture_logs(check.datetime)(...)
     logs[11] <- .capture_logs(check.ids)(...)
+    logs[12] <- .capture_logs(check.duplicated_rows)(...)
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -409,4 +410,26 @@ check.ids <- function(datafile, id.name = "id", ...) {
   
   ## Done
   message(" Checked for duplicated IDs")
+}
+
+
+#' Function to check for duplicated rows in variables & categories
+#'
+#' @param variables variables dataframe
+#' @param categories categories dataframe
+#' 
+#' @export
+
+check.duplicated_rows <- function(variables, categories = NULL, ...) {
+  ## Check for duplicated rows in variables
+  if (TRUE %in% duplicated(variables)) {
+    warning("There are duplicated rows in variables object")
+  }
+  
+  ## Check for duplicated rows in categories
+  if (TRUE %in% duplicated(categories)) {
+    warning("There are duplicated rows in categories object")
+  }
+  
+  message(" Checked for duplicated row in variable/categorie objects")
 }
