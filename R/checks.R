@@ -7,23 +7,23 @@
 #' 
 #' @export
 
-adm.run_all_checks <- function(datafile, variables, categories = NULL) {
+check.run_all <- function(datafile, variables, categories = NULL) {
   message("Running all checks...")
   
   ## Function containing all checks
   start_checks <- function(...) {
     logs <- list()
-    logs[01] <- .capture_logs(adm.check_columns_var)(...)
-    logs[02] <- .capture_logs(adm.check_columns_cat)(...)
-    logs[03] <- .capture_logs(adm.check_valuetype)(...)
-    logs[04] <- .capture_logs(adm.check_minmax)(...)
-    logs[05] <- .capture_logs(adm.check_entitytype)(...)
-    logs[06] <- .capture_logs(adm.check_required_columns)(...)
-    logs[07] <- .capture_logs(adm.check_encrypted_values)(...)
-    logs[08] <- .capture_logs(adm.check_infinite)(...)
-    logs[09] <- .capture_logs(adm.check_date)(...)
-    logs[10] <- .capture_logs(adm.check_datetime)(...)
-    logs[11] <- .capture_logs(adm.check_ids)(...)
+    logs[01] <- .capture_logs(check.columns_var)(...)
+    logs[02] <- .capture_logs(check.columns_cat)(...)
+    logs[03] <- .capture_logs(check.valuetype)(...)
+    logs[04] <- .capture_logs(check.minmax)(...)
+    logs[05] <- .capture_logs(check.entitytype)(...)
+    logs[06] <- .capture_logs(check.required_columns)(...)
+    logs[07] <- .capture_logs(check.encrypted_values)(...)
+    logs[08] <- .capture_logs(check.infinite)(...)
+    logs[09] <- .capture_logs(check.date)(...)
+    logs[10] <- .capture_logs(check.datetime)(...)
+    logs[11] <- .capture_logs(check.ids)(...)
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -52,7 +52,7 @@ adm.run_all_checks <- function(datafile, variables, categories = NULL) {
 #' 
 #' @export
 
-adm.check_columns_var <- function(datafile, variables, ...) {
+check.columns_var <- function(datafile, variables, ...) {
   ## Get columns
   columns_data <- colnames(datafile)
   columns_vars <- variables$name
@@ -84,7 +84,7 @@ adm.check_columns_var <- function(datafile, variables, ...) {
 #' 
 #' @export
 
-adm.check_columns_cat <- function(datafile, categories = NULL, ...) {
+check.columns_cat <- function(datafile, categories = NULL, ...) {
   if (is.null(categories)) {
     warning("There is no categorie object")
     return()
@@ -119,7 +119,7 @@ adm.check_columns_cat <- function(datafile, categories = NULL, ...) {
 #' 
 #' @export
 
-adm.check_valuetype <- function(datafile, variables, ...) {
+check.valuetype <- function(datafile, variables, ...) {
   ## Get valuetypes
   valuetypes_data <- sapply(datafile, .map_dtype)
   valuetypes_vars <- setNames(variables$valueType, variables$name)
@@ -148,7 +148,7 @@ adm.check_valuetype <- function(datafile, variables, ...) {
 #' 
 #' @export
 
-adm.check_minmax <- function(datafile, variables, categories = NULL) {
+check.minmax <- function(datafile, variables, categories = NULL) {
   ## Check for min/max columns
   if (!all(c("min", "max") %in% colnames(variables))) {
     warning("There is no min/max column in variables object")
@@ -206,7 +206,7 @@ adm.check_minmax <- function(datafile, variables, categories = NULL) {
 #' 
 #' @export
 
-adm.check_entitytype <- function(variables, ...) {
+check.entitytype <- function(variables, ...) {
   ## Get entity types
   entity <- unique(variables$entityType)
   
@@ -227,7 +227,7 @@ adm.check_entitytype <- function(variables, ...) {
 #' 
 #' @export
 
-adm.check_required_columns <- function(variables, ...) {
+check.required_columns <- function(variables, ...) {
   ## Search for specific columns
   col_labels <- str_detect(colnames(variables), "label")
   col_entitytype <- str_detect(colnames(variables), "entityType")
@@ -258,7 +258,7 @@ adm.check_required_columns <- function(variables, ...) {
 #' 
 #' @export
 
-adm.check_encrypted_values <- function(datafile, variables, ...) {
+check.encrypted_values <- function(datafile, variables, ...) {
   ## Check for encrypted column
   col_encrypted <- str_detect(colnames(variables), "encrypted")
   if (!TRUE %in% col_encrypted) {
@@ -302,7 +302,7 @@ adm.check_encrypted_values <- function(datafile, variables, ...) {
 #' 
 #' @export
 
-adm.check_infinite <- function(datafile, ...) {
+check.infinite <- function(datafile, ...) {
   ## Search for infinite values
   get_inf <- sapply(datafile, function(x) {
     any(is.infinite(x))
@@ -330,7 +330,7 @@ adm.check_infinite <- function(datafile, ...) {
 #' 
 #' @export
 
-adm.check_date <- function(datafile, variables, ...) {
+check.date <- function(datafile, variables, ...) {
   ## Get variables with date object
   get_date <- datafile %>%
     select(variables %>% filter(valueType == "date") %>% pull(name))
@@ -366,7 +366,7 @@ adm.check_date <- function(datafile, variables, ...) {
 #' 
 #' @export
 
-adm.check_datetime <- function(datafile, variables, ...) {
+check.datetime <- function(datafile, variables, ...) {
   ## Get variables with datetime object
   get_datetime <- datafile %>%
     select(variables %>% filter(valueType == "datetime") %>% pull(name))
@@ -400,7 +400,7 @@ adm.check_datetime <- function(datafile, variables, ...) {
 #' 
 #' @export
 
-adm.check_ids <- function(datafile, id.name = "id", ...) {
+check.ids <- function(datafile, id.name = "id", ...) {
   check_duplicated <- datafile |> select(all_of(id.name)) |> duplicated()
   
   if(TRUE %in% check_duplicated) {

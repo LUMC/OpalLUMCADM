@@ -11,7 +11,7 @@ load("./cicd/03_diffdf/dataset_cnsim.Rdata")
 ## Run check for success
 test_that("success", {
   output <- capture.output(
-    adm.check_diffdf(
+    adm.diffdf(
       datafile1 = datafile1,
       datafile2 = datafile2,
       path = NA
@@ -25,7 +25,7 @@ test_that("success", {
 ## Run check for warning
 test_that("warning", {
   expect_warning(
-    adm.check_diffdf(
+    adm.diffdf(
       datafile1 = datafile1,
       datafile2 = datafile2,
       path = "./cicd/03_diffdf/diffdf_output1.xlsx"
@@ -43,7 +43,7 @@ datafile1$LAB_TSC[1] <- "different"
 ## Run check for warning
 test_that("warning", {
   expect_warning(
-    adm.check_diffdf(
+    adm.diffdf(
       datafile1 = datafile1,
       datafile2 = datafile2,
       path = "./cicd/03_diffdf/diffdf_output2.xlsx"

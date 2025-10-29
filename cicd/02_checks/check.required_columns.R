@@ -11,7 +11,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test with warning
 test_that("warning", {
   expect_warning(
-    adm.check_required_columns(
+    check.required_columns(
       variables = variables
     ),
     "There is no 'encrypted' column in variables object"
@@ -26,7 +26,7 @@ variables$entityType <- NULL
 ## Run test with warning
 test_that("warning", {
   expect_warning(
-    adm.check_required_columns(
+    check.required_columns(
       variables = variables
     ),
     "There is no 'entityType' column in variables object"
@@ -40,7 +40,7 @@ variables$`label:en` <- NULL
 ## Run test with warning
 test_that("warning", {
   expect_warning(
-    adm.check_required_columns(
+    check.required_columns(
       variables = variables
     ),
     "There is no 'label' column in variables object"
@@ -54,7 +54,7 @@ variables$`label:en` <- "test label"
 ## Run test with error
 test_that("success", {
   expect_message(
-    adm.check_required_columns(
+    check.required_columns(
       variables = variables
     ),
     "Checked required columns"

@@ -10,7 +10,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run check with warning
 test_that("warning", {
   expect_warning(
-    adm.check_minmax(
+    check.minmax(
       datafile = datafile,
       variables = variables
     ),
@@ -26,14 +26,14 @@ variables$max <- 50
 ## Run test with warning
 test_that("warning", {
   expect_warning(
-    adm.check_minmax(
+    check.minmax(
       datafile = datafile, 
       variables = variables
     ),
     "'LAB_TRIG' minimum value to low: -3.434 < -1"
   )
   expect_warning(
-    adm.check_minmax(
+    check.minmax(
       datafile = datafile,
       variables = variables
     ),
@@ -49,7 +49,7 @@ variables$max <- 60
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_minmax(
+    check.minmax(
       datafile = datafile, 
       variables = variables
     ),

@@ -11,7 +11,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test with error
 test_that("error", {
   expect_error(
-    adm.check_encrypted_values(
+    check.encrypted_values(
       datafile = datafile,
       variables = variables
     ),
@@ -26,7 +26,7 @@ variables$encrypted <- "no"
 ## Run test with success
 test_that("message", {
   expect_message(
-    adm.check_encrypted_values(
+    check.encrypted_values(
       datafile = datafile,
       variables = variables
     ),
@@ -41,7 +41,7 @@ variables$encrypted[2] <- "SI"
 ## Run test with error
 test_that("error", {
   expect_error(
-    adm.check_encrypted_values(
+    check.encrypted_values(
       datafile = datafile, 
       variables = variables
     ),
@@ -56,7 +56,7 @@ datafile$LAB_TRIG <- paste0("1:", datafile$LAB_TRIG)
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_encrypted_values(
+    check.encrypted_values(
       datafile = datafile, 
       variables = variables
     ),
@@ -71,7 +71,7 @@ variables$encrypted[2] <- "yes"
 ## Run test with error
 test_that("error", {
   expect_error(
-    adm.check_encrypted_values(
+    check.encrypted_values(
       datafile = datafile, 
       variables = variables
     ),
@@ -86,7 +86,7 @@ datafile$LAB_TRIG <- paste0("3::", datafile$LAB_TRIG)
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_encrypted_values(
+    check.encrypted_values(
       datafile = datafile, 
       variables = variables
     ),

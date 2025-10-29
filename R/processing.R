@@ -123,7 +123,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   findings <- list()
   
   ## Run diffdf for datafile
-  findings$datafile <- adm.check_diffdf(
+  findings$datafile <- adm.diffdf(
     datafile1 = datafile,
     datafile2 = df$datafile,
     keys = colnames(df$datafile)[1],
@@ -131,7 +131,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   )
   
   ## Run diffdf for variables
-  findings$variables <- adm.check_diffdf(
+  findings$variables <- adm.diffdf(
     datafile1 = variables,
     datafile2 = df$variables,
     keys = "name",
@@ -140,7 +140,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   
   ## Run diffdf for categories
   if (!is.null(categories)) {
-    findings$categories <- adm.check_diffdf(
+    findings$categories <- adm.diffdf(
       datafile1 = categories,
       datafile2 = df$categories,
       keys = c("variable", "name"),

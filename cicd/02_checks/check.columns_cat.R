@@ -11,7 +11,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_columns_cat(
+    check.columns_cat(
       datafile = datafile,
       categorie = categories
     ),
@@ -25,7 +25,7 @@ categories$variable[1] <- "test"
 ## Run check with warning
 test_that("warning", {
   expect_warning(
-    adm.check_columns_cat(
+    check.columns_cat(
       datafile = datafile,
       categories = categories
     ),

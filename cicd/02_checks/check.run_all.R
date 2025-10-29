@@ -10,7 +10,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test
 test_that("success", {
   expect_message(
-    test_df <<- adm.run_all_checks(
+    test_df <<- check.run_all(
       datafile = datafile,
       variables = variables,
       categories = categories

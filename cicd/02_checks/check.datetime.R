@@ -11,7 +11,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_datetime(
+    check.datetime(
       datafile = datafile,
       variables = variables
     ),
@@ -27,7 +27,7 @@ variables$valueType[1] <- "datetime"
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_datetime(
+    check.datetime(
       datafile = datafile,
       variables = variables
     ),
@@ -43,7 +43,7 @@ variables$valueType[1] <- "datetime"
 ## Run test with warning
 test_that("warning", {
   expect_warning(
-    adm.check_datetime(
+    check.datetime(
       datafile = datafile,
       variables = variables
     ),

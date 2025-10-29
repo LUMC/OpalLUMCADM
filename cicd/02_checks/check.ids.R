@@ -10,24 +10,23 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test with success
 test_that("success", {
   expect_message(
-    adm.check_infinite(
+    check.ids(
       datafile = datafile
     ),
-    "Checked infinite values"
+    "Checked for duplicated IDs"
   )
 })
 
 
-## Set an infinite value for warning
-datafile$MEDI_LPD <- as.numeric(1)
-datafile$MEDI_LPD[1] <- Inf
+## Add a duplicated ID
+datafile$id[2] <- datafile$id[1]
 
-## Run test with warning
+## Run check with warning
 test_that("warning", {
   expect_warning(
-    adm.check_infinite(
+    check.ids(
       datafile = datafile
     ),
-    "Some columns have Infinite values: MEDI_LPD"
+    "There are some duplicated IDs in column `id`"
   )
 })
