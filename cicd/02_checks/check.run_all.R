@@ -20,12 +20,12 @@ test_that("success", {
 })
 
 ## Check dimensions of object
-if (!all(dim(test_df) == c(11, 3))) {
+if (!all(dim(test_df) == c(12, 3))) {
   stop("Wrong dimensions!", dim(test_df))
 }
 
 ## Check type output
-if (table(test_df$type)[["OK"]] != 7) {
+if (table(test_df$type)[["OK"]] != 8) {
   stop("Wrong number of output `OK`!")
 }
 if (table(test_df$type)[["WARNING"]] != 3) {
