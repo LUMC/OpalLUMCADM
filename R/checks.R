@@ -25,6 +25,7 @@ check.run_all <- function(datafile, variables, categories = NULL) {
     logs[10] <- .capture_logs(check.datetime)(...)
     logs[11] <- .capture_logs(check.duplicated_ids)(...)
     logs[12] <- .capture_logs(check.duplicated_rows)(...)
+    logs[13] <- .capture_logs(check.character_ids)(...)
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -433,3 +434,22 @@ check.duplicated_rows <- function(variables, categories = NULL, ...) {
   
   message(" Checked for duplicated row in variable/categorie objects")
 }
+
+
+#' Function to check if key is a character value
+#'
+#' @param datafile data input
+#' @param id.name The name of the column representing the entity identifiers. Default is 'id'.
+#' 
+#' @export
+
+check.character_ids <- function(datafile, id.name = "id", ...) {
+  ## Check if ID column is character
+  dtype <- typeof(datafile[[id.name]])
+  if (dtype != "character") {
+    warning("ID values are not listed as character")
+  }
+  
+  message(" Checked for ID as character")
+}
+

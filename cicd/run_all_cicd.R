@@ -11,6 +11,7 @@ source("./cicd/01_tables/adm.table_save_overwrite.R")
 source("./cicd/01_tables/cleanup.R")
 
 ## 02_checks
+source("./cicd/02_checks/check.character_ids.R")
 source("./cicd/02_checks/check.columns_cat.R")
 source("./cicd/02_checks/check.columns_var.R")
 source("./cicd/02_checks/check.date.R")
