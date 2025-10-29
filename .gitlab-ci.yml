@@ -45,9 +45,10 @@ Checks:
     - Rscript ./cicd/02_checks/check.columns_var.R
     - Rscript ./cicd/02_checks/check.date.R
     - Rscript ./cicd/02_checks/check.datetime.R
+    - Rscript ./cicd/02_checks/check.duplicated_ids.R
+    - Rscript ./cicd/02_checks/check.duplicated_rows.R
     - Rscript ./cicd/02_checks/check.encrypted_values.R
     - Rscript ./cicd/02_checks/check.entitytype.R
-    - Rscript ./cicd/02_checks/check.ids.R
     - Rscript ./cicd/02_checks/check.infinite.R
     - Rscript ./cicd/02_checks/check.minmax.R
     - Rscript ./cicd/02_checks/check.required_columns.R
