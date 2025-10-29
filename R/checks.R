@@ -23,7 +23,7 @@ check.run_all <- function(datafile, variables, categories = NULL) {
     logs[08] <- .capture_logs(check.infinite)(...)
     logs[09] <- .capture_logs(check.date)(...)
     logs[10] <- .capture_logs(check.datetime)(...)
-    logs[11] <- .capture_logs(check.ids)(...)
+    logs[11] <- .capture_logs(check.duplicated_ids)(...)
     logs[12] <- .capture_logs(check.duplicated_rows)(...)
     
     ## Create dataframe from all logs
@@ -401,7 +401,7 @@ check.datetime <- function(datafile, variables, ...) {
 #' 
 #' @export
 
-check.ids <- function(datafile, id.name = "id", ...) {
+check.duplicated_ids <- function(datafile, id.name = "id", ...) {
   check_duplicated <- datafile |> select(all_of(id.name)) |> duplicated()
   
   if(TRUE %in% check_duplicated) {
