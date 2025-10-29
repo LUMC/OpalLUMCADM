@@ -10,7 +10,7 @@ load("./cicd/02_checks/dataset_cnsim.Rdata")
 ## Run test with success
 test_that("success", {
   expect_message(
-    check.ids(
+    check.duplicated_ids(
       datafile = datafile
     ),
     "Checked for duplicated IDs"
@@ -24,7 +24,7 @@ datafile$id[2] <- datafile$id[1]
 ## Run check with warning
 test_that("warning", {
   expect_warning(
-    check.ids(
+    check.duplicated_ids(
       datafile = datafile
     ),
     "There are some duplicated IDs in column `id`"
