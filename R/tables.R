@@ -72,13 +72,14 @@ adm.set_method <- function(method) {
 #' @param categories categories dataframe
 #' @param method String: write, update or overwrite
 #' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
+#' @param path String: Path of folder
 #' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @import opalr dplyr
 #' 
 #' @export
 
-adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, max_retries = 3, ...) {
+adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
   ## Set method
   method <- adm.set_method(method = method)
   
@@ -138,7 +139,17 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
       categories = categories,
       ...
     )
-    return(findings)
+    
+    ## Write to file or return object
+    if (!is.null(path)) {
+      today <- format(Sys.Date(), format = "%Y%m%d")
+      .write_to_excel(
+        findings = findings,
+        path = paste0(path, "/", tablename, "_", today, ".xlsx")
+      )
+    } else {
+      return(findings)
+    }
   }
 }
 
@@ -151,12 +162,14 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
 #' @param project_dst Origin opal project name for destination Opal
 #' @param tables_src Origin opal table name from source Opal
 #' @param tables_dst Origin opal table name for destination Opal
+#' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
+#' @param path String: Path of folder
 #'
 #' @import opalr dplyr
 #' 
 #' @export
 
-adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, tables_src, tables_dst, ...) {
+adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, tables_src, tables_dst, diffdf = FALSE, path = NULL, ...) {
   if (length(tables_dst) != length(tables_src)) {
     stop("Number of tablenames from source not equal to destination!")
   }
@@ -175,8 +188,11 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, tables_
       opal = opal_dst,
       projname = project_dst,
       tablename = tables_dst[item],
-      vars = df$variables,
-      cats = df$categories,
+      datafile = df$datafile,
+      variables = df$variables,
+      categories = df$categories,
+      diffdf = diffdf,
+      path = path,
       ...
     )
   }

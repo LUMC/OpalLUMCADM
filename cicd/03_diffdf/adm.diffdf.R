@@ -13,27 +13,11 @@ test_that("success", {
   output <- capture.output(
     adm.diffdf(
       datafile1 = datafile1,
-      datafile2 = datafile2,
-      path = NA
+      datafile2 = datafile2
     )
   )
   
   expect_true(grepl("No issues were found!", output))
-})
-
-
-## Run check for warning
-test_that("warning", {
-  expect_warning(
-    adm.diffdf(
-      datafile1 = datafile1,
-      datafile2 = datafile2,
-      path = "./cicd/03_diffdf/diffdf_output1.xlsx"
-    ),
-    "Workbook does not contain any worksheets. A worksheet will be added."
-  )
-  
-  expect_true(file.exists("./cicd/03_diffdf/diffdf_output1.xlsx"))
 })
 
 
@@ -45,11 +29,8 @@ test_that("warning", {
   expect_warning(
     adm.diffdf(
       datafile1 = datafile1,
-      datafile2 = datafile2,
-      path = "./cicd/03_diffdf/diffdf_output2.xlsx"
+      datafile2 = datafile2
     ),
     "Not all Values Compared Equal"
   )
-  
-  expect_true(file.exists("./cicd/03_diffdf/diffdf_output2.xlsx"))
 })

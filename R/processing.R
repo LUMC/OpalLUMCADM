@@ -123,7 +123,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   findings <- list()
   
   ## Run diffdf for datafile
-  findings$datafile <- adm.diffdf(
+  findings[["datafile"]] <- adm.diffdf(
     datafile1 = datafile,
     datafile2 = df$datafile,
     keys = colnames(df$datafile)[1],
@@ -131,7 +131,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   )
   
   ## Run diffdf for variables
-  findings$variables <- adm.diffdf(
+  findings[["variables"]] <- adm.diffdf(
     datafile1 = variables,
     datafile2 = df$variables,
     keys = "name",
@@ -140,7 +140,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   
   ## Run diffdf for categories
   if (!is.null(categories)) {
-    findings$categories <- adm.diffdf(
+    findings[["categories"]] <- adm.diffdf(
       datafile1 = categories,
       datafile2 = df$categories,
       keys = c("variable", "name"),
@@ -149,4 +149,35 @@ adm.fix_valuetype <- function(datafile, variables) {
   }
   
   return(findings)
+}
+
+
+#' Function to write diffdf to excel
+#'
+#' @param findings list of dataframes from diffdf
+#' @param path path to output dir
+#' 
+#' @import openxlsx
+#' 
+#' @export
+
+.write_to_excel <- function(findings, path, ...) {
+  ## Create a new workbook
+  wb <- createWorkbook()
+  
+  ## Loop through each findings object (datafile, variables, categories)
+  for (object in names(findings)) {
+    ## Loop through each diffdf item in object
+    for (sheetName in names(findings[[object]])) {
+      addWorksheet(wb = wb, sheetName = paste(object, sheetName, sep = "_"))
+      writeData(wb, sheet = paste(object, sheetName, sep = "_"), x = findings[[object]][[sheetName]])
+    }
+  }
+  
+  ## Save workbook
+  saveWorkbook(
+    wb = wb,
+    file = path,
+    ...
+  )
 }
