@@ -13,6 +13,7 @@ adm.table_save(
   categories = NULL,
   method = "write",
   diffdf = FALSE,
+  path = NULL,
   max_retries = 3,
   ...
 )
@@ -33,6 +34,8 @@ adm.table_save(
 \item{method}{String: write, update or overwrite}
 
 \item{diffdf}{Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table}
+
+\item{path}{String: Path of folder}
 
 \item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
 }

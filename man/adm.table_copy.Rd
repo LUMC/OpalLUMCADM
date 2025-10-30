@@ -11,6 +11,8 @@ adm.table_copy(
   project_dst,
   tables_src,
   tables_dst,
+  diffdf = FALSE,
+  path = NULL,
   ...
 )
 }
@@ -26,6 +28,10 @@ adm.table_copy(
 \item{tables_src}{Origin opal table name from source Opal}
 
 \item{tables_dst}{Origin opal table name for destination Opal}
+
+\item{diffdf}{Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table}
+
+\item{path}{String: Path of folder}
 }
 \description{
 Function to copy a table within Opal

@@ -4,16 +4,19 @@
 \alias{adm.diffdf}
 \title{Function to find differences in data}
 \usage{
-adm.diffdf(datafile1, datafile2, path = NA, keys = NULL, ...)
+adm.diffdf(datafile1, datafile2, keys = NULL, ...)
 }
 \arguments{
-\item{path}{path to output dir}
-
 \item{keys}{vector of variables (as strings) that defines a unique row in the base and compare dataframes}
 
 \item{dataframe1}{dataframe}
 
 \item{dataframe2}{dataframe}
+
+\item{path}{path to output dir}
+}
+\value{
+difference, dataframe with differences (if there are any)
 }
 \description{
 Function to find differences in data
