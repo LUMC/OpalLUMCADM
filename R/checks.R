@@ -13,19 +13,19 @@ check.run_all <- function(datafile, variables, categories = NULL) {
   ## Function containing all checks
   start_checks <- function(...) {
     logs <- list()
-    logs[01] <- .capture_logs(check.columns_var)(...)
-    logs[02] <- .capture_logs(check.columns_cat)(...)
-    logs[03] <- .capture_logs(check.valuetype)(...)
-    logs[04] <- .capture_logs(check.minmax)(...)
-    logs[05] <- .capture_logs(check.entitytype)(...)
-    logs[06] <- .capture_logs(check.required_columns)(...)
-    logs[07] <- .capture_logs(check.encrypted_values)(...)
-    logs[08] <- .capture_logs(check.infinite)(...)
-    logs[09] <- .capture_logs(check.date)(...)
-    logs[10] <- .capture_logs(check.datetime)(...)
-    logs[11] <- .capture_logs(check.duplicated_ids)(...)
-    logs[12] <- .capture_logs(check.duplicated_rows)(...)
-    logs[13] <- .capture_logs(check.character_ids)(...)
+    logs <- append(logs, .capture_logs(check.columns_var)(...))
+    logs <- append(logs, .capture_logs(check.columns_cat)(...))
+    logs <- append(logs, .capture_logs(check.valuetype)(...))
+    logs <- append(logs, .capture_logs(check.minmax)(...))
+    logs <- append(logs, .capture_logs(check.entitytype)(...))
+    logs <- append(logs, .capture_logs(check.required_columns)(...))
+    logs <- append(logs, .capture_logs(check.encrypted_values)(...))
+    logs <- append(logs, .capture_logs(check.infinite)(...))
+    logs <- append(logs, .capture_logs(check.date)(...))
+    logs <- append(logs, .capture_logs(check.datetime)(...))
+    logs <- append(logs, .capture_logs(check.duplicated_ids)(...))
+    logs <- append(logs, .capture_logs(check.duplicated_rows)(...))
+    logs <- append(logs, .capture_logs(check.character_ids)(...))
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -348,7 +348,7 @@ check.date <- function(datafile, variables, ...) {
     ## Check content
     if (FALSE %in% is_date) {
       warning(
-        "Some date columns don't have format: `yyyy-mm-dd`: ",
+        "Some date columns don't have Date format: `yyyy-mm-dd`: ",
         paste(names(is_date)[is_date == FALSE], collapse = ", ")
       )
     }
@@ -378,7 +378,7 @@ check.datetime <- function(datafile, variables, ...) {
     is_datetime <- apply(
       get_datetime, 2,
       function(x) {
-        all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
+        all(!is.na(as.POSIXct(na.omit(x), format = "%Y-%m-%d %H:%M:%OS")))
       })
     
     ## Check content
