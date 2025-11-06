@@ -38,30 +38,6 @@ adm.table_get <- function(opal, projname, tablename, ...) {
 }
 
 
-#' Function to set method for force & overwrite
-#'
-#' @param method String: write, update or overwrite
-#'
-#' @return method, vector with settings for force & overwrite
-#'
-#' @export
-
-adm.set_method <- function(method) {
-  ## Set method
-  if(method == "write"){
-    method = c(force = FALSE, overwrite = FALSE)
-  } else if(method == "update"){
-    method = c(force = TRUE, overwrite = FALSE)
-  } else if(method == "overwrite"){
-    method = c(force = TRUE, overwrite = TRUE)
-  } else {
-    stop("The method argument can only have three options: write, update or overwrite.")
-  }
-  
-  return(method)
-}
-
-
 #' Function to save a table from R to Opal
 #'
 #' @param opal a working opalr::opal_login
@@ -81,7 +57,7 @@ adm.set_method <- function(method) {
 
 adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
   ## Set method
-  method <- adm.set_method(method = method)
+  method <- .set_method(method = method)
   
   ## Set default entitytype
   type <- "Participant"

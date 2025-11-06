@@ -152,6 +152,31 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
+
+#' Function to set method for force & overwrite
+#'
+#' @param method String: write, update or overwrite
+#'
+#' @return method, vector with settings for force & overwrite
+#'
+#' @export
+
+.set_method <- function(method) {
+  ## Set method
+  if(method == "write"){
+    method = c(force = FALSE, overwrite = FALSE)
+  } else if(method == "update"){
+    method = c(force = TRUE, overwrite = FALSE)
+  } else if(method == "overwrite"){
+    method = c(force = TRUE, overwrite = TRUE)
+  } else {
+    stop("The method argument can only have three options: write, update or overwrite.")
+  }
+  
+  return(method)
+}
+
+
 #' Function to write diffdf to excel
 #'
 #' @param findings list of dataframes from diffdf
@@ -170,14 +195,16 @@ adm.fix_valuetype <- function(datafile, variables) {
     ## Loop through each diffdf item in object
     for (sheetName in names(findings[[object]])) {
       addWorksheet(wb = wb, sheetName = paste(object, sheetName, sep = "_"))
-      writeData(wb, sheet = paste(object, sheetName, sep = "_"), x = findings[[object]][[sheetName]])
+      writeData(wb = wb, sheet = paste(object, sheetName, sep = "_"), x = findings[[object]][[sheetName]])
     }
   }
   
-  ## Save workbook
-  saveWorkbook(
-    wb = wb,
-    file = path,
-    ...
-  )
+  ## Save workbook (if there are any differences)
+  if (!is_empty(names(wb))) {
+    saveWorkbook(
+      wb = wb,
+      file = path,
+      ...
+    )
+  }
 }
