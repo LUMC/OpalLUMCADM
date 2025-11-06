@@ -62,7 +62,7 @@ categories <- df$categories
 ```{r check}
 
 ## Check dataset
-adm.run_all_checks(
+check.run_all(
   datafile = datafile,
   variables = variables
 )
