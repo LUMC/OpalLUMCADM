@@ -8,21 +8,6 @@ library(OpalLUMCADM)
 load("./cicd/02_checks/dataset_cnsim.Rdata")
 
 
-## Run check with warning
-test_that("warning", {
-  expect_warning(
-    check.columns_var(
-      datafile = datafile,
-      variables = variables
-    ),
-    "Column 'id' in data: TRUE & column 'id' in variables: FALSE"
-  )
-})
-
-
-## Remove 'id' column for success
-datafile$id <- NULL
-
 ## Run test with success
 test_that("success", {
   expect_message(
@@ -31,5 +16,20 @@ test_that("success", {
       variables = variables
     ),
     "Checked columns between datafile & variables"
+  )
+})
+
+
+## Add column
+datafile$test <- 0
+
+## Run check with warning
+test_that("warning", {
+  expect_warning(
+    check.columns_var(
+      datafile = datafile,
+      variables = variables
+    ),
+    "Column 'test' in data: TRUE & column 'test' in variables: FALSE"
   )
 })

@@ -59,8 +59,12 @@ check.columns_var <- function(datafile, variables, ...) {
   columns_data <- colnames(datafile)
   columns_vars <- variables$name
   
+  ## Ignore id column from data
+  columns_data <- columns_data[columns_data != "id"]
+  
   ## Get differences
   column_diff <- setdiff(columns_data, columns_vars)
+  column_diff <- c(column_diff, setdiff(columns_vars, columns_data))
   
   ## Show differences
   if (!is_empty(column_diff)) {
