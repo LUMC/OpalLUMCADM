@@ -4,7 +4,7 @@
 \alias{adm.table_get}
 \title{Function to read a table from opal to R}
 \usage{
-adm.table_get(opal, projname, tablename, ...)
+adm.table_get(opal, projname, tablename, max_retries = 3, ...)
 }
 \arguments{
 \item{opal}{a working opalr::opal_login}
@@ -12,6 +12,8 @@ adm.table_get(opal, projname, tablename, ...)
 \item{projname}{Origin opal project name}
 
 \item{tablename}{Origin opal table name}
+
+\item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
 }
 \value{
 datalist, list with datafiles & dictionary

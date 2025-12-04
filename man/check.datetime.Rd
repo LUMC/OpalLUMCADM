@@ -4,12 +4,14 @@
 \alias{check.datetime}
 \title{Function to check datetime}
 \usage{
-check.datetime(datafile, variables, ...)
+check.datetime(datafile, variables, format = "\%Y-\%m-\%d \%H:\%M:\%OS", ...)
 }
 \arguments{
 \item{datafile}{data input}
 
 \item{variables}{variables dataframe}
+
+\item{format}{format of dates (default = "%Y-%m-%d %H:%M:%OS")}
 }
 \description{
 Function to check datetime

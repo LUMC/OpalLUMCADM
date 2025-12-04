@@ -4,12 +4,14 @@
 \alias{check.date}
 \title{Function to check date}
 \usage{
-check.date(datafile, variables, ...)
+check.date(datafile, variables, format = "\%Y-\%m-\%d", ...)
 }
 \arguments{
 \item{datafile}{data input}
 
 \item{variables}{variables dataframe}
+
+\item{format}{format of dates (default = "%Y-%m-%d")}
 }
 \description{
 Function to check date
