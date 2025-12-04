@@ -129,7 +129,7 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
     
     ## Write to file or return object
     if (!is.null(path)) {
-      today <- format(Sys.Date(), format = "%Y%m%d")
+      today <- format(Sys.time(), format = "%Y%m%d_%H%m")
       .write_to_excel(
         findings = findings,
         path = paste0(path, "/", tablename, "_", today, ".xlsx")
