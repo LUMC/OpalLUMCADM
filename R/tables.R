@@ -4,6 +4,7 @@
 #' @param opal a working opalr::opal_login
 #' @param projname Origin opal project name
 #' @param tablename Origin opal table name
+#' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @import opalr dplyr
 #' 
@@ -11,21 +12,31 @@
 #'
 #' @export
 
-adm.table_get <- function(opal, projname, tablename, ...) {
-  ## Get table from Opal
-  df <- opal.table_get(
-    opal = opal,
-    project = projname,
-    table = tablename,
-    ...
-  )
-  
-  ## Get dictionary from Opal
-  dict <- opal.table_dictionary_get(
-    opal = opal,
-    project = projname,
-    table = tablename
-  )
+adm.table_get <- function(opal, projname, tablename, max_retries = 3,...) {
+  ## Get table from Opal with x number of max_retries
+  attempt <- 1
+  while (attempt <= max_retries) {
+    tryCatch({
+      ## Get table from Opal
+      df <- opal.table_get(
+        opal = opal,
+        project = projname,
+        table = tablename,
+        ...
+      )
+      
+      ## Get dictionary from Opal
+      dict <- opal.table_dictionary_get(
+        opal = opal,
+        project = projname,
+        table = tablename
+      )
+      break
+    }, error = function(e) {
+      warning(paste("Attempt", attempt, "failed:", e$message))
+      attempt <<- attempt + 1
+    })
+  }
   
   ## Combine output
   datalist <- list(
