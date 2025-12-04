@@ -25,10 +25,10 @@ if (!all(dim(test_df) == c(13, 3))) {
 }
 
 ## Check type output
-if (table(test_df$type)[["OK"]] != 9) {
+if (table(test_df$type)[["OK"]] != 10) {
   stop("Wrong number of output `OK`!")
 }
-if (table(test_df$type)[["WARNING"]] != 3) {
+if (table(test_df$type)[["WARNING"]] != 2) {
   stop("Wrong number of output `WARNING`!")
 }
 if (table(test_df$type)[["ERROR"]] != 1) {
