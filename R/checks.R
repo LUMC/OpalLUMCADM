@@ -266,9 +266,12 @@ check.required_columns <- function(variables, ...) {
 
 check.encrypted_values <- function(datafile, variables, ...) {
   ## Check for encrypted column
-  col_encrypted <- str_detect(colnames(variables), "encrypted")
-  if (!TRUE %in% col_encrypted) {
+  if (!("encrypted" %in% colnames(variables))) {
     stop("There is no 'encrypted' column in variables object")
+  }
+  
+  if (!all(variables$encrypted %in% c("no", "yes", "SI"))) {
+    warning("There are values in encrypted columns that don't match: no, yes or SI")
   }
   
   ## Tres options

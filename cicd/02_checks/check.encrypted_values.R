@@ -34,6 +34,19 @@ test_that("message", {
   )
 })
 
+variables$encrypted[2] <- "test"
+
+## Run check with warning
+test_that("warning", {
+  expect_warning(
+    check.encrypted_values(
+      datafile = datafile,
+      variables = variables
+    ),
+    "There are values in encrypted columns that don't match: no, yes or SI"
+  )
+})
+
 
 ## Add 'encrypted' column for error
 variables$encrypted[2] <- "SI"
