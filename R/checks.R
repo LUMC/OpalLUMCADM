@@ -334,12 +334,13 @@ check.infinite <- function(datafile, ...) {
 #' 
 #' @param datafile data input
 #' @param variables variables dataframe
+#' @param format format of dates (default = "%Y-%m-%d")
 #' 
 #' @import lubridate
 #' 
 #' @export
 
-check.date <- function(datafile, variables, ...) {
+check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
   ## Get variables with date object
   get_date <- datafile %>%
     select(variables %>% filter(valueType == "date") %>% pull(name))
@@ -349,7 +350,7 @@ check.date <- function(datafile, variables, ...) {
     is_date <- apply(
       get_date, 2,
       function(x) {
-        all(!is.na(as.Date(na.omit(x), format = "%Y-%m-%d")))
+        all(!is.na(as.Date(na.omit(x), format = format)))
       })
     
     ## Check content
@@ -370,12 +371,13 @@ check.date <- function(datafile, variables, ...) {
 #' 
 #' @param datafile data input
 #' @param variables variables dataframe
+#' @param format format of dates (default = "%Y-%m-%d %H:%M:%OS")
 #' 
 #' @import lubridate
 #' 
 #' @export
 
-check.datetime <- function(datafile, variables, ...) {
+check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", ...) {
   ## Get variables with datetime object
   get_datetime <- datafile %>%
     select(variables %>% filter(valueType == "datetime") %>% pull(name))
@@ -385,7 +387,7 @@ check.datetime <- function(datafile, variables, ...) {
     is_datetime <- apply(
       get_datetime, 2,
       function(x) {
-        all(!is.na(as.POSIXct(na.omit(x), format = "%Y-%m-%d %H:%M:%OS")))
+        all(!is.na(as.POSIXct(na.omit(x), format = format)))
       })
     
     ## Check content
