@@ -208,3 +208,41 @@ adm.fix_valuetype <- function(datafile, variables) {
     )
   }
 }
+
+
+#' Function to get tres response codes
+#' 
+#' @param response respons codes captures from TRES
+#'
+#' @export
+
+.tres_response_codes <- function(response) {
+  ## Available codes by TRES
+  codes <- c(
+    "100" = "User not found",
+    "200" = "Logon error",
+    "300" = "Encrypt error",
+    "301" = "Decrypt error",
+    "303" = "Decrypt not allowed",
+    "304" = "Search imaging not allowed",
+    "305" = "Text contains illegal characters",
+    "306" = "Encrypted value contains invalid user GUID",
+    "307" = "Encrypted value is not base64",
+    "308" = "Search image is not base64",
+    "309" = "Decrypt string has invalid format",
+    "310" = "Plain text not specified (can't encrypt NA)",
+    "311" = "Decrypt string not specified",
+    "312" = "Encrypt/decrypt mode not specified",
+    "313" = "No permission to use api",
+    "314" = "User is not logged in",
+    "315" = "Encrypt on behalf not allowed",
+    "316" = "Encrypted value is invalid or tampered with",
+    "999" = "Unknown error occurred"
+  )
+  
+  ## Get unique error codes
+  clean_response <- unique(sub(".*\\(E([0-9]+)\\).*", "\\1", response))
+  
+  ## Print warnings
+  warning(paste0(clean_response, ": ", codes[clean_response], collapse = "\n"))
+}
