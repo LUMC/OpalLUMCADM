@@ -13,7 +13,7 @@ LazyData: true
 RoxygenNote: 7.3.3
 Depends: R (>= 4.3)
 Imports: 
-  opalr (>= 3.4.2),
+  opalr (>= 3.5.1),
   dplyr (>= 1.1.4),
   rlang (>= 1.1.6),
   diffdf (>= 1.1.1),
