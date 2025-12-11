@@ -147,8 +147,8 @@ adm.table_save <- function(opal, project, table, datafile, variables, categories
 #' @param opal_dst A working opalr::opal_login as destination
 #' @param project_src Origin opal project name from source Opal
 #' @param project_dst Origin opal project name for destination Opal
-#' @param tables_src Origin opal table name from source Opal
-#' @param tables_dst Origin opal table name for destination Opal
+#' @param table_src Origin opal table name from source Opal
+#' @param table_dst Origin opal table name for destination Opal
 #' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
 #' @param path String: Path of folder
 #'
@@ -156,25 +156,25 @@ adm.table_save <- function(opal, project, table, datafile, variables, categories
 #' 
 #' @export
 
-adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, tables_src, tables_dst, diffdf = FALSE, path = NULL, ...) {
-  if (length(tables_dst) != length(tables_src)) {
+adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, diffdf = FALSE, path = NULL, ...) {
+  if (length(table_dst) != length(table_src)) {
     stop("Number of tablenames from source not equal to destination!")
   }
   
   ## Loop through each tablename from source
-  for (item in 1:length(tables_src)) {
+  for (item in 1:length(table_src)) {
     ## Get table from Opal
     df <- adm.table_get(
       opal = opal_src,
       project = project_src,
-      table = tables_src[item]
+      table = table_src[item]
     )
 
     ## Save a copy of table in Opal
     adm.table_save(
       opal = opal_dst,
       project = project_dst,
-      table = tables_dst[item],
+      table = table_dst[item],
       datafile = df$datafile,
       variables = df$variables,
       categories = df$categories,
