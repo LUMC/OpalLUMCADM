@@ -9,8 +9,8 @@ adm.table_copy(
   opal_dst,
   project_src,
   project_dst,
-  tables_src,
-  tables_dst,
+  table_src,
+  table_dst,
   diffdf = FALSE,
   path = NULL,
   ...
@@ -25,9 +25,9 @@ adm.table_copy(
 
 \item{project_dst}{Origin opal project name for destination Opal}
 
-\item{tables_src}{Origin opal table name from source Opal}
+\item{table_src}{Origin opal table name from source Opal}
 
-\item{tables_dst}{Origin opal table name for destination Opal}
+\item{table_dst}{Origin opal table name for destination Opal}
 
 \item{diffdf}{Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table}
 

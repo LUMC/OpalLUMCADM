@@ -11,7 +11,7 @@ check.datetime(datafile, variables, format = "\%Y-\%m-\%d \%H:\%M:\%OS", ...)
 
 \item{variables}{variables dataframe}
 
-\item{format}{format of dates (default = "%Y-%m-%d %H:%M:%OS")}
+\item{format}{format of dates (default = "\%Y-\%m-\%d \%H:\%M:\%OS")}
 }
 \description{
 Function to check datetime

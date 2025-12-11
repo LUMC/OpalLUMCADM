@@ -4,14 +4,14 @@
 \alias{adm.table_get}
 \title{Function to read a table from opal to R}
 \usage{
-adm.table_get(opal, projname, tablename, max_retries = 3, ...)
+adm.table_get(opal, project, table, max_retries = 3, ...)
 }
 \arguments{
 \item{opal}{a working opalr::opal_login}
 
-\item{projname}{Origin opal project name}
+\item{project}{Origin opal project name}
 
-\item{tablename}{Origin opal table name}
+\item{table}{Origin opal table name}
 
 \item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
 }

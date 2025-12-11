@@ -11,7 +11,7 @@ check.date(datafile, variables, format = "\%Y-\%m-\%d", ...)
 
 \item{variables}{variables dataframe}
 
-\item{format}{format of dates (default = "%Y-%m-%d")}
+\item{format}{format of dates (default = "\%Y-\%m-\%d")}
 }
 \description{
 Function to check date

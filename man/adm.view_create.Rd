@@ -6,8 +6,8 @@
 \usage{
 adm.view_create(
   opal,
-  projname_view,
-  tablename_view,
+  project,
+  table,
   source,
   variables,
   categories = NULL,
@@ -17,9 +17,9 @@ adm.view_create(
 \arguments{
 \item{opal}{a working opalr::opal_login}
 
-\item{projname_view}{Origin opal project name}
+\item{project}{Origin opal project name for view}
 
-\item{tablename_view}{Origin opal table name}
+\item{table}{Origin opal table name for view}
 
 \item{source}{Vector with project and table names: project.table: CNSIM.CNSIM1}
 
