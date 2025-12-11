@@ -334,7 +334,7 @@ check.infinite <- function(datafile, ...) {
 #' 
 #' @param datafile data input
 #' @param variables variables dataframe
-#' @param format format of dates (default = "%Y-%m-%d")
+#' @param format format of dates (default = "\%Y-\%m-\%d")
 #' 
 #' @import lubridate
 #' 
@@ -371,7 +371,7 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
 #' 
 #' @param datafile data input
 #' @param variables variables dataframe
-#' @param format format of dates (default = "%Y-%m-%d %H:%M:%OS")
+#' @param format format of dates (default = "\%Y-\%m-\%d \%H:\%M:\%OS")
 #' 
 #' @import lubridate
 #' 
