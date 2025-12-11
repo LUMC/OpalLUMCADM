@@ -13,8 +13,8 @@ opal <- opal.login(
 ## Get dataframe
 df <- adm.table_get(
   opal = opal,
-  projname = "CNSIM",
-  tablename = "CNSIM1"
+  project = "CNSIM",
+  table = "CNSIM1"
 )
 
 ## Check dimensions of object

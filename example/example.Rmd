@@ -46,8 +46,8 @@ opal <- opal.login(
 ## Get table
 df <- adm.table_get(
   opal = opal,
-  projname = "CNSIM",
-  tablename = "CNSIM1"
+  project = "CNSIM",
+  table = "CNSIM1"
 )
 
 datafile <- df$datafile
@@ -79,8 +79,8 @@ check.run_all(
 ## Save table
 adm.table_save(
   opal = opal,
-  projname = "CNSIM",
-  tablename = "CNSIM_TEST",
+  project = "CNSIM",
+  table = "CNSIM_TEST",
   datafile = datafile,
   method = "write"
 )

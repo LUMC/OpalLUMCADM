@@ -100,8 +100,8 @@ adm.fix_valuetype <- function(datafile, variables) {
 #' Function to save a table from R to Opal + a table_get() + diffdf
 #'
 #' @param opal a working opalr::opal_login
-#' @param projname Origin opal project name
-#' @param tablename Origin opal table name
+#' @param project Origin opal project name
+#' @param table Origin opal table name
 #' @param datafile data dataframe
 #' @param variables variables dataframe
 #' @param categories categories dataframe
@@ -110,12 +110,12 @@ adm.fix_valuetype <- function(datafile, variables) {
 #' 
 #' @export
 
-.table_save_diffdf <- function(opal, projname, tablename, datafile, variables, categories = NULL, ...) {
+.table_save_diffdf <- function(opal, project, table, datafile, variables, categories = NULL, ...) {
   ## Get table
   df <- adm.table_get(
     opal = opal,
-    projname = projname,
-    tablename = tablename,
+    project = project,
+    table = table,
     ...
   )
   

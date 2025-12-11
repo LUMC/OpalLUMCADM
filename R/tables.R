@@ -2,8 +2,8 @@
 #' Function to read a table from opal to R
 #'
 #' @param opal a working opalr::opal_login
-#' @param projname Origin opal project name
-#' @param tablename Origin opal table name
+#' @param project Origin opal project name
+#' @param table Origin opal table name
 #' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @import opalr dplyr
@@ -12,7 +12,7 @@
 #'
 #' @export
 
-adm.table_get <- function(opal, projname, tablename, max_retries = 3,...) {
+adm.table_get <- function(opal, project, table, max_retries = 3,...) {
   ## Get table from Opal with x number of max_retries
   attempt <- 1
   while (attempt <= max_retries) {
@@ -20,16 +20,16 @@ adm.table_get <- function(opal, projname, tablename, max_retries = 3,...) {
       ## Get table from Opal
       df <- opal.table_get(
         opal = opal,
-        project = projname,
-        table = tablename,
+        project = project,
+        table = table,
         ...
       )
       
       ## Get dictionary from Opal
       dict <- opal.table_dictionary_get(
         opal = opal,
-        project = projname,
-        table = tablename
+        project = project,
+        table = table
       )
       break
     }, error = function(e) {
@@ -52,8 +52,8 @@ adm.table_get <- function(opal, projname, tablename, max_retries = 3,...) {
 #' Function to save a table from R to Opal
 #'
 #' @param opal a working opalr::opal_login
-#' @param projname Origin opal project name
-#' @param tablename Origin opal table name
+#' @param project Origin opal project name
+#' @param table Origin opal table name
 #' @param datafile data dataframe
 #' @param variables variables dataframe
 #' @param categories categories dataframe
@@ -66,7 +66,7 @@ adm.table_get <- function(opal, projname, tablename, max_retries = 3,...) {
 #' 
 #' @export
 
-adm.table_save <- function(opal, projname, tablename, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
+adm.table_save <- function(opal, project, table, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
   ## Set method
   method <- .set_method(method = method)
   
@@ -92,8 +92,8 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
     tryCatch({
       opal.table_save(
         opal = opal,
-        project = projname,
-        table = tablename,
+        project = project,
+        table = table,
         tibble = datafile,
         type = type,
         force = method["force"],
@@ -110,8 +110,8 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
   ## Remove user own permissions
   opal.table_perm_delete(
     opal = opal,
-    project = projname,
-    table = tablename,
+    project = project,
+    table = table,
     subject = opal$username
   )
   
@@ -119,8 +119,8 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
   if (diffdf) {
     findings <- .table_save_diffdf(
       opal = opal,
-      projname = projname,
-      tablename = tablename,
+      project = project,
+      table = table,
       datafile = datafile, 
       variables = variables,
       categories = categories,
@@ -132,7 +132,7 @@ adm.table_save <- function(opal, projname, tablename, datafile, variables, categ
       today <- format(Sys.time(), format = "%Y%m%d_%H%m")
       .write_to_excel(
         findings = findings,
-        path = paste0(path, "/", tablename, "_", today, ".xlsx")
+        path = paste0(path, "/", table, "_", today, ".xlsx")
       )
     } else {
       return(findings)
@@ -166,15 +166,15 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, tables_
     ## Get table from Opal
     df <- adm.table_get(
       opal = opal_src,
-      projname = project_src,
-      tablename = tables_src[item]
+      project = project_src,
+      table = tables_src[item]
     )
 
     ## Save a copy of table in Opal
     adm.table_save(
       opal = opal_dst,
-      projname = project_dst,
-      tablename = tables_dst[item],
+      project = project_dst,
+      table = tables_dst[item],
       datafile = df$datafile,
       variables = df$variables,
       categories = df$categories,

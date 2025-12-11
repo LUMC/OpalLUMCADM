@@ -2,8 +2,8 @@
 #' Function to create a view in Opal
 #'
 #' @param opal a working opalr::opal_login
-#' @param projname_view Origin opal project name
-#' @param tablename_view Origin opal table name
+#' @param project Origin opal project name for view
+#' @param table Origin opal table name for view
 #' @param source Vector with project and table names: project.table: CNSIM.CNSIM1
 #' @param variables variables dataframe
 #' @param categories categories dataframe
@@ -12,20 +12,20 @@
 #' 
 #' @export
 
-adm.view_create <- function(opal, projname_view, tablename_view, source, variables, categories = NULL, ...) {
+adm.view_create <- function(opal, project, table, source, variables, categories = NULL, ...) {
   ## Check if view already exists
   view_exists <- opal.table_exists(
     opal = opal,
-    project = projname_view,
-    table = tablename_view
+    project = project,
+    table = table
   )
   
   if (!view_exists) {
     ## Create view if it doesn't exist
     opal.table_view_create(
       opal = opal,
-      project = projname_view, 
-      table = tablename_view,
+      project = project, 
+      table = table,
       tables = source,
       ...
     )
@@ -38,8 +38,8 @@ adm.view_create <- function(opal, projname_view, tablename_view, source, variabl
   for (x in 1:nrow(variables)) {
     opal.table_dictionary_update(
       opal = opal,
-      project = projname_view, 
-      table = tablename_view,
+      project = project, 
+      table = table,
       variables = variables[x, ],
       categories = categories
     )
@@ -48,8 +48,8 @@ adm.view_create <- function(opal, projname_view, tablename_view, source, variabl
   ## Remove own user permissions
   opal.table_perm_delete(
     opal = opal,
-    project = projname_view,
-    table = tablename_view,
+    project = project,
+    table = table,
     subject = opal$username
   )
 }

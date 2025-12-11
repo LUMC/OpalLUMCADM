@@ -20,8 +20,8 @@ dict <- opal.table_dictionary_get(
 ## Create view
 adm.view_create(
   opal = opal,
-  projname_view = "CNSIM",
-  tablename_view = "CNSIM_TEST_VIEW",
+  project = "CNSIM",
+  table = "CNSIM_TEST_VIEW",
   source = c("CNSIM.CNSIM1"),
   variables = dict$variables,
   categories = dict$categories
@@ -30,8 +30,8 @@ adm.view_create(
 ## Get view
 df_get <- adm.table_get(
   opal = opal,
-  projname = "CNSIM",
-  tablename = "CNSIM_TEST_VIEW"
+  project = "CNSIM",
+  table = "CNSIM_TEST_VIEW"
 )
 
 ## Check dimensions of object

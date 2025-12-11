@@ -23,8 +23,8 @@ df <- tibble(
 ## Save dataframe
 adm.table_save(
   opal = opal,
-  projname = "CNSIM",
-  tablename = "CNSIM_TEST",
+  project = "CNSIM",
+  table = "CNSIM_TEST",
   datafile = df,
   method = "update"
 )
@@ -32,8 +32,8 @@ adm.table_save(
 ## Get dataframe
 df_get <- adm.table_get(
   opal = opal,
-  projname = "CNSIM",
-  tablename = "CNSIM_TEST"
+  project = "CNSIM",
+  table = "CNSIM_TEST"
 )
 
 ## Check dimensions of object
