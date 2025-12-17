@@ -21,6 +21,7 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
   )
   
   if (!view_exists) {
+    message("Creating new view...")
     ## Create view if it doesn't exist
     opal.table_view_create(
       opal = opal,
@@ -29,6 +30,8 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
       tables = source,
       ...
     )
+  } else {
+    message("Updating existing view...")
   }
   
   ## Set script column as required for views
