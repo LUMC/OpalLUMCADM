@@ -246,3 +246,25 @@ adm.fix_valuetype <- function(datafile, variables) {
   ## Print warnings
   warning(paste0(clean_response, ": ", codes[clean_response], collapse = "\n"))
 }
+
+
+#' Function to cleanup NA or null or ""
+#' 
+#' @param datafile DataFrame to clean
+#'
+#' @return datafile, DataFrame with NA/null/"" cleaned
+#' 
+#' @export
+
+.clean_NA <- function(datafile) {
+  ## Clean up ""
+  datafile[datafile == ""] <- NA
+  
+  ## Clean up "NA"
+  datafile[datafile == "NA"] <- NA
+  
+  ## Clean up "null"
+  datafile[datafile == "null"] <- NA
+  
+  return(datafile)
+}

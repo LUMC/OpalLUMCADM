@@ -17,6 +17,10 @@ adm.diffdf <- function(datafile1, datafile2, keys = NULL, ...) {
   datafile1 <- datafile1 |> dplyr::mutate(across(everything(), as.character))
   datafile2 <- datafile2 |> dplyr::mutate(across(everything(), as.character))
   
+  ## Ignore if NA==NA or NULL=NA
+  datafile1 <- .clean_NA(datafile = datafile1)
+  datafile2 <- .clean_NA(datafile = datafile2)
+  
   ## Get differences
   difference <- diffdf(
     base = datafile1,
