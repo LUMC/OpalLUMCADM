@@ -241,10 +241,13 @@ adm.fix_valuetype <- function(datafile, variables) {
   )
   
   ## Get unique error codes
-  clean_response <- unique(sub(".*\\(E([0-9]+)\\).*", "\\1", response))
+  clean_response <- c(sub(".*\\(E([0-9]+)\\).*", "\\1", response), "316")
+  count_response <- table(clean_response)
   
   ## Print warnings
-  warning(paste0(clean_response, ": ", codes[clean_response], collapse = "\n"))
+  for (x in names(count_response)) {
+    warning(paste0(count_response[[x]], "x\tE", x, ": ", codes[x]))
+  }
 }
 
 
