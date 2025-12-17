@@ -356,7 +356,7 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
     ## Check content
     if (FALSE %in% is_date) {
       warning(
-        "Some date columns don't have Date format: `yyyy-mm-dd`: ",
+        "Some date columns don't have Date format: `", format, "`: ",
         paste(names(is_date)[is_date == FALSE], collapse = ", ")
       )
     }
@@ -393,7 +393,7 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
     ## Check content
     if (FALSE %in% is_datetime) {
       warning(
-        "Some datetime columns don't have POSIXct format: `yyyy-mm-dd hh:mm:ss`: ", 
+        "Some datetime columns don't have POSIXct format: `", format, "`: ", 
         paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
       )
     }
