@@ -8,6 +8,7 @@ source("./cicd/01_tables/adm.table_get.R")
 source("./cicd/01_tables/adm.table_save_write.R")
 source("./cicd/01_tables/adm.table_save_update.R")
 source("./cicd/01_tables/adm.table_save_overwrite.R")
+source("./cicd/01_tables/adm.table_save_diffdf_overwrite.R")
 source("./cicd/01_tables/cleanup.R")
 
 ## 02_checks
