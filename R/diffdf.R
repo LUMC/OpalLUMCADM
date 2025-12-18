@@ -8,7 +8,7 @@
 #' 
 #' @import diffdf 
 #' 
-#' @return difference, dataframe with differences (if there are any)
+#' @return findings, dataframe with differences (if there are any)
 #' 
 #' @export
 
@@ -22,7 +22,7 @@ adm.diffdf <- function(datafile1, datafile2, keys = NULL, ...) {
   datafile2 <- .clean_NA(datafile = datafile2)
   
   ## Get differences
-  difference <- diffdf(
+  findings <- diffdf(
     base = datafile1,
     compare = datafile2,
     keys = keys,
@@ -30,9 +30,52 @@ adm.diffdf <- function(datafile1, datafile2, keys = NULL, ...) {
   )
   
   ## Merge all vardiffs
-  difference[["VarDiff"]] <- do.call(rbind, difference[grep("VarDiff_", names(difference))])
-  difference[grep("VarDiff_", names(difference))] <- NULL
+  findings[["VarDiff"]] <- do.call(rbind, findings[grep("VarDiff_", names(findings))])
+  findings[grep("VarDiff_", names(findings))] <- NULL
   
-  ## Return difference
-  return(difference)
+  ## Return findings
+  return(findings)
+}
+
+
+#' Function to check datafile, variables & categories in one go
+#'
+#' @param datalist1 List object: list(datafile = datafile, categories = categories, variables = variables)
+#' @param datalist2 List object: list(datafile = datafile, categories = categories, variables = variables)
+#' 
+#' @return findings, dataframe with differences (if there are any)
+#' 
+#' @export
+
+adm.complete_diffdf <- function(datalist1, datalist2, ...) {
+  ## Create diffdf output list
+  findings <- list()
+  
+  ## Run diffdf for datafile
+  findings[["datafile"]] <- adm.diffdf(
+    datafile1 = datalist1$datafile,
+    datafile2 = datalist2$datafile,
+    keys = colnames(datalist1$datafile)[1],
+    ...
+  )
+  
+  ## Run diffdf for variables
+  findings[["variables"]] <- adm.diffdf(
+    datafile1 = datalist1$variables,
+    datafile2 = datalist2$variables,
+    keys = "name",
+    ...
+  )
+  
+  ## Run diffdf for categories
+  if (!is.null(datalist1$categories) & !is.null(datalist2$categories)) {
+    findings[["categories"]] <- adm.diffdf(
+      datafile1 = datalist1$categories,
+      datafile2 = datalist2$categories,
+      keys = c("variable", "name"),
+      ...
+    )
+  }
+  
+  return(findings)
 }

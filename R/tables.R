@@ -58,15 +58,13 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
 #' @param variables variables dataframe
 #' @param categories categories dataframe
 #' @param method String: write, update or overwrite
-#' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
-#' @param path String: Path of folder
 #' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
 #'
 #' @import opalr dplyr
 #' 
 #' @export
 
-adm.table_save <- function(opal, project, table, datafile, variables, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
+adm.table_save <- function(opal, project, table, datafile, variables, categories = NULL, method = "write", max_retries = 3, ...) {
   ## Set method
   method <- .set_method(method = method)
   
@@ -114,29 +112,71 @@ adm.table_save <- function(opal, project, table, datafile, variables, categories
     table = table,
     subject = opal$username
   )
+}
+
+
+#' Function to save a table from R to Opal with a diffdf check
+#'
+#' @param opal a working opalr::opal_login
+#' @param project Origin opal project name
+#' @param table Origin opal table name
+#' @param datafile data dataframe
+#' @param variables variables dataframe
+#' @param categories categories dataframe
+#' @param method String: write, update or overwrite
+#' @param path String: Path of folder
+#' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
+#'
+#' @import opalr dplyr
+#' 
+#' @export
+
+adm.table_save_diffdf <- function(opal, project, table, datafile, variables, categories = NULL, method = "write", path = NULL, max_retries = 3, ...) {
+  ## Get data from Opal before upload
+  datalist1 <- adm.table_get(
+    opal = opal,
+    project = project,
+    table = table,
+    ...
+  )
   
+  ## Save table
+  adm.table_save(
+    opal = opal,
+    project = project,
+    table = table,
+    datafile = datafile,
+    variables = variables,
+    categories = categories,
+    method = method,
+    max_retries = max_retries,
+    ...
+  )
+  
+  ## Get data from Opal after upload
+  datalist2 <- adm.table_get(
+    opal = opal,
+    project = project,
+    table = table,
+    ...
+  )
+  
+  datalist2$datafile[[2]] <- 5
   ## Run diffdf
-  if (diffdf) {
-    findings <- .table_save_diffdf(
-      opal = opal,
-      project = project,
-      table = table,
-      datafile = datafile, 
-      variables = variables,
-      categories = categories,
-      ...
+  findings <- adm.complete_diffdf(
+    datalist1 = datalist1,
+    datalist2 = datalist2
+  )
+  
+  ## Save or return output of diffdf
+  if (!is.null(path)) {
+    today <- format(Sys.time(), format = "%Y%m%d_%H%m%S")
+    .write_to_excel(
+      findings = findings,
+      path = paste0(path, "/", table, "_", today, ".xlsx")
     )
-    
-    ## Write to file or return object
-    if (!is.null(path)) {
-      today <- format(Sys.time(), format = "%Y%m%d_%H%m%S")
-      .write_to_excel(
-        findings = findings,
-        path = paste0(path, "/", table, "_", today, ".xlsx")
-      )
-    } else {
-      return(findings)
-    }
+  } else {
+    return(findings)
   }
 }
 

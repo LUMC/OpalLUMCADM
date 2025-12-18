@@ -97,62 +97,6 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Function to save a table from R to Opal + a table_get() + diffdf
-#'
-#' @param opal a working opalr::opal_login
-#' @param project Origin opal project name
-#' @param table Origin opal table name
-#' @param datafile data dataframe
-#' @param variables variables dataframe
-#' @param categories categories dataframe
-#' 
-#' @import opalr
-#' 
-#' @export
-
-.table_save_diffdf <- function(opal, project, table, datafile, variables, categories = NULL, ...) {
-  ## Get table
-  df <- adm.table_get(
-    opal = opal,
-    project = project,
-    table = table,
-    ...
-  )
-  
-  ## Create diffdf output list
-  findings <- list()
-  
-  ## Run diffdf for datafile
-  findings[["datafile"]] <- adm.diffdf(
-    datafile1 = datafile,
-    datafile2 = df$datafile,
-    keys = colnames(df$datafile)[1],
-    ...
-  )
-  
-  ## Run diffdf for variables
-  findings[["variables"]] <- adm.diffdf(
-    datafile1 = variables,
-    datafile2 = df$variables,
-    keys = "name",
-    ...
-  )
-  
-  ## Run diffdf for categories
-  if (!is.null(categories)) {
-    findings[["categories"]] <- adm.diffdf(
-      datafile1 = categories,
-      datafile2 = df$categories,
-      keys = c("variable", "name"),
-      ...
-    )
-  }
-  
-  return(findings)
-}
-
-
-
 #' Function to set method for force & overwrite
 #'
 #' @param method String: write, update or overwrite
@@ -192,6 +136,12 @@ adm.fix_valuetype <- function(datafile, variables) {
   
   ## Loop through each findings object (datafile, variables, categories)
   for (object in names(findings)) {
+    ## Show if no issues were found
+    if (length(findings[[object]]) == 0) {
+      addWorksheet(wb = wb, sheetName = object)
+      writeData(wb = wb, sheet = object, x = "No issues were found!")
+    }
+    
     ## Loop through each diffdf item in object
     for (sheetName in names(findings[[object]])) {
       addWorksheet(wb = wb, sheetName = paste(object, sheetName, sep = "_"))
@@ -251,7 +201,7 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Function to cleanup NA or null or ""
+#' Function to cleanup NA or null or "" for diffdf
 #' 
 #' @param datafile DataFrame to clean
 #'
