@@ -9,7 +9,7 @@ adm.table_save_diffdf(
   project,
   table,
   datafile,
-  variables,
+  variables = NULL,
   categories = NULL,
   method = "write",
   path = NULL,

@@ -9,7 +9,7 @@ adm.table_save(
   project,
   table,
   datafile,
-  variables,
+  variables = NULL,
   categories = NULL,
   method = "write",
   max_retries = 3,
