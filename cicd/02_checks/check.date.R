@@ -47,6 +47,6 @@ test_that("warning", {
       datafile = datafile,
       variables = variables
     ),
-    "Some date columns don't have Date format: `yyyy-mm-dd`: LAB_TSC"
+    "Some date columns don't have Date format: `%Y-%m-%d`: LAB_TSC"
   )
 })

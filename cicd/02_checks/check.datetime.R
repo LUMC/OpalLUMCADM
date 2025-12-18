@@ -47,6 +47,6 @@ test_that("warning", {
       datafile = datafile,
       variables = variables
     ),
-    "Some datetime columns don't have POSIXct format: `yyyy-mm-dd hh:mm:ss`: LAB_TSC"
+    "Some datetime columns don't have POSIXct format: `%Y-%m-%d %H:%M:%OS`: LAB_TSC"
   )
 })

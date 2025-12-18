@@ -18,14 +18,20 @@ dict <- opal.table_dictionary_get(
 )
 
 ## Create view
-adm.view_create(
-  opal = opal,
-  project = "CNSIM",
-  table = "CNSIM_TEST_VIEW",
-  source = c("CNSIM.CNSIM1"),
-  variables = dict$variables,
-  categories = dict$categories
-)
+test_that("success", {
+  expect_message(
+    adm.view_create(
+      opal = opal,
+      project = "CNSIM",
+      table = "CNSIM_TEST_VIEW",
+      source = c("CNSIM.CNSIM1"),
+      variables = dict$variables,
+      categories = dict$categories
+    ),
+    "Creating new view..."
+  )
+})
+
 
 ## Get view
 df_get <- adm.table_get(
@@ -45,3 +51,19 @@ if (round(mean(df_get$datafile$LAB_TSC, na.rm = TRUE), 2) != 5.87) {
 }
 
 message("View is loaded correctly")
+
+
+## Update view
+test_that("success", {
+  expect_message(
+    adm.view_create(
+      opal = opal,
+      project = "CNSIM",
+      table = "CNSIM_TEST_VIEW",
+      source = c("CNSIM.CNSIM1"),
+      variables = dict$variables,
+      categories = dict$categories
+    ),
+    "Updating existing view..."
+  )
+})
