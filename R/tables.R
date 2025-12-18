@@ -13,8 +13,10 @@
 #' @export
 
 adm.table_get <- function(opal, project, table, max_retries = 3,...) {
-  ## Get table from Opal with x number of max_retries
   attempt <- 1
+  dict <- NULL
+  
+  ## Get table from Opal with x number of max_retries
   while (attempt <= max_retries) {
     tryCatch({
       ## Get table from Opal
@@ -31,6 +33,10 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
         project = project,
         table = table
       )
+      
+      ## Set categories as NULL if empty
+      dict$categories <- if (nrow(dict$categories)) dict$categories else NULL
+      
       break
     }, error = function(e) {
       warning(paste("Attempt", attempt, "failed:", e$message))
@@ -42,7 +48,7 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
   datalist <- list(
     datafile = df,
     variables = dict$variables,
-    categories = if (nrow(dict$categories)) dict$categories else NULL
+    categories = dict$categories
   )
   
   return(datalist)
@@ -64,7 +70,7 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
 #' 
 #' @export
 
-adm.table_save <- function(opal, project, table, datafile, variables, categories = NULL, method = "write", max_retries = 3, ...) {
+adm.table_save <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", max_retries = 3, ...) {
   ## Set method
   method <- .set_method(method = method)
   
@@ -72,7 +78,7 @@ adm.table_save <- function(opal, project, table, datafile, variables, categories
   type <- "Participant"
   
   ## Apply dictionary if variables are present
-  if (!missing(variables)) {
+  if (!is.null(variables)) {
     datafile <- dictionary.apply(
       tibble = datafile,
       variables = variables,
@@ -131,7 +137,7 @@ adm.table_save <- function(opal, project, table, datafile, variables, categories
 #' 
 #' @export
 
-adm.table_save_diffdf <- function(opal, project, table, datafile, variables, categories = NULL, method = "write", path = NULL, max_retries = 3, ...) {
+adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", path = NULL, max_retries = 3, ...) {
   ## Get data from Opal before upload
   datalist1 <- adm.table_get(
     opal = opal,
@@ -161,7 +167,6 @@ adm.table_save_diffdf <- function(opal, project, table, datafile, variables, cat
     ...
   )
   
-  datalist2$datafile[[2]] <- 5
   ## Run diffdf
   findings <- adm.complete_diffdf(
     datalist1 = datalist1,

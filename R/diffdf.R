@@ -60,12 +60,14 @@ adm.complete_diffdf <- function(datalist1, datalist2, ...) {
   )
   
   ## Run diffdf for variables
-  findings[["variables"]] <- adm.diffdf(
-    datafile1 = datalist1$variables,
-    datafile2 = datalist2$variables,
-    keys = "name",
-    ...
-  )
+  if (!is.null(datalist1$variables) & !is.null(datalist2$variables)) {
+    findings[["variables"]] <- adm.diffdf(
+      datafile1 = datalist1$variables,
+      datafile2 = datalist2$variables,
+      keys = "name",
+      ...
+    )
+  }
   
   ## Run diffdf for categories
   if (!is.null(datalist1$categories) & !is.null(datalist2$categories)) {
