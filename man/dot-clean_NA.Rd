@@ -2,7 +2,7 @@
 % Please edit documentation in R/processing.R
 \name{.clean_NA}
 \alias{.clean_NA}
-\title{Function to cleanup NA or null or ""}
+\title{Function to cleanup NA or null or "" for diffdf}
 \usage{
 .clean_NA(datafile)
 }
@@ -13,5 +13,5 @@
 datafile, DataFrame with NA/null/"" cleaned
 }
 \description{
-Function to cleanup NA or null or ""
+Function to cleanup NA or null or "" for diffdf
 }

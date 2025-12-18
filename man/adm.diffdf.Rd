@@ -16,7 +16,7 @@ adm.diffdf(datafile1, datafile2, keys = NULL, ...)
 \item{path}{path to output dir}
 }
 \value{
-difference, dataframe with differences (if there are any)
+findings, dataframe with differences (if there are any)
 }
 \description{
 Function to find differences in data
