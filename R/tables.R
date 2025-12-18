@@ -212,7 +212,8 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
     df <- adm.table_get(
       opal = opal_src,
       project = project_src,
-      table = table_src[item]
+      table = table_src[item],
+      ...
     )
     
     ## Run save with diffdf or not
