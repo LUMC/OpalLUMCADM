@@ -214,18 +214,29 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
       project = project_src,
       table = table_src[item]
     )
-
-    ## Save a copy of table in Opal
-    adm.table_save(
-      opal = opal_dst,
-      project = project_dst,
-      table = table_dst[item],
-      datafile = df$datafile,
-      variables = df$variables,
-      categories = df$categories,
-      diffdf = diffdf,
-      path = path,
-      ...
-    )
+    
+    ## Run save with diffdf or not
+    if (isTRUE(diffdf)) {
+      adm.table_save_diffdf(
+        opal = opal_dst,
+        project = project_dst,
+        table = table_dst[item],
+        datafile = df$datafile,
+        variables = df$variables,
+        categories = df$categories,
+        path = path,
+        ...
+      )
+    } else {
+      adm.table_save(
+        opal = opal_dst,
+        project = project_dst,
+        table = table_dst[item],
+        datafile = df$datafile,
+        variables = df$variables,
+        categories = df$categories,
+        ...
+      )
+    }
   }
 }
