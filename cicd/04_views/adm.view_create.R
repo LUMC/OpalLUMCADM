@@ -1,6 +1,7 @@
 
 ## Load libraries
 library(opalr)
+library(testthat)
 library(OpalLUMCADM)
 
 ## Set opal-demo login
