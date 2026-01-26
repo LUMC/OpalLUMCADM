@@ -8,7 +8,13 @@ install.packages("remotes")
 install.packages("git2r")
 ```
 
-2. Install the "OpalLUMCADM" package:
+2. Install the "Rtres" package:
+```R
+## Install package
+remotes::install_github("ZorgTTP/rtres")
+```
+
+3. Install the "OpalLUMCADM" package:
 ```R
 ## Install package
 remotes::install_git(
@@ -30,7 +36,3 @@ library(OpalLUMCADM)
 ## Usage
 Check `example.Rmd` in the example folder
 
-## Rewrite Roxygen:
-```R
-roxygen2::roxygenise()
-```
