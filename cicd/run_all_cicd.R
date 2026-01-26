@@ -12,6 +12,7 @@ source("./cicd/01_tables/adm.table_save_diffdf_overwrite.R")
 source("./cicd/01_tables/cleanup.R")
 
 ## 02_checks
+source("./cicd/02_checks/check.cat_text_labels.R")
 source("./cicd/02_checks/check.character_ids.R")
 source("./cicd/02_checks/check.columns_cat.R")
 source("./cicd/02_checks/check.columns_var.R")
@@ -25,6 +26,7 @@ source("./cicd/02_checks/check.infinite.R")
 source("./cicd/02_checks/check.minmax.R")
 source("./cicd/02_checks/check.required_columns.R")
 source("./cicd/02_checks/check.valuetype.R")
+source("./cicd/02_checks/check.var_column_datatype.R")
 source("./cicd/02_checks/check.run_all.R")
 
 ## 03_diffdf

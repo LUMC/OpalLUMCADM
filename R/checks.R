@@ -26,6 +26,8 @@ check.run_all <- function(datafile, variables, categories = NULL) {
     logs <- append(logs, .capture_logs(check.duplicated_ids)(...))
     logs <- append(logs, .capture_logs(check.duplicated_rows)(...))
     logs <- append(logs, .capture_logs(check.character_ids)(...))
+    logs <- append(logs, .capture_logs(check.var_column_datatype)(...))
+    logs <- append(logs, .capture_logs(check.cat_text_labels)(...))
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -462,3 +464,48 @@ check.character_ids <- function(datafile, id.name = "id", ...) {
   message(" Checked for ID as character")
 }
 
+
+#' Function to check if datafile values are present in categorie labels (text values only)
+#'
+#' @param datafile data input
+#' @param categories categories dataframe
+#' 
+#' @export
+
+check.cat_text_labels <- function(datafile, categories, ...) {
+  ## Get all character categories
+  columns <- which(sapply(datafile, .map_dtype) == "text")
+  categories <- categories[categories$variable %in% names(columns), ]
+  
+  for (x in unique(categories$variable)) {
+    cat_value <- categories$name[categories$variable == x]
+    data_value <- na.omit(datafile[[x]][!(datafile[[x]] %in% cat_value)])
+    if (!is_empty(data_value)) {
+      warning(paste0("Categorie object is possibly missing a value for column: `", x, "`"))
+    }
+  }
+  
+  message(" Checked categorie text labels")
+}
+
+
+#' Function to check if all columns in variables are character type
+#'
+#' @param variables variables dataframe
+#' 
+#' @export
+
+check.var_column_datatype <- function(variables, ...) {
+  ## Remove columns with NA only
+  variables <- variables[, colSums(is.na(variables)) < nrow(variables)]
+  
+  ## Ignore these columns
+  variables[, c("min", "max", "repeatable", "index")] <- NULL
+  
+  ## Check if there are columns that are not character
+  if (!all(sapply(na.omit(variables), class) == "character")) {
+    warning("Not all columns in variable object are character (could cause ParseException)")
+  }
+  
+  message(" Checked variable object datatypes")
+}

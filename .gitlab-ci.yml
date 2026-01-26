@@ -42,6 +42,7 @@ Checks:
     - R CMD INSTALL "$PKG_FILE"
     - Rscript ./cicd/02_checks/create_dataset.R
   script:
+    - Rscript ./cicd/02_checks/check.cat_text_labels.R
     - Rscript ./cicd/02_checks/check.character_ids.R
     - Rscript ./cicd/02_checks/check.columns_cat.R
     - Rscript ./cicd/02_checks/check.columns_var.R
@@ -55,6 +56,7 @@ Checks:
     - Rscript ./cicd/02_checks/check.minmax.R
     - Rscript ./cicd/02_checks/check.required_columns.R
     - Rscript ./cicd/02_checks/check.valuetype.R
+    - Rscript ./cicd/02_checks/check.var_column_datatype.R
     - Rscript ./cicd/02_checks/check.run_all.R
 
 DiffDF:
