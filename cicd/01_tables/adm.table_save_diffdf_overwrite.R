@@ -2,6 +2,7 @@
 ## Load libraries
 library(opalr)
 library(dplyr)
+library(testthat)
 library(OpalLUMCADM)
 
 ## Set opal-demo login
