@@ -62,7 +62,7 @@ check.run_all <- function(datafile, variables, categories = NULL) {
 #' 
 #' @return A list of warnings about missing or extra columns.
 #' 
-#' @import dplyr
+#' @import dplyr purrr
 #' 
 #' @export
 
@@ -267,7 +267,7 @@ check.entitytype <- function(variables, ...) {
 #' 
 #' @return A list of warnings if required columns are missing.
 #' 
-#' @import dplyr
+#' @import dplyr stringr
 #' 
 #' @export
 
@@ -388,7 +388,7 @@ check.infinite <- function(datafile, ...) {
 #' 
 #' @return A warning if any date column fails format validation.
 #' 
-#' @import dplyr
+#' @import dplyr lubridate
 #' 
 #' @export
 
@@ -429,7 +429,7 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
 #' 
 #' @return A warning if any datetime column fails format validation.
 #' 
-#' @import dplyr
+#' @import dplyr lubridate
 #' 
 #' @export
 
