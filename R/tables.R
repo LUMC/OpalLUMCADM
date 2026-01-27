@@ -79,6 +79,12 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
   
   ## Apply dictionary if variables are present
   if (!is.null(variables)) {
+    ## Fix dates & datetimes to character to avoid haven problems
+    columns <- sapply(datafile, .map_dtype)
+    date_columns <- names(columns)[columns %in% c("date", "datetime")]
+    datafile[date_columns] <- lapply(datafile[date_columns], as.character)
+    
+    ## Apply dictionary
     datafile <- dictionary.apply(
       tibble = datafile,
       variables = variables,
@@ -194,6 +200,7 @@ adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NU
 #' @param project_dst Origin opal project name for destination Opal
 #' @param table_src Origin opal table name from source Opal
 #' @param table_dst Origin opal table name for destination Opal
+#' @param method String: write, update or overwrite
 #' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
 #' @param path String: Path of folder
 #'
@@ -201,7 +208,7 @@ adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NU
 #' 
 #' @export
 
-adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, diffdf = FALSE, path = NULL, ...) {
+adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, method = "write", diffdf = FALSE, path = NULL, ...) {
   if (length(table_dst) != length(table_src)) {
     stop("Number of tablenames from source not equal to destination!")
   }
@@ -225,6 +232,7 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
         datafile = df$datafile,
         variables = df$variables,
         categories = df$categories,
+        method = method,
         path = path,
         ...
       )
@@ -236,6 +244,7 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
         datafile = df$datafile,
         variables = df$variables,
         categories = df$categories,
+        method = method,
         ...
       )
     }
