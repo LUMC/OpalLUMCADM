@@ -16,5 +16,10 @@ opal.table_delete(
   project = "CNSIM",
   table = "CNSIM_TEST"
 )
+opal.table_delete(
+  opal = opal,
+  project = "CNSIM",
+  table = "CNSIM_TEST2"
+)
 
 message("Cleanup is done!")
