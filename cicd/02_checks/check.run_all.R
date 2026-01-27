@@ -19,6 +19,8 @@ test_that("success", {
   )
 })
 
+print(test_df)
+
 ## Check dimensions of object
 if (!all(dim(test_df) == c(15, 3))) {
   stop("Wrong dimensions!", dim(test_df))
