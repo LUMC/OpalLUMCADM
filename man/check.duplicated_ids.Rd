@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.duplicated_ids}
 \alias{check.duplicated_ids}
-\title{Function to check if datafile has duplicated ids}
+\title{Check for Duplicated IDs in Data}
 \usage{
 check.duplicated_ids(datafile, id.name = "id", ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{id.name}{The name of the column representing the entity identifiers. Default is 'id'.}
+\item{id.name}{A character string specifying the ID column name (default: "id").}
+}
+\value{
+A warning if duplicated IDs are found.
 }
 \description{
-Function to check if datafile has duplicated ids
+Ensures that the ID column contains no duplicated values.
 }

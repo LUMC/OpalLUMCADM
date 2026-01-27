@@ -2,16 +2,16 @@
 % Please edit documentation in R/processing.R
 \name{.clean_NA}
 \alias{.clean_NA}
-\title{Function to cleanup NA or null or "" for diffdf}
+\title{Clean data for missing values}
 \usage{
 .clean_NA(datafile)
 }
 \arguments{
-\item{datafile}{DataFrame to clean}
+\item{datafile}{A vector or data frame containing data to clean}
 }
 \value{
-datafile, DataFrame with NA/null/"" cleaned
+A cleaned version of the input data with missing values standardized
 }
 \description{
-Function to cleanup NA or null or "" for diffdf
+Replaces empty strings, "NA", and "null" with NA values in a diffdf.
 }

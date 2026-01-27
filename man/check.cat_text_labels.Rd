@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.cat_text_labels}
 \alias{check.cat_text_labels}
-\title{Function to check if datafile values are present in categorie labels (text values only)}
+\title{Check Categorical Text Labels Completeness}
 \usage{
 check.cat_text_labels(datafile, categories, ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{categories}{categories dataframe}
+\item{categories}{A data frame or list containing category definitions.}
+}
+\value{
+A warning if any value in a categorical column is missing from the category list.
 }
 \description{
-Function to check if datafile values are present in categorie labels (text values only)
+Ensures that all values in text-based categorical columns are present in the category definitions.
 }

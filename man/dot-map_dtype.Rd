@@ -2,13 +2,17 @@
 % Please edit documentation in R/processing.R
 \name{.map_dtype}
 \alias{.map_dtype}
-\title{Function to set class type based on data in column}
+\title{Map R data types to Opal data types}
 \usage{
 .map_dtype(column)
 }
 \arguments{
-\item{column}{Data column}
+\item{column}{A single R column object (e.g., vector)}
+}
+\value{
+A string representing the Opal data type corresponding to the input column class
 }
 \description{
-Function to set class type based on data in column
+Translates R data types (e.g., integer, character) to corresponding Opal data types
+(e.g., integer, text, decimal, boolean, datetime, date).
 }

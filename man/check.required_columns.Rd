@@ -2,13 +2,16 @@
 % Please edit documentation in R/checks.R
 \name{check.required_columns}
 \alias{check.required_columns}
-\title{Function to check presence of required columns labels, descriptions & encrypted in variables}
+\title{Check for Required Columns in Variables}
 \usage{
 check.required_columns(variables, ...)
 }
 \arguments{
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
+}
+\value{
+A list of warnings if required columns are missing.
 }
 \description{
-Function to check presence of required columns labels, descriptions & encrypted in variables
+Validates the presence of required columns: 'label', 'entityType', and 'encrypted'.
 }

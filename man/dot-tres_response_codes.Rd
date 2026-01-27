@@ -2,13 +2,17 @@
 % Please edit documentation in R/processing.R
 \name{.tres_response_codes}
 \alias{.tres_response_codes}
-\title{Function to get tres response codes}
+\title{Map TRES response codes to human-readable messages}
 \usage{
 .tres_response_codes(response)
 }
 \arguments{
-\item{response}{respons codes captures from TRES}
+\item{response}{A string containing TRES response with error codes (e.g., "Error (E301)...")}
+}
+\value{
+NULL (prints warnings about error code frequencies)
 }
 \description{
-Function to get tres response codes
+Extracts and interprets error codes from a TRES response string, mapping them
+to descriptive messages. Prints warnings for each code and its frequency.
 }

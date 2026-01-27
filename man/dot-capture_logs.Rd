@@ -2,16 +2,18 @@
 % Please edit documentation in R/processing.R
 \name{.capture_logs}
 \alias{.capture_logs}
-\title{Function to capture all warnings & errors when running all check functions}
+\title{Capture function execution logs including warnings and errors}
 \usage{
 .capture_logs(function_name)
 }
 \arguments{
-\item{function_name}{Function to run & catch logs from}
+\item{function_name}{A function to be wrapped and monitored}
 }
 \value{
-logs Return list with warnings & errors
+A list containing log entries with details about errors, warnings, or success
 }
 \description{
-Function to capture all warnings & errors when running all check functions
+This function wraps any given function and captures all warnings and errors
+during its execution. It logs the type and message of each warning or error,
+and returns a list of logs. If no issues are found, it logs "OK".
 }

@@ -2,13 +2,16 @@
 % Please edit documentation in R/tres.R
 \name{adm.tres_connection}
 \alias{adm.tres_connection}
-\title{Function to check tres connection}
+\title{Test TRES Connection}
 \usage{
 adm.tres_connection(connection, ...)
 }
 \arguments{
-\item{connection}{Connection with RTRES}
+\item{connection}{A connection object used to communicate with the TRES service.}
+}
+\value{
+A character string starting with "3::" indicating successful connection.
 }
 \description{
-Function to check tres connection
+Creates a test connection to verify that the TRES encryption service is accessible.
 }

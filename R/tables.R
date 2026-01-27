@@ -1,14 +1,22 @@
 
-#' Function to read a table from opal to R
+#' Get table data and metadata from Opal
 #'
-#' @param opal a working opalr::opal_login
-#' @param project Origin opal project name
-#' @param table Origin opal table name
-#' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
+#' Retrieves a table from an Opal server along with its variable and category dictionary.
+#' Supports retry logic in case of connection or network failures.
+#'
+#' @param opal A connection object to the Opal server.
+#' @param project The name of the project containing the table.
+#' @param table The name of the table to retrieve.
+#' @param max_retries Integer specifying the maximum number of retry attempts (default: 3).
+#'
+#' @return A list containing:
+#'   \itemize{
+#'     \item \code{datafile}: The data as a tibble.
+#'     \item \code{variables}: The table's variable dictionary.
+#'     \item \code{categories}: The table's category dictionary (NULL if empty).
+#'   }
 #'
 #' @import opalr dplyr
-#' 
-#' @return datalist, list with datafiles & dictionary
 #'
 #' @export
 
@@ -55,19 +63,24 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
 }
 
 
-#' Function to save a table from R to Opal
+#' Save a table to Opal with optional dictionary application and retry logic
 #'
-#' @param opal a working opalr::opal_login
-#' @param project Origin opal project name
-#' @param table Origin opal table name
-#' @param datafile data dataframe
-#' @param variables variables dataframe
-#' @param categories categories dataframe
-#' @param method String: write, update or overwrite
-#' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
+#' Saves a tibble to an Opal table, applying variable and category dictionaries if provided.
+#' Includes retry mechanism for failed saves and removes user permissions afterward.
+#'
+#' @param opal A connection object to the Opal server.
+#' @param project The name of the project containing the table.
+#' @param table The name of the table to save.
+#' @param datafile A tibble containing the data to save.
+#' @param variables A tibble of variable definitions (optional).
+#' @param categories A tibble of category definitions (optional).
+#' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
+#' @param max_retries Integer specifying the maximum number of retry attempts (default: 3).
+#'
+#' @return A list containing the saved data and metadata (not directly returned; operation is side-effect).
 #'
 #' @import opalr dplyr
-#' 
+#'
 #' @export
 
 adm.table_save <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", max_retries = 3, ...) {
@@ -127,20 +140,25 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 }
 
 
-#' Function to save a table from R to Opal with a diffdf check
+#' Save a table with diff comparison before and after upload
 #'
-#' @param opal a working opalr::opal_login
-#' @param project Origin opal project name
-#' @param table Origin opal table name
-#' @param datafile data dataframe
-#' @param variables variables dataframe
-#' @param categories categories dataframe
-#' @param method String: write, update or overwrite
-#' @param path String: Path of folder
-#' @param max_retries Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.
+#' Retrieves data from Opal before and after upload, compares the two datasets using `adm.complete_diffdf`,
+#' and optionally saves the differences to an Excel file.
+#'
+#' @param opal A connection object to the Opal server.
+#' @param project The name of the project containing the table.
+#' @param table The name of the table to save.
+#' @param datafile A tibble containing the data to save.
+#' @param variables A tibble of variable definitions (optional).
+#' @param categories A tibble of category definitions (optional).
+#' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
+#' @param path Character path to save diff findings as Excel file (optional).
+#' @param max_retries Integer specifying the maximum number of retry attempts (default: 3).
+#'
+#' @return If \code{path} is provided, returns silently; otherwise, returns a list of differences.
 #'
 #' @import opalr dplyr
-#' 
+#'
 #' @export
 
 adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", path = NULL, max_retries = 3, ...) {
@@ -192,20 +210,25 @@ adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NU
 }
 
 
-#' Function to copy a table within Opal
+#' Copy a table from one Opal instance to another
 #'
-#' @param opal_src A working opalr::opal_login as source
-#' @param opal_dst A working opalr::opal_login as destination
-#' @param project_src Origin opal project name from source Opal
-#' @param project_dst Origin opal project name for destination Opal
-#' @param table_src Origin opal table name from source Opal
-#' @param table_dst Origin opal table name for destination Opal
-#' @param method String: write, update or overwrite
-#' @param diffdf Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table
-#' @param path String: Path of folder
+#' Copies tables from a source Opal project to a destination project.
+#' Optionally performs a diff check after saving.
+#'
+#' @param opal_src A connection object to the source Opal server.
+#' @param opal_dst A connection object to the destination Opal server.
+#' @param project_src The name of the source project.
+#' @param project_dst The name of the destination project.
+#' @param table_src A character vector of source table names.
+#' @param table_dst A character vector of destination table names.
+#' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
+#' @param diffdf Logical indicating whether to run a diff check after save (default: FALSE).
+#' @param path Character path to save diff findings as Excel file (optional).
+#'
+#' @return A list of copied tables (no direct return; operation is side-effect).
 #'
 #' @import opalr dplyr
-#' 
+#'
 #' @export
 
 adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, method = "write", diffdf = FALSE, path = NULL, ...) {

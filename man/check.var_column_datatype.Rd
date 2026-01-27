@@ -2,13 +2,16 @@
 % Please edit documentation in R/checks.R
 \name{check.var_column_datatype}
 \alias{check.var_column_datatype}
-\title{Function to check if all columns in variables are character type}
+\title{Check Variable Object Datatypes}
 \usage{
 check.var_column_datatype(variables, ...)
 }
 \arguments{
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
+}
+\value{
+A warning if any column is not of character type.
 }
 \description{
-Function to check if all columns in variables are character type
+Ensures that all columns in the variables object are character type.
 }

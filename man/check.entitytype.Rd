@@ -2,13 +2,16 @@
 % Please edit documentation in R/checks.R
 \name{check.entitytype}
 \alias{check.entitytype}
-\title{Function to check entity type}
+\title{Check Entity Type Consistency}
 \usage{
 check.entitytype(variables, ...)
 }
 \arguments{
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
+}
+\value{
+A warning if more than one entity type is present.
 }
 \description{
-Function to check entity type
+Ensures that only one entity type is defined across all variables.
 }

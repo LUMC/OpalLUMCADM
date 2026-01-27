@@ -2,13 +2,16 @@
 % Please edit documentation in R/checks.R
 \name{check.infinite}
 \alias{check.infinite}
-\title{Function to check on Inf values}
+\title{Check for Infinite Values in Data}
 \usage{
 check.infinite(datafile, ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
+}
+\value{
+A warning if any column contains infinite values.
 }
 \description{
-Function to check on Inf values
+Identifies columns containing infinite values (Inf or -Inf).
 }

@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.columns_var}
 \alias{check.columns_var}
-\title{Function to check if all columns listed in variables are also in the dataset and vice-versa}
+\title{Check Column Mismatch Between Datafile and Variables}
 \usage{
 check.columns_var(datafile, variables, ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
+}
+\value{
+A list of warnings about missing or extra columns.
 }
 \description{
-Function to check if all columns listed in variables are also in the dataset and vice-versa
+Validates that all columns in the variables object are present in the datafile.
 }

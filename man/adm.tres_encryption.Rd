@@ -2,7 +2,7 @@
 % Please edit documentation in R/tres.R
 \name{adm.tres_encryption}
 \alias{adm.tres_encryption}
-\title{Function to encrypt with tres}
+\title{Encrypt Data Columns Using TRES}
 \usage{
 adm.tres_encryption(
   connection,
@@ -13,17 +13,17 @@ adm.tres_encryption(
 )
 }
 \arguments{
-\item{connection}{Connection with RTRES}
+\item{connection}{A connection object used to communicate with the TRES service.}
 
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the data to be encrypted.}
 
-\item{columns}{selected columns for encryption}
+\item{columns}{A character vector specifying which columns to encrypt. If NULL, all columns are encrypted.}
 
-\item{boolean.}{Whether or not the search_image needs to be included when encrypting}
+\item{search_image}{A logical value indicating whether to search for image data after encryption.}
 }
 \value{
-datafile, encrypted datafile
+A data frame with encrypted values in the specified columns.
 }
 \description{
-Function to encrypt with tres
+Encrypts specified columns in a data frame using the TRES encryption service.
 }

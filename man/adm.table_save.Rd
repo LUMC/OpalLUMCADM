@@ -2,7 +2,7 @@
 % Please edit documentation in R/tables.R
 \name{adm.table_save}
 \alias{adm.table_save}
-\title{Function to save a table from R to Opal}
+\title{Save a table to Opal with optional dictionary application and retry logic}
 \usage{
 adm.table_save(
   opal,
@@ -17,22 +17,26 @@ adm.table_save(
 )
 }
 \arguments{
-\item{opal}{a working opalr::opal_login}
+\item{opal}{A connection object to the Opal server.}
 
-\item{project}{Origin opal project name}
+\item{project}{The name of the project containing the table.}
 
-\item{table}{Origin opal table name}
+\item{table}{The name of the table to save.}
 
-\item{datafile}{data dataframe}
+\item{datafile}{A tibble containing the data to save.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A tibble of variable definitions (optional).}
 
-\item{categories}{categories dataframe}
+\item{categories}{A tibble of category definitions (optional).}
 
-\item{method}{String: write, update or overwrite}
+\item{method}{Character specifying save method ("write", "overwrite", etc.) (default: "write").}
 
-\item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
+\item{max_retries}{Integer specifying the maximum number of retry attempts (default: 3).}
+}
+\value{
+A list containing the saved data and metadata (not directly returned; operation is side-effect).
 }
 \description{
-Function to save a table from R to Opal
+Saves a tibble to an Opal table, applying variable and category dictionaries if provided.
+Includes retry mechanism for failed saves and removes user permissions afterward.
 }

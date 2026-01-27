@@ -1,9 +1,15 @@
 
-#' Function to check run all checks
+#' Run All Data Validation Checks
 #'
-#' @param datafile data input
-#' @param variables variables dataframe
-#' @param categories categories dataframe
+#' Executes a comprehensive set of data validation checks across datafile, variables, and categories.
+#'
+#' @param datafile A data frame containing the actual data to be validated.
+#' @param variables A data frame or list containing variable definitions (e.g., name, valueType, min, max, entityType, encrypted).
+#' @param categories A data frame or list containing category definitions (e.g., variable, missing, labels).
+#' 
+#' @return A data frame containing logs of all validation checks performed.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -47,12 +53,16 @@ check.run_all <- function(datafile, variables, categories = NULL) {
 }
 
 
-#' Function to check if all columns listed in variables are also in the dataset and vice-versa
+#' Check Column Mismatch Between Datafile and Variables
 #'
-#' @param datafile data input
-#' @param variables variables dataframe
+#' Validates that all columns in the variables object are present in the datafile.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param variables A data frame or list containing variable definitions.
 #' 
-#' @import purrr
+#' @return A list of warnings about missing or extra columns.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -83,12 +93,16 @@ check.columns_var <- function(datafile, variables, ...) {
 }
 
 
-#' Function to check if all columns listed in categories are also in the dataset
+#' Check Column Mismatch Between Datafile and Categories
 #'
-#' @param datafile data input
-#' @param categories categories dataframe
+#' Validates that all columns in the categories object are present in the datafile.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param categories A data frame or list containing category definitions.
 #' 
-#' @import purrr
+#' @return A list of warnings about missing columns in categories.
+#' 
+#' @import dplyr purrr
 #' 
 #' @export
 
@@ -120,10 +134,16 @@ check.columns_cat <- function(datafile, categories = NULL, ...) {
 }
 
 
-#' Function to check valuetypes of data vs variables
+#' Check Value Type Consistency Between Data and Variables
 #'
-#' @param datafile data input
-#' @param variables variables dataframe
+#' Compares the data type of each column in the datafile with the specified value types in variables.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param variables A data frame or list containing variable definitions.
+#' 
+#' @return A list of warnings about mismatched value types.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -148,11 +168,17 @@ check.valuetype <- function(datafile, variables, ...) {
 }
 
 
-#' Function to check data on minimum & maximum values if defined in variables
+#' Check Minimum and Maximum Value Bounds
 #'
-#' @param datafile data input
-#' @param variables variables dataframe
-#' @param categories categories dataframe
+#' Validates that numeric columns fall within the specified min and max bounds defined in variables.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param variables A data frame or list containing variable definitions with min and max fields.
+#' @param categories A data frame or list containing category definitions (used to handle missing values).
+#' 
+#' @return A list of warnings about values outside defined min/max ranges.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -208,9 +234,15 @@ check.minmax <- function(datafile, variables, categories = NULL) {
 }
 
 
-#' Function to check entity type
+#' Check Entity Type Consistency
+#'
+#' Ensures that only one entity type is defined across all variables.
+#'
+#' @param variables A data frame or list containing variable definitions.
 #' 
-#' @param variables variables dataframe
+#' @return A warning if more than one entity type is present.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -227,11 +259,15 @@ check.entitytype <- function(variables, ...) {
 }
 
 
-#' Function to check presence of required columns labels, descriptions & encrypted in variables
+#' Check for Required Columns in Variables
+#'
+#' Validates the presence of required columns: 'label', 'entityType', and 'encrypted'.
+#'
+#' @param variables A data frame or list containing variable definitions.
 #' 
-#' @param variables variables dataframe
+#' @return A list of warnings if required columns are missing.
 #' 
-#' @import stringr
+#' @import dplyr
 #' 
 #' @export
 
@@ -257,10 +293,14 @@ check.required_columns <- function(variables, ...) {
 }
 
 
-#' Function to check encryption of values
+#' Check Encrypted Values Compliance
+#'
+#' Validates that encrypted columns contain only valid values ('no', 'yes', 'SI') and are fully encrypted.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param variables A data frame or list containing variable definitions.
 #' 
-#' @param datafile data input
-#' @param variables variables dataframe
+#' @return A warning or error if encrypted values are invalid or not fully encrypted.
 #' 
 #' @import dplyr
 #' 
@@ -307,9 +347,15 @@ check.encrypted_values <- function(datafile, variables, ...) {
 }
 
 
-#' Function to check on Inf values
+#' Check for Infinite Values in Data
+#'
+#' Identifies columns containing infinite values (Inf or -Inf).
+#'
+#' @param datafile A data frame containing the actual data.
 #' 
-#' @param datafile data input
+#' @return A warning if any column contains infinite values.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -332,13 +378,17 @@ check.infinite <- function(datafile, ...) {
 }
 
 
-#' Function to check date
+#' Check Date Format Consistency
+#'
+#' Validates that date columns are properly formatted according to the specified format.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param variables A data frame or list containing variable definitions.
+#' @param format A string specifying the date format (default: "\%Y-\%m-\%d").
 #' 
-#' @param datafile data input
-#' @param variables variables dataframe
-#' @param format format of dates (default = "\%Y-\%m-\%d")
+#' @return A warning if any date column fails format validation.
 #' 
-#' @import lubridate
+#' @import dplyr
 #' 
 #' @export
 
@@ -369,13 +419,17 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
 }
 
 
-#' Function to check datetime
+#' Check Datetime Format Consistency
+#'
+#' Validates that datetime columns are properly formatted according to the specified format.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param variables A data frame or list containing variable definitions.
+#' @param format A string specifying the datetime format (default: "\%Y-\%m-\%d \%H:\%M:\%OS").
 #' 
-#' @param datafile data input
-#' @param variables variables dataframe
-#' @param format format of dates (default = "\%Y-\%m-\%d \%H:\%M:\%OS")
+#' @return A warning if any datetime column fails format validation.
 #' 
-#' @import lubridate
+#' @import dplyr
 #' 
 #' @export
 
@@ -406,10 +460,16 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
 }
 
 
-#' Function to check if datafile has duplicated ids
+#' Check for Duplicated IDs in Data
 #'
-#' @param datafile data input
-#' @param id.name The name of the column representing the entity identifiers. Default is 'id'.
+#' Ensures that the ID column contains no duplicated values.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param id.name A character string specifying the ID column name (default: "id").
+#' 
+#' @return A warning if duplicated IDs are found.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -425,10 +485,16 @@ check.duplicated_ids <- function(datafile, id.name = "id", ...) {
 }
 
 
-#' Function to check for duplicated rows in variables & categories
+#' Check for Duplicated Rows in Variables and Categories
 #'
-#' @param variables variables dataframe
-#' @param categories categories dataframe
+#' Validates that both variables and categories objects do not contain duplicated rows.
+#'
+#' @param variables A data frame or list containing variable definitions.
+#' @param categories A data frame or list containing category definitions.
+#' 
+#' @return A warning if duplicated rows are found in variables or categories.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -447,10 +513,16 @@ check.duplicated_rows <- function(variables, categories = NULL, ...) {
 }
 
 
-#' Function to check if key is a character value
+#' Check if ID Column is Character Type
 #'
-#' @param datafile data input
-#' @param id.name The name of the column representing the entity identifiers. Default is 'id'.
+#' Ensures that the ID column is of character type.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param id.name A character string specifying the ID column name (default: "id").
+#' 
+#' @return A warning if the ID column is not of character type.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -465,10 +537,16 @@ check.character_ids <- function(datafile, id.name = "id", ...) {
 }
 
 
-#' Function to check if datafile values are present in categorie labels (text values only)
+#' Check Categorical Text Labels Completeness
 #'
-#' @param datafile data input
-#' @param categories categories dataframe
+#' Ensures that all values in text-based categorical columns are present in the category definitions.
+#'
+#' @param datafile A data frame containing the actual data.
+#' @param categories A data frame or list containing category definitions.
+#' 
+#' @return A warning if any value in a categorical column is missing from the category list.
+#' 
+#' @import dplyr
 #' 
 #' @export
 
@@ -489,9 +567,15 @@ check.cat_text_labels <- function(datafile, categories, ...) {
 }
 
 
-#' Function to check if all columns in variables are character type
+#' Check Variable Object Datatypes
 #'
-#' @param variables variables dataframe
+#' Ensures that all columns in the variables object are character type.
+#'
+#' @param variables A data frame or list containing variable definitions.
+#' 
+#' @return A warning if any column is not of character type.
+#' 
+#' @import dplyr
 #' 
 #' @export
 

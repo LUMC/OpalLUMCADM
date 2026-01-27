@@ -1,6 +1,14 @@
 
-#' Loading message package OpalLUMCADM
+#' Load the OpalLUMCADM Package
 #'
+#' This function is called when the OpalLUMCADM package is loaded into R.
+#' It displays a ASCII art logo upon package startup.
+#' 
+#' @param libname Character string indicating the library path where the package is loaded.
+#' @param pkgname Character string indicating the name of the package.
+#' 
+#' @return Nothing is returned; this is a startup function.
+#' 
 #' @export
 
 .onLoad <- function(libname, pkgname){

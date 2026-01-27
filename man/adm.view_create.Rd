@@ -2,7 +2,7 @@
 % Please edit documentation in R/views.R
 \name{adm.view_create}
 \alias{adm.view_create}
-\title{Function to create a view in Opal}
+\title{Create or Update a View in OPAL with Dictionary and Permissions}
 \usage{
 adm.view_create(
   opal,
@@ -15,18 +15,23 @@ adm.view_create(
 )
 }
 \arguments{
-\item{opal}{a working opalr::opal_login}
+\item{opal}{A connection object to the OPAL server.}
 
-\item{project}{Origin opal project name for view}
+\item{project}{The name of the project where the view is to be created or updated.}
 
-\item{table}{Origin opal table name for view}
+\item{table}{The name of the table (view) to be created or updated.}
 
-\item{source}{Vector with project and table names: project.table: CNSIM.CNSIM1}
+\item{source}{The source table(s) used to define the view.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame containing variable definitions (name, type, etc.).}
 
-\item{categories}{categories dataframe}
+\item{categories}{Optional data frame of category mappings for variables.}
+}
+\value{
+A logical value indicating whether the view was created or updated.
 }
 \description{
-Function to create a view in Opal
+This function creates or updates a view in an OPAL project based on a source table.
+It checks if the view exists, creates or updates it, sets the script column,
+updates the dictionary entries, and removes user permissions.
 }

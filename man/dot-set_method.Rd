@@ -2,16 +2,17 @@
 % Please edit documentation in R/processing.R
 \name{.set_method}
 \alias{.set_method}
-\title{Function to set method for force & overwrite}
+\title{Set method parameters for write operations}
 \usage{
 .set_method(method)
 }
 \arguments{
-\item{method}{String: write, update or overwrite}
+\item{method}{A character string specifying the operation method: "write", "update", or "overwrite"}
 }
 \value{
-method, vector with settings for force & overwrite
+A list with 'force' and 'overwrite' flags based on the input method
 }
 \description{
-Function to set method for force & overwrite
+Translates a method string ("write", "update", "overwrite") into a list of
+force and overwrite flags. Returns a consistent method parameter list.
 }

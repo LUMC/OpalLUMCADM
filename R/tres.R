@@ -1,11 +1,12 @@
 
-
-#' Function to check tres connection
+#' Test TRES Connection
 #'
-#' @param connection Connection with RTRES
+#' Creates a test connection to verify that the TRES encryption service is accessible.
 #'
-#' @import rtres
-#'
+#' @param connection A connection object used to communicate with the TRES service.
+#' 
+#' @return A character string starting with "3::" indicating successful connection.
+#' 
 #' @export
 
 adm.tres_connection <- function(connection, ...) {
@@ -32,17 +33,17 @@ adm.tres_connection <- function(connection, ...) {
 }
 
 
-#' Function to encrypt with tres
+#' Encrypt Data Columns Using TRES
 #'
-#' @param connection Connection with RTRES
-#' @param datafile data input
-#' @param columns selected columns for encryption
-#' @param boolean. Whether or not the search_image needs to be included when encrypting
+#' Encrypts specified columns in a data frame using the TRES encryption service.
 #'
-#' @import rtres
+#' @param connection A connection object used to communicate with the TRES service.
+#' @param datafile A data frame containing the data to be encrypted.
+#' @param columns A character vector specifying which columns to encrypt. If NULL, all columns are encrypted.
+#' @param search_image A logical value indicating whether to search for image data after encryption.
 #' 
-#' @return datafile, encrypted datafile
-#'
+#' @return A data frame with encrypted values in the specified columns.
+#' 
 #' @export
 
 adm.tres_encryption <- function(connection, datafile, columns = NULL, search_image = FALSE, ...) {
@@ -83,16 +84,16 @@ adm.tres_encryption <- function(connection, datafile, columns = NULL, search_ima
 }
 
 
-#' Function to decrypt with tres
+#' Decrypt Data Columns Using TRES
 #'
-#' @param connection Connection with RTRES
-#' @param datafile data input
-#' @param columns selected columns for decryption
+#' Decrypts specified columns in a data frame using the TRES decryption service.
 #'
-#' @import rtres dplyr
+#' @param connection A connection object used to communicate with the TRES service.
+#' @param datafile A data frame containing the encrypted data to be decrypted.
+#' @param columns A character vector specifying which columns to decrypt. If NULL, columns starting with "3::" are selected.
 #' 
-#' @return datafile, decrypted datafile
-#'
+#' @return A data frame with decrypted values in the specified columns.
+#' 
 #' @export
 
 adm.tres_decryption <- function(connection, datafile, columns = NULL, ...) {

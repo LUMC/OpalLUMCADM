@@ -1,10 +1,14 @@
 
-#' Function to capture all warnings & errors when running all check functions
+#' Capture function execution logs including warnings and errors
 #'
-#' @param function_name Function to run & catch logs from
-#' 
-#' @return logs Return list with warnings & errors
-#' 
+#' This function wraps any given function and captures all warnings and errors
+#' during its execution. It logs the type and message of each warning or error,
+#' and returns a list of logs. If no issues are found, it logs "OK".
+#'
+#' @param function_name A function to be wrapped and monitored
+#'
+#' @return A list containing log entries with details about errors, warnings, or success
+#'
 #' @export
 
 .capture_logs <- function(function_name) {
@@ -45,10 +49,15 @@
 }
 
 
-#' Function to set class type based on data in column
+#' Map R data types to Opal data types
 #'
-#' @param column Data column
-#' 
+#' Translates R data types (e.g., integer, character) to corresponding Opal data types
+#' (e.g., integer, text, decimal, boolean, datetime, date).
+#'
+#' @param column A single R column object (e.g., vector)
+#'
+#' @return A string representing the Opal data type corresponding to the input column class
+#'
 #' @export
 
 .map_dtype <- function(column) {
@@ -70,13 +79,17 @@
 }
 
 
-#' Function to set the correct valuetype of data vs variables
+#' Fix data variable value types to match Opal expectations
 #'
-#' @param datafile data input
-#' @param variables variables dataframe
-#' 
-#' @return variables Return variables with corrected valuetypes
-#' 
+#' Compares the expected value types from a variables list with the actual types
+#' in the data file. If mismatches are found, updates the value type in the variables
+#' list and prints a message.
+#'
+#' @param datafile A data frame or list containing the data to be checked
+#' @param variables A data frame or list with 'name' and 'valueType' columns
+#'
+#' @return A modified version of the variables list with corrected value types
+#'
 #' @export
 
 adm.fix_valuetype <- function(datafile, variables) {
@@ -97,11 +110,14 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Function to set method for force & overwrite
+#' Set method parameters for write operations
 #'
-#' @param method String: write, update or overwrite
+#' Translates a method string ("write", "update", "overwrite") into a list of
+#' force and overwrite flags. Returns a consistent method parameter list.
 #'
-#' @return method, vector with settings for force & overwrite
+#' @param method A character string specifying the operation method: "write", "update", or "overwrite"
+#'
+#' @return A list with 'force' and 'overwrite' flags based on the input method
 #'
 #' @export
 
@@ -121,13 +137,16 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Function to write diffdf to excel
+#' Write findings to an Excel workbook
 #'
-#' @param findings list of dataframes from diffdf
-#' @param path path to output dir
-#' 
-#' @import openxlsx
-#' 
+#' Creates an Excel workbook and writes each findings object (datafile, variables, categories)
+#' into separate worksheets. If no issues are found, a placeholder message is written.
+#'
+#' @param findings A list of findings, with keys corresponding to object types (e.g., "datafile", "variables")
+#' @param path The file path where the Excel workbook will be saved
+#'
+#' @return NULL (workbook is saved to path)
+#'
 #' @export
 
 .write_to_excel <- function(findings, path, ...) {
@@ -160,9 +179,14 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Function to get tres response codes
-#' 
-#' @param response respons codes captures from TRES
+#' Map TRES response codes to human-readable messages
+#'
+#' Extracts and interprets error codes from a TRES response string, mapping them
+#' to descriptive messages. Prints warnings for each code and its frequency.
+#'
+#' @param response A string containing TRES response with error codes (e.g., "Error (E301)...")
+#'
+#' @return NULL (prints warnings about error code frequencies)
 #'
 #' @export
 
@@ -201,12 +225,14 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Function to cleanup NA or null or "" for diffdf
-#' 
-#' @param datafile DataFrame to clean
+#' Clean data for missing values
 #'
-#' @return datafile, DataFrame with NA/null/"" cleaned
-#' 
+#' Replaces empty strings, "NA", and "null" with NA values in a diffdf.
+#'
+#' @param datafile A vector or data frame containing data to clean
+#'
+#' @return A cleaned version of the input data with missing values standardized
+#'
 #' @export
 
 .clean_NA <- function(datafile) {

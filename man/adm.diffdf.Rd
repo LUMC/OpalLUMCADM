@@ -2,22 +2,20 @@
 % Please edit documentation in R/diffdf.R
 \name{adm.diffdf}
 \alias{adm.diffdf}
-\title{Function to find differences in data}
+\title{Compare Two Data Frames for Differences}
 \usage{
 adm.diffdf(datafile1, datafile2, keys = NULL, ...)
 }
 \arguments{
-\item{keys}{vector of variables (as strings) that defines a unique row in the base and compare dataframes}
+\item{datafile1}{A data frame representing the base data.}
 
-\item{dataframe1}{dataframe}
+\item{datafile2}{A data frame representing the data to compare against.}
 
-\item{dataframe2}{dataframe}
-
-\item{path}{path to output dir}
+\item{keys}{A character vector specifying the key columns used to match rows between data frames. If NULL, all columns are used as keys.}
 }
 \value{
-findings, dataframe with differences (if there are any)
+A list containing the differences found between the two data frames, including variable-level and value-level differences.
 }
 \description{
-Function to find differences in data
+This function compares two data frames to identify differences in variables, values, and structure.
 }

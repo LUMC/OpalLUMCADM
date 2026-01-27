@@ -2,17 +2,20 @@
 % Please edit documentation in R/checks.R
 \name{check.datetime}
 \alias{check.datetime}
-\title{Function to check datetime}
+\title{Check Datetime Format Consistency}
 \usage{
 check.datetime(datafile, variables, format = "\%Y-\%m-\%d \%H:\%M:\%OS", ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
 
-\item{format}{format of dates (default = "\%Y-\%m-\%d \%H:\%M:\%OS")}
+\item{format}{A string specifying the datetime format (default: "\%Y-\%m-\%d \%H:\%M:\%OS").}
+}
+\value{
+A warning if any datetime column fails format validation.
 }
 \description{
-Function to check datetime
+Validates that datetime columns are properly formatted according to the specified format.
 }

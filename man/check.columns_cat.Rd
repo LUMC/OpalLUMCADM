@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.columns_cat}
 \alias{check.columns_cat}
-\title{Function to check if all columns listed in categories are also in the dataset}
+\title{Check Column Mismatch Between Datafile and Categories}
 \usage{
 check.columns_cat(datafile, categories = NULL, ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{categories}{categories dataframe}
+\item{categories}{A data frame or list containing category definitions.}
+}
+\value{
+A list of warnings about missing columns in categories.
 }
 \description{
-Function to check if all columns listed in categories are also in the dataset
+Validates that all columns in the categories object are present in the datafile.
 }

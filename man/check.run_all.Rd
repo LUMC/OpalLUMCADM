@@ -2,17 +2,20 @@
 % Please edit documentation in R/checks.R
 \name{check.run_all}
 \alias{check.run_all}
-\title{Function to check run all checks}
+\title{Run All Data Validation Checks}
 \usage{
 check.run_all(datafile, variables, categories = NULL)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data to be validated.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions (e.g., name, valueType, min, max, entityType, encrypted).}
 
-\item{categories}{categories dataframe}
+\item{categories}{A data frame or list containing category definitions (e.g., variable, missing, labels).}
+}
+\value{
+A data frame containing logs of all validation checks performed.
 }
 \description{
-Function to check run all checks
+Executes a comprehensive set of data validation checks across datafile, variables, and categories.
 }

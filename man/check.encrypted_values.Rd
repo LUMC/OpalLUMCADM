@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.encrypted_values}
 \alias{check.encrypted_values}
-\title{Function to check encryption of values}
+\title{Check Encrypted Values Compliance}
 \usage{
 check.encrypted_values(datafile, variables, ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
+}
+\value{
+A warning or error if encrypted values are invalid or not fully encrypted.
 }
 \description{
-Function to check encryption of values
+Validates that encrypted columns contain only valid values ('no', 'yes', 'SI') and are fully encrypted.
 }

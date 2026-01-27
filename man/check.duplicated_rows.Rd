@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.duplicated_rows}
 \alias{check.duplicated_rows}
-\title{Function to check for duplicated rows in variables & categories}
+\title{Check for Duplicated Rows in Variables and Categories}
 \usage{
 check.duplicated_rows(variables, categories = NULL, ...)
 }
 \arguments{
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
 
-\item{categories}{categories dataframe}
+\item{categories}{A data frame or list containing category definitions.}
+}
+\value{
+A warning if duplicated rows are found in variables or categories.
 }
 \description{
-Function to check for duplicated rows in variables & categories
+Validates that both variables and categories objects do not contain duplicated rows.
 }

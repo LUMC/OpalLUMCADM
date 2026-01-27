@@ -2,22 +2,28 @@
 % Please edit documentation in R/tables.R
 \name{adm.table_get}
 \alias{adm.table_get}
-\title{Function to read a table from opal to R}
+\title{Get table data and metadata from Opal}
 \usage{
 adm.table_get(opal, project, table, max_retries = 3, ...)
 }
 \arguments{
-\item{opal}{a working opalr::opal_login}
+\item{opal}{A connection object to the Opal server.}
 
-\item{project}{Origin opal project name}
+\item{project}{The name of the project containing the table.}
 
-\item{table}{Origin opal table name}
+\item{table}{The name of the table to retrieve.}
 
-\item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
+\item{max_retries}{Integer specifying the maximum number of retry attempts (default: 3).}
 }
 \value{
-datalist, list with datafiles & dictionary
+A list containing:
+  \itemize{
+    \item \code{datafile}: The data as a tibble.
+    \item \code{variables}: The table's variable dictionary.
+    \item \code{categories}: The table's category dictionary (NULL if empty).
+  }
 }
 \description{
-Function to read a table from opal to R
+Retrieves a table from an Opal server along with its variable and category dictionary.
+Supports retry logic in case of connection or network failures.
 }

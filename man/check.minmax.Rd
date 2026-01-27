@@ -2,17 +2,20 @@
 % Please edit documentation in R/checks.R
 \name{check.minmax}
 \alias{check.minmax}
-\title{Function to check data on minimum & maximum values if defined in variables}
+\title{Check Minimum and Maximum Value Bounds}
 \usage{
 check.minmax(datafile, variables, categories = NULL)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions with min and max fields.}
 
-\item{categories}{categories dataframe}
+\item{categories}{A data frame or list containing category definitions (used to handle missing values).}
+}
+\value{
+A list of warnings about values outside defined min/max ranges.
 }
 \description{
-Function to check data on minimum & maximum values if defined in variables
+Validates that numeric columns fall within the specified min and max bounds defined in variables.
 }

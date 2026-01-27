@@ -2,10 +2,19 @@
 % Please edit documentation in R/zzz.R
 \name{.onLoad}
 \alias{.onLoad}
-\title{Loading message package OpalLUMCADM}
+\title{Load the OpalLUMCADM Package}
 \usage{
 .onLoad(libname, pkgname)
 }
+\arguments{
+\item{libname}{Character string indicating the library path where the package is loaded.}
+
+\item{pkgname}{Character string indicating the name of the package.}
+}
+\value{
+Nothing is returned; this is a startup function.
+}
 \description{
-Loading message package OpalLUMCADM
+This function is called when the OpalLUMCADM package is loaded into R.
+It displays a ASCII art logo upon package startup.
 }

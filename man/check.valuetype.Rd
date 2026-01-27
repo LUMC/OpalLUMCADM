@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.valuetype}
 \alias{check.valuetype}
-\title{Function to check valuetypes of data vs variables}
+\title{Check Value Type Consistency Between Data and Variables}
 \usage{
 check.valuetype(datafile, variables, ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
+}
+\value{
+A list of warnings about mismatched value types.
 }
 \description{
-Function to check valuetypes of data vs variables
+Compares the data type of each column in the datafile with the specified value types in variables.
 }

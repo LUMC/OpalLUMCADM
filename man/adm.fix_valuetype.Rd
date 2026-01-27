@@ -2,18 +2,20 @@
 % Please edit documentation in R/processing.R
 \name{adm.fix_valuetype}
 \alias{adm.fix_valuetype}
-\title{Function to set the correct valuetype of data vs variables}
+\title{Fix data variable value types to match Opal expectations}
 \usage{
 adm.fix_valuetype(datafile, variables)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame or list containing the data to be checked}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list with 'name' and 'valueType' columns}
 }
 \value{
-variables Return variables with corrected valuetypes
+A modified version of the variables list with corrected value types
 }
 \description{
-Function to set the correct valuetype of data vs variables
+Compares the expected value types from a variables list with the actual types
+in the data file. If mismatches are found, updates the value type in the variables
+list and prints a message.
 }

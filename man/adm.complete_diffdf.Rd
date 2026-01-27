@@ -2,18 +2,18 @@
 % Please edit documentation in R/diffdf.R
 \name{adm.complete_diffdf}
 \alias{adm.complete_diffdf}
-\title{Function to check datafile, variables & categories in one go}
+\title{Compare Multiple Data Frame Lists for Comprehensive Differences}
 \usage{
 adm.complete_diffdf(datalist1, datalist2, ...)
 }
 \arguments{
-\item{datalist1}{List object: list(datafile = datafile, categories = categories, variables = variables)}
+\item{datalist1}{A list containing at least 'datafile' and optionally 'variables' and 'categories'.}
 
-\item{datalist2}{List object: list(datafile = datafile, categories = categories, variables = variables)}
+\item{datalist2}{A list containing at least 'datafile' and optionally 'variables' and 'categories'.}
 }
 \value{
-findings, dataframe with differences (if there are any)
+A list containing the differences found across datafile, variables, and categories.
 }
 \description{
-Function to check datafile, variables & categories in one go
+This function performs a comprehensive comparison between two lists of data frames, including datafile, variables, and categories.
 }

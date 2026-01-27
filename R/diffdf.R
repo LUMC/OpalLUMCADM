@@ -1,14 +1,16 @@
 
-#' Function to find differences in data
+#' Compare Two Data Frames for Differences
 #'
-#' @param dataframe1 dataframe
-#' @param dataframe2 dataframe
-#' @param path path to output dir
-#' @param keys vector of variables (as strings) that defines a unique row in the base and compare dataframes
-#' 
-#' @import diffdf 
-#' 
-#' @return findings, dataframe with differences (if there are any)
+#' This function compares two data frames to identify differences in variables, values, and structure.
+#'
+#' @param datafile1 A data frame representing the base data.
+#' @param datafile2 A data frame representing the data to compare against.
+#' @param keys A character vector specifying the key columns used to match rows between data frames. If NULL, all columns are used as keys.
+#'
+#' @return A list containing the differences found between the two data frames, including variable-level and value-level differences.
+#'
+#' @import dplyr
+#' @importFrom diffdf diffdf
 #' 
 #' @export
 
@@ -38,12 +40,17 @@ adm.diffdf <- function(datafile1, datafile2, keys = NULL, ...) {
 }
 
 
-#' Function to check datafile, variables & categories in one go
+#' Compare Multiple Data Frame Lists for Comprehensive Differences
 #'
-#' @param datalist1 List object: list(datafile = datafile, categories = categories, variables = variables)
-#' @param datalist2 List object: list(datafile = datafile, categories = categories, variables = variables)
-#' 
-#' @return findings, dataframe with differences (if there are any)
+#' This function performs a comprehensive comparison between two lists of data frames, including datafile, variables, and categories.
+#'
+#' @param datalist1 A list containing at least 'datafile' and optionally 'variables' and 'categories'.
+#' @param datalist2 A list containing at least 'datafile' and optionally 'variables' and 'categories'.
+#'
+#' @return A list containing the differences found across datafile, variables, and categories.
+#'
+#' @import dplyr
+#' @importFrom diffdf diffdf
 #' 
 #' @export
 

@@ -1,12 +1,18 @@
 
-#' Function to create a view in Opal
+#' Create or Update a View in OPAL with Dictionary and Permissions
 #'
-#' @param opal a working opalr::opal_login
-#' @param project Origin opal project name for view
-#' @param table Origin opal table name for view
-#' @param source Vector with project and table names: project.table: CNSIM.CNSIM1
-#' @param variables variables dataframe
-#' @param categories categories dataframe
+#' This function creates or updates a view in an OPAL project based on a source table.
+#' It checks if the view exists, creates or updates it, sets the script column,
+#' updates the dictionary entries, and removes user permissions.
+#'
+#' @param opal A connection object to the OPAL server.
+#' @param project The name of the project where the view is to be created or updated.
+#' @param table The name of the table (view) to be created or updated.
+#' @param source The source table(s) used to define the view.
+#' @param variables A data frame containing variable definitions (name, type, etc.).
+#' @param categories Optional data frame of category mappings for variables.
+#' 
+#' @return A logical value indicating whether the view was created or updated.
 #' 
 #' @import opalr
 #' 

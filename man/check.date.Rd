@@ -2,17 +2,20 @@
 % Please edit documentation in R/checks.R
 \name{check.date}
 \alias{check.date}
-\title{Function to check date}
+\title{Check Date Format Consistency}
 \usage{
 check.date(datafile, variables, format = "\%Y-\%m-\%d", ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A data frame or list containing variable definitions.}
 
-\item{format}{format of dates (default = "\%Y-\%m-\%d")}
+\item{format}{A string specifying the date format (default: "\%Y-\%m-\%d").}
+}
+\value{
+A warning if any date column fails format validation.
 }
 \description{
-Function to check date
+Validates that date columns are properly formatted according to the specified format.
 }

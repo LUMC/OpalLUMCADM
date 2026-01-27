@@ -2,7 +2,7 @@
 % Please edit documentation in R/tables.R
 \name{adm.table_save_diffdf}
 \alias{adm.table_save_diffdf}
-\title{Function to save a table from R to Opal with a diffdf check}
+\title{Save a table with diff comparison before and after upload}
 \usage{
 adm.table_save_diffdf(
   opal,
@@ -18,24 +18,28 @@ adm.table_save_diffdf(
 )
 }
 \arguments{
-\item{opal}{a working opalr::opal_login}
+\item{opal}{A connection object to the Opal server.}
 
-\item{project}{Origin opal project name}
+\item{project}{The name of the project containing the table.}
 
-\item{table}{Origin opal table name}
+\item{table}{The name of the table to save.}
 
-\item{datafile}{data dataframe}
+\item{datafile}{A tibble containing the data to save.}
 
-\item{variables}{variables dataframe}
+\item{variables}{A tibble of variable definitions (optional).}
 
-\item{categories}{categories dataframe}
+\item{categories}{A tibble of category definitions (optional).}
 
-\item{method}{String: write, update or overwrite}
+\item{method}{Character specifying save method ("write", "overwrite", etc.) (default: "write").}
 
-\item{path}{String: Path of folder}
+\item{path}{Character path to save diff findings as Excel file (optional).}
 
-\item{max_retries}{Integer: The number of times R will try to read a datafile from, or write a datafile to, opal.}
+\item{max_retries}{Integer specifying the maximum number of retry attempts (default: 3).}
+}
+\value{
+If \code{path} is provided, returns silently; otherwise, returns a list of differences.
 }
 \description{
-Function to save a table from R to Opal with a diffdf check
+Retrieves data from Opal before and after upload, compares the two datasets using `adm.complete_diffdf`,
+and optionally saves the differences to an Excel file.
 }

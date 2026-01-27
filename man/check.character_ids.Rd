@@ -2,15 +2,18 @@
 % Please edit documentation in R/checks.R
 \name{check.character_ids}
 \alias{check.character_ids}
-\title{Function to check if key is a character value}
+\title{Check if ID Column is Character Type}
 \usage{
 check.character_ids(datafile, id.name = "id", ...)
 }
 \arguments{
-\item{datafile}{data input}
+\item{datafile}{A data frame containing the actual data.}
 
-\item{id.name}{The name of the column representing the entity identifiers. Default is 'id'.}
+\item{id.name}{A character string specifying the ID column name (default: "id").}
+}
+\value{
+A warning if the ID column is not of character type.
 }
 \description{
-Function to check if key is a character value
+Ensures that the ID column is of character type.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/tables.R
 \name{adm.table_copy}
 \alias{adm.table_copy}
-\title{Function to copy a table within Opal}
+\title{Copy a table from one Opal instance to another}
 \usage{
 adm.table_copy(
   opal_src,
@@ -18,24 +18,28 @@ adm.table_copy(
 )
 }
 \arguments{
-\item{opal_src}{A working opalr::opal_login as source}
+\item{opal_src}{A connection object to the source Opal server.}
 
-\item{opal_dst}{A working opalr::opal_login as destination}
+\item{opal_dst}{A connection object to the destination Opal server.}
 
-\item{project_src}{Origin opal project name from source Opal}
+\item{project_src}{The name of the source project.}
 
-\item{project_dst}{Origin opal project name for destination Opal}
+\item{project_dst}{The name of the destination project.}
 
-\item{table_src}{Origin opal table name from source Opal}
+\item{table_src}{A character vector of source table names.}
 
-\item{table_dst}{Origin opal table name for destination Opal}
+\item{table_dst}{A character vector of destination table names.}
 
-\item{method}{String: write, update or overwrite}
+\item{method}{Character specifying save method ("write", "overwrite", etc.) (default: "write").}
 
-\item{diffdf}{Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table}
+\item{diffdf}{Logical indicating whether to run a diff check after save (default: FALSE).}
 
-\item{path}{String: Path of folder}
+\item{path}{Character path to save diff findings as Excel file (optional).}
+}
+\value{
+A list of copied tables (no direct return; operation is side-effect).
 }
 \description{
-Function to copy a table within Opal
+Copies tables from a source Opal project to a destination project.
+Optionally performs a diff check after saving.
 }

@@ -2,15 +2,19 @@
 % Please edit documentation in R/processing.R
 \name{.write_to_excel}
 \alias{.write_to_excel}
-\title{Function to write diffdf to excel}
+\title{Write findings to an Excel workbook}
 \usage{
 .write_to_excel(findings, path, ...)
 }
 \arguments{
-\item{findings}{list of dataframes from diffdf}
+\item{findings}{A list of findings, with keys corresponding to object types (e.g., "datafile", "variables")}
 
-\item{path}{path to output dir}
+\item{path}{The file path where the Excel workbook will be saved}
+}
+\value{
+NULL (workbook is saved to path)
 }
 \description{
-Function to write diffdf to excel
+Creates an Excel workbook and writes each findings object (datafile, variables, categories)
+into separate worksheets. If no issues are found, a placeholder message is written.
 }
