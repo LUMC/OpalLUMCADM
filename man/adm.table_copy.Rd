@@ -11,6 +11,7 @@ adm.table_copy(
   project_dst,
   table_src,
   table_dst,
+  method = "write",
   diffdf = FALSE,
   path = NULL,
   ...
@@ -28,6 +29,8 @@ adm.table_copy(
 \item{table_src}{Origin opal table name from source Opal}
 
 \item{table_dst}{Origin opal table name for destination Opal}
+
+\item{method}{String: write, update or overwrite}
 
 \item{diffdf}{Boolean: Should a table_get() be run so a diffdf can be performed on uploaded table}
 
