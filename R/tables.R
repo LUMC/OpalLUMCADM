@@ -45,6 +45,9 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
       ## Set categories as NULL if empty
       dict$categories <- if (nrow(dict$categories)) dict$categories else NULL
       
+      ## Remove na_values (issue when applying new categories with missing)
+      dict$variables$na_values <- NULL
+      
       break
     }, error = function(e) {
       warning(paste("Attempt", attempt, "failed:", e$message))
