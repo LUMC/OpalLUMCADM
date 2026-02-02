@@ -3,7 +3,6 @@
 .Rhistory
 *.RData
 .Ruserdata
-Data_generation
 .Rbuildignore
 .Rproj.user
 *.xlsx
