@@ -51,7 +51,7 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     variables = variables,
     categories = categories
   )
-    
+  
   ## Remove own user permissions
   opal.table_perm_delete(
     opal = opal,
