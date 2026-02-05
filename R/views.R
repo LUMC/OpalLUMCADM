@@ -43,16 +43,14 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
   ## Set script column as required for views
   variables$script <- paste0("$('", variables$name, "')")
   
-  ## Update dictionary (in loop, because of WAF)
-  for (x in 1:nrow(variables)) {
-    opal.table_dictionary_update(
-      opal = opal,
-      project = project, 
-      table = table,
-      variables = variables[x, ],
-      categories = categories
-    )
-  }
+  ## Update dictionary with variables & categories
+  opal.table_dictionary_update(
+    opal = opal,
+    project = project, 
+    table = table,
+    variables = variables,
+    categories = categories
+  )
     
   ## Remove own user permissions
   opal.table_perm_delete(
