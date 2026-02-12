@@ -14,6 +14,8 @@ adm.table_get(opal, project, table, max_retries = 3, ...)
 \item{table}{The name of the table to retrieve.}
 
 \item{max_retries}{Integer specifying the maximum number of retry attempts (default: 3).}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A list containing:

@@ -10,6 +10,8 @@ check.cat_text_labels(datafile, categories, ...)
 \item{datafile}{A data frame containing the actual data.}
 
 \item{categories}{A data frame or list containing category definitions.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if any value in a categorical column is missing from the category list.

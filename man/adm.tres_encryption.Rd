@@ -20,6 +20,8 @@ adm.tres_encryption(
 \item{columns}{A character vector specifying which columns to encrypt. If NULL, all columns are encrypted.}
 
 \item{search_image}{A logical value indicating whether to search for image data after encryption.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A data frame with encrypted values in the specified columns.

@@ -4,6 +4,7 @@
 #' Creates a test connection to verify that the TRES encryption service is accessible.
 #'
 #' @param connection A connection object used to communicate with the TRES service.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A character string starting with "3::" indicating successful connection.
 #' 
@@ -41,6 +42,7 @@ adm.tres_connection <- function(connection, ...) {
 #' @param datafile A data frame containing the data to be encrypted.
 #' @param columns A character vector specifying which columns to encrypt. If NULL, all columns are encrypted.
 #' @param search_image A logical value indicating whether to search for image data after encryption.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A data frame with encrypted values in the specified columns.
 #' 
@@ -91,6 +93,7 @@ adm.tres_encryption <- function(connection, datafile, columns = NULL, search_ima
 #' @param connection A connection object used to communicate with the TRES service.
 #' @param datafile A data frame containing the encrypted data to be decrypted.
 #' @param columns A character vector specifying which columns to decrypt. If NULL, columns starting with "3::" are selected.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A data frame with decrypted values in the specified columns.
 #' 

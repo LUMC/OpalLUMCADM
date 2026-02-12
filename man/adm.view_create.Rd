@@ -26,6 +26,8 @@ adm.view_create(
 \item{variables}{A data frame containing variable definitions (name, type, etc.).}
 
 \item{categories}{Optional data frame of category mappings for variables.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A logical value indicating whether the view was created or updated.

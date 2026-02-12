@@ -144,6 +144,7 @@ adm.fix_valuetype <- function(datafile, variables) {
 #'
 #' @param findings A list of findings, with keys corresponding to object types (e.g., "datafile", "variables")
 #' @param path The file path where the Excel workbook will be saved
+#' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return NULL (workbook is saved to path)
 #'

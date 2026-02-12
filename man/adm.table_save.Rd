@@ -39,7 +39,7 @@ adm.table_save(
 
 \item{max_retries}{Integer specifying the maximum number of retry attempts on failure (default: 3).}
 
-\item{...}{Additional arguments passed to underlying Opal functions.}
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 If \code{diffdf} is FALSE, returns silently. If TRUE, returns the diff findings as a tibble.

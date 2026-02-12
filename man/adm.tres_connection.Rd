@@ -8,6 +8,8 @@ adm.tres_connection(connection, ...)
 }
 \arguments{
 \item{connection}{A connection object used to communicate with the TRES service.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A character string starting with "3::" indicating successful connection.

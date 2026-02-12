@@ -12,6 +12,8 @@ check.date(datafile, variables, format = "\%Y-\%m-\%d", ...)
 \item{variables}{A data frame or list containing variable definitions.}
 
 \item{format}{A string specifying the date format (default: "\%Y-\%m-\%d").}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if any date column fails format validation.

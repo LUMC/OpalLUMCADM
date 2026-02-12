@@ -8,6 +8,7 @@
 #' @param project The name of the project containing the table.
 #' @param table The name of the table to retrieve.
 #' @param max_retries Integer specifying the maximum number of retry attempts (default: 3).
+#' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return A list containing:
 #'   \itemize{
@@ -20,7 +21,7 @@
 #'
 #' @export
 
-adm.table_get <- function(opal, project, table, max_retries = 3,...) {
+adm.table_get <- function(opal, project, table, max_retries = 3, ...) {
   attempt <- 1
   dict <- NULL
   
@@ -80,7 +81,7 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
 #' @param diffdf Logical indicating whether to perform a diff comparison after saving (default: FALSE).
 #' @param path Character path to save diff findings as an Excel file (if \code{diffdf} is TRUE).
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure (default: 3).
-#' @param ... Additional arguments passed to underlying Opal functions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return If \code{diffdf} is FALSE, returns silently. If TRUE, returns the diff findings as a tibble.
 #' 
@@ -125,7 +126,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param categories A list of category definitions (optional).
 #' @param method Character specifying the save method (e.g., "write", "overwrite").
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure.
-#' @param ... Additional arguments passed to underlying Opal functions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @import opalr dplyr
 #' 
@@ -201,7 +202,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param method Character specifying the save method (e.g., "write", "overwrite").
 #' @param path Character path to save diff findings as an Excel file (if specified).
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure.
-#' @param ... Additional arguments passed to underlying Opal functions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return If \code{path} is specified, returns silently. Otherwise, returns the diff findings as a tibble.
 #' 
@@ -272,6 +273,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
 #' @param diffdf Logical indicating whether to run a diff check after save (default: FALSE).
 #' @param path Character path to save diff findings as Excel file (optional).
+#' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return A list of copied tables (no direct return; operation is side-effect).
 #'

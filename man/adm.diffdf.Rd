@@ -12,6 +12,8 @@ adm.diffdf(datafile1, datafile2, keys = NULL, ...)
 \item{datafile2}{A data frame representing the data to compare against.}
 
 \item{keys}{A character vector specifying the key columns used to match rows between data frames. If NULL, all columns are used as keys.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A list containing the differences found between the two data frames, including variable-level and value-level differences.

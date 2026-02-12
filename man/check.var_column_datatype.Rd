@@ -8,6 +8,8 @@ check.var_column_datatype(variables, ...)
 }
 \arguments{
 \item{variables}{A data frame or list containing variable definitions.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if any column is not of character type.

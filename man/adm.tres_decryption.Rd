@@ -12,6 +12,8 @@ adm.tres_decryption(connection, datafile, columns = NULL, ...)
 \item{datafile}{A data frame containing the encrypted data to be decrypted.}
 
 \item{columns}{A character vector specifying which columns to decrypt. If NULL, columns starting with "3::" are selected.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A data frame with decrypted values in the specified columns.

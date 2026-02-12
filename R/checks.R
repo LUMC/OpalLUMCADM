@@ -59,6 +59,7 @@ check.run_all <- function(datafile, variables, categories = NULL) {
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param variables A data frame or list containing variable definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A list of warnings about missing or extra columns.
 #' 
@@ -99,6 +100,7 @@ check.columns_var <- function(datafile, variables, ...) {
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param categories A data frame or list containing category definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A list of warnings about missing columns in categories.
 #' 
@@ -140,6 +142,7 @@ check.columns_cat <- function(datafile, categories = NULL, ...) {
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param variables A data frame or list containing variable definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A list of warnings about mismatched value types.
 #' 
@@ -239,6 +242,7 @@ check.minmax <- function(datafile, variables, categories = NULL) {
 #' Ensures that only one entity type is defined across all variables.
 #'
 #' @param variables A data frame or list containing variable definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if more than one entity type is present.
 #' 
@@ -264,6 +268,7 @@ check.entitytype <- function(variables, ...) {
 #' Validates the presence of required columns: 'label', 'entityType', and 'encrypted'.
 #'
 #' @param variables A data frame or list containing variable definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A list of warnings if required columns are missing.
 #' 
@@ -299,6 +304,7 @@ check.required_columns <- function(variables, ...) {
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param variables A data frame or list containing variable definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning or error if encrypted values are invalid or not fully encrypted.
 #' 
@@ -352,6 +358,7 @@ check.encrypted_values <- function(datafile, variables, ...) {
 #' Identifies columns containing infinite values (Inf or -Inf).
 #'
 #' @param datafile A data frame containing the actual data.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if any column contains infinite values.
 #' 
@@ -385,6 +392,7 @@ check.infinite <- function(datafile, ...) {
 #' @param datafile A data frame containing the actual data.
 #' @param variables A data frame or list containing variable definitions.
 #' @param format A string specifying the date format (default: "\%Y-\%m-\%d").
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if any date column fails format validation.
 #' 
@@ -426,6 +434,7 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
 #' @param datafile A data frame containing the actual data.
 #' @param variables A data frame or list containing variable definitions.
 #' @param format A string specifying the datetime format (default: "\%Y-\%m-\%d \%H:\%M:\%OS").
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if any datetime column fails format validation.
 #' 
@@ -466,6 +475,7 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param id.name A character string specifying the ID column name (default: "id").
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if duplicated IDs are found.
 #' 
@@ -491,6 +501,7 @@ check.duplicated_ids <- function(datafile, id.name = "id", ...) {
 #'
 #' @param variables A data frame or list containing variable definitions.
 #' @param categories A data frame or list containing category definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if duplicated rows are found in variables or categories.
 #' 
@@ -519,6 +530,7 @@ check.duplicated_rows <- function(variables, categories = NULL, ...) {
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param id.name A character string specifying the ID column name (default: "id").
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if the ID column is not of character type.
 #' 
@@ -543,6 +555,7 @@ check.character_ids <- function(datafile, id.name = "id", ...) {
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param categories A data frame or list containing category definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if any value in a categorical column is missing from the category list.
 #' 
@@ -575,6 +588,7 @@ check.cat_text_labels <- function(datafile, categories, ...) {
 #' Ensures that all columns in the variables object are character type.
 #'
 #' @param variables A data frame or list containing variable definitions.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A warning if any column is not of character type.
 #' 

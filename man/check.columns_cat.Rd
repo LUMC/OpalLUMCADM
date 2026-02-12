@@ -10,6 +10,8 @@ check.columns_cat(datafile, categories = NULL, ...)
 \item{datafile}{A data frame containing the actual data.}
 
 \item{categories}{A data frame or list containing category definitions.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A list of warnings about missing columns in categories.

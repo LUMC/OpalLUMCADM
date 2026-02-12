@@ -33,7 +33,7 @@
 
 \item{max_retries}{Integer specifying the maximum number of retry attempts on failure.}
 
-\item{...}{Additional arguments passed to underlying Opal functions.}
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \description{
 Saves a table to Opal using standard methods, applying variable and category dictionaries.

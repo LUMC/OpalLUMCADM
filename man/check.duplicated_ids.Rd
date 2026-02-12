@@ -10,6 +10,8 @@ check.duplicated_ids(datafile, id.name = "id", ...)
 \item{datafile}{A data frame containing the actual data.}
 
 \item{id.name}{A character string specifying the ID column name (default: "id").}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if duplicated IDs are found.

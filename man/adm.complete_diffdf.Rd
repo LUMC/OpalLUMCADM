@@ -10,6 +10,8 @@ adm.complete_diffdf(datalist1, datalist2, ...)
 \item{datalist1}{A list containing at least 'datafile' and optionally 'variables' and 'categories'.}
 
 \item{datalist2}{A list containing at least 'datafile' and optionally 'variables' and 'categories'.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A list containing the differences found across datafile, variables, and categories.

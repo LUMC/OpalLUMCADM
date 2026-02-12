@@ -10,6 +10,8 @@ check.encrypted_values(datafile, variables, ...)
 \item{datafile}{A data frame containing the actual data.}
 
 \item{variables}{A data frame or list containing variable definitions.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning or error if encrypted values are invalid or not fully encrypted.

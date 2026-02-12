@@ -12,6 +12,8 @@ check.datetime(datafile, variables, format = "\%Y-\%m-\%d \%H:\%M:\%OS", ...)
 \item{variables}{A data frame or list containing variable definitions.}
 
 \item{format}{A string specifying the datetime format (default: "\%Y-\%m-\%d \%H:\%M:\%OS").}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if any datetime column fails format validation.

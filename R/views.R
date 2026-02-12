@@ -11,6 +11,7 @@
 #' @param source The source table(s) used to define the view.
 #' @param variables A data frame containing variable definitions (name, type, etc.).
 #' @param categories Optional data frame of category mappings for variables.
+#' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A logical value indicating whether the view was created or updated.
 #' 

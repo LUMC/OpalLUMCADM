@@ -36,7 +36,7 @@
 
 \item{max_retries}{Integer specifying the maximum number of retry attempts on failure.}
 
-\item{...}{Additional arguments passed to underlying Opal functions.}
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 If \code{path} is specified, returns silently. Otherwise, returns the diff findings as a tibble.

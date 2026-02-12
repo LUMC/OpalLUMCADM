@@ -8,6 +8,8 @@ check.infinite(datafile, ...)
 }
 \arguments{
 \item{datafile}{A data frame containing the actual data.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if any column contains infinite values.

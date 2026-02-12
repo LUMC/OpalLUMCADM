@@ -8,6 +8,8 @@ check.required_columns(variables, ...)
 }
 \arguments{
 \item{variables}{A data frame or list containing variable definitions.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A list of warnings if required columns are missing.

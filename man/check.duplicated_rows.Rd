@@ -10,6 +10,8 @@ check.duplicated_rows(variables, categories = NULL, ...)
 \item{variables}{A data frame or list containing variable definitions.}
 
 \item{categories}{A data frame or list containing category definitions.}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 A warning if duplicated rows are found in variables or categories.

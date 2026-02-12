@@ -10,6 +10,8 @@
 \item{findings}{A list of findings, with keys corresponding to object types (e.g., "datafile", "variables")}
 
 \item{path}{The file path where the Excel workbook will be saved}
+
+\item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
 NULL (workbook is saved to path)

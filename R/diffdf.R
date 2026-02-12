@@ -6,6 +6,7 @@
 #' @param datafile1 A data frame representing the base data.
 #' @param datafile2 A data frame representing the data to compare against.
 #' @param keys A character vector specifying the key columns used to match rows between data frames. If NULL, all columns are used as keys.
+#' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return A list containing the differences found between the two data frames, including variable-level and value-level differences.
 #'
@@ -46,6 +47,7 @@ adm.diffdf <- function(datafile1, datafile2, keys = NULL, ...) {
 #'
 #' @param datalist1 A list containing at least 'datafile' and optionally 'variables' and 'categories'.
 #' @param datalist2 A list containing at least 'datafile' and optionally 'variables' and 'categories'.
+#' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return A list containing the differences found across datafile, variables, and categories.
 #'
