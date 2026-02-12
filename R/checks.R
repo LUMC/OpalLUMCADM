@@ -555,6 +555,9 @@ check.cat_text_labels <- function(datafile, categories, ...) {
   columns <- which(sapply(datafile, .map_dtype) == "text")
   categories <- categories[categories$variable %in% names(columns), ]
   
+  ## Only check missing is false
+  categories <- categories[categories$missing == FALSE, ]
+  
   for (x in unique(categories$variable)) {
     cat_value <- categories$name[categories$variable == x]
     data_value <- na.omit(datafile[[x]][!(datafile[[x]] %in% cat_value)])
