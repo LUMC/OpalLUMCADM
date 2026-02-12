@@ -20,23 +20,25 @@ df <- tibble(
 )
 
 ## Save dataframe
-findings <- adm.table_save_diffdf(
+findings <- adm.table_save(
   opal = opal,
   project = "CNSIM",
   table = "CNSIM_TEST",
   datafile = df,
-  method = "overwrite"
+  method = "overwrite",
+  diffdf = TRUE
 )
 
 ## Run check for success
 test_that("success", {
   output <- capture.output(
-    adm.table_save_diffdf(
+    adm.table_save(
       opal = opal,
       project = "CNSIM",
       table = "CNSIM_TEST",
       datafile = df,
-      method = "overwrite"
+      method = "overwrite",
+      diffdf = TRUE
     )
   )
   

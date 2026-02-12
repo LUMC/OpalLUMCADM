@@ -2,7 +2,7 @@
 % Please edit documentation in R/tables.R
 \name{adm.table_save}
 \alias{adm.table_save}
-\title{Save a table to Opal with optional dictionary application and retry logic}
+\title{Save data to an Opal table with optional diff comparison}
 \usage{
 adm.table_save(
   opal,
@@ -12,6 +12,8 @@ adm.table_save(
   variables = NULL,
   categories = NULL,
   method = "write",
+  diffdf = FALSE,
+  path = NULL,
   max_retries = 3,
   ...
 )
@@ -21,22 +23,27 @@ adm.table_save(
 
 \item{project}{The name of the project containing the table.}
 
-\item{table}{The name of the table to save.}
+\item{table}{The name of the table to save to.}
 
 \item{datafile}{A tibble containing the data to save.}
 
-\item{variables}{A tibble of variable definitions (optional).}
+\item{variables}{A list of variable definitions (optional).}
 
-\item{categories}{A tibble of category definitions (optional).}
+\item{categories}{A list of category definitions (optional).}
 
-\item{method}{Character specifying save method ("write", "overwrite", etc.) (default: "write").}
+\item{method}{Character specifying the save method (e.g., "write", "overwrite"). Default: "write".}
 
-\item{max_retries}{Integer specifying the maximum number of retry attempts (default: 3).}
+\item{diffdf}{Logical indicating whether to perform a diff comparison after saving (default: FALSE).}
+
+\item{path}{Character path to save diff findings as an Excel file (if \code{diffdf} is TRUE).}
+
+\item{max_retries}{Integer specifying the maximum number of retry attempts on failure (default: 3).}
+
+\item{...}{Additional arguments passed to underlying Opal functions.}
 }
 \value{
-A list containing the saved data and metadata (not directly returned; operation is side-effect).
+If \code{diffdf} is FALSE, returns silently. If TRUE, returns the diff findings as a tibble.
 }
 \description{
-Saves a tibble to an Opal table, applying variable and category dictionaries if provided.
-Includes retry mechanism for failed saves and removes user permissions afterward.
+Saves a data frame to an Opal table. Optionally performs a diff comparison between before and after uploads.
 }

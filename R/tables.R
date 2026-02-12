@@ -66,27 +66,72 @@ adm.table_get <- function(opal, project, table, max_retries = 3,...) {
 }
 
 
-#' Save a table to Opal with optional dictionary application and retry logic
+#' Save data to an Opal table with optional diff comparison
 #'
-#' Saves a tibble to an Opal table, applying variable and category dictionaries if provided.
-#' Includes retry mechanism for failed saves and removes user permissions afterward.
+#' Saves a data frame to an Opal table. Optionally performs a diff comparison between before and after uploads.
 #'
 #' @param opal A connection object to the Opal server.
 #' @param project The name of the project containing the table.
-#' @param table The name of the table to save.
+#' @param table The name of the table to save to.
 #' @param datafile A tibble containing the data to save.
-#' @param variables A tibble of variable definitions (optional).
-#' @param categories A tibble of category definitions (optional).
-#' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
-#' @param max_retries Integer specifying the maximum number of retry attempts (default: 3).
-#'
-#' @return A list containing the saved data and metadata (not directly returned; operation is side-effect).
-#'
+#' @param variables A list of variable definitions (optional).
+#' @param categories A list of category definitions (optional).
+#' @param method Character specifying the save method (e.g., "write", "overwrite"). Default: "write".
+#' @param diffdf Logical indicating whether to perform a diff comparison after saving (default: FALSE).
+#' @param path Character path to save diff findings as an Excel file (if \code{diffdf} is TRUE).
+#' @param max_retries Integer specifying the maximum number of retry attempts on failure (default: 3).
+#' @param ... Additional arguments passed to underlying Opal functions.
+#' 
+#' @return If \code{diffdf} is FALSE, returns silently. If TRUE, returns the diff findings as a tibble.
+#' 
 #' @import opalr dplyr
-#'
+#' 
 #' @export
 
-adm.table_save <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", max_retries = 3, ...) {
+adm.table_save <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
+  ## Set arguments
+  args <- list(
+    opal = opal,
+    project = project,
+    table = table,
+    datafile = datafile,
+    variables = variables,
+    categories = categories,
+    method = method,
+    path = path,
+    max_retries = max_retries,
+    ...
+  )
+  
+  ## Run table save with or without diffdf
+  if (isTRUE(diffdf)) {
+    do.call(.table_save_diffdf, args)
+  } else {
+    args$path <- NULL
+    do.call(.table_save_normal, args)
+  }
+}
+
+
+#' Internal function: Save table without diff comparison
+#'
+#' Saves a table to Opal using standard methods, applying variable and category dictionaries.
+#'
+#' @param opal A connection object to the Opal server.
+#' @param project The name of the project containing the table.
+#' @param table The name of the table to save to.
+#' @param datafile A tibble containing the data to save.
+#' @param variables A list of variable definitions (optional).
+#' @param categories A list of category definitions (optional).
+#' @param method Character specifying the save method (e.g., "write", "overwrite").
+#' @param max_retries Integer specifying the maximum number of retry attempts on failure.
+#' @param ... Additional arguments passed to underlying Opal functions.
+#' 
+#' @import opalr dplyr
+#' 
+#' @export
+
+.table_save_normal <- function(opal, project, table, datafile, variables, categories, method, max_retries, ...) {
   ## Set method
   method <- .set_method(method = method)
   
@@ -143,28 +188,28 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 }
 
 
-#' Save a table with diff comparison before and after upload
+#' Internal function: Save table with diff comparison
 #'
-#' Retrieves data from Opal before and after upload, compares the two datasets using `adm.complete_diffdf`,
-#' and optionally saves the differences to an Excel file.
+#' Saves a table to Opal and compares the data before and after upload.
 #'
 #' @param opal A connection object to the Opal server.
 #' @param project The name of the project containing the table.
-#' @param table The name of the table to save.
+#' @param table The name of the table to save to.
 #' @param datafile A tibble containing the data to save.
-#' @param variables A tibble of variable definitions (optional).
-#' @param categories A tibble of category definitions (optional).
-#' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
-#' @param path Character path to save diff findings as Excel file (optional).
-#' @param max_retries Integer specifying the maximum number of retry attempts (default: 3).
-#'
-#' @return If \code{path} is provided, returns silently; otherwise, returns a list of differences.
-#'
+#' @param variables A list of variable definitions (optional).
+#' @param categories A list of category definitions (optional).
+#' @param method Character specifying the save method (e.g., "write", "overwrite").
+#' @param path Character path to save diff findings as an Excel file (if specified).
+#' @param max_retries Integer specifying the maximum number of retry attempts on failure.
+#' @param ... Additional arguments passed to underlying Opal functions.
+#' 
+#' @return If \code{path} is specified, returns silently. Otherwise, returns the diff findings as a tibble.
+#' 
 #' @import opalr dplyr
-#'
+#' 
 #' @export
 
-adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", path = NULL, max_retries = 3, ...) {
+.table_save_diffdf <- function(opal, project, table, datafile, variables, categories, method, path, max_retries, ...) {
   ## Get data from Opal before upload
   datalist1 <- adm.table_get(
     opal = opal,
@@ -174,7 +219,7 @@ adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NU
   )
   
   ## Save table
-  adm.table_save(
+  .table_save_normal(
     opal = opal,
     project = project,
     table = table,
@@ -202,7 +247,7 @@ adm.table_save_diffdf <- function(opal, project, table, datafile, variables = NU
   
   ## Save or return output of diffdf
   if (!is.null(path)) {
-    today <- format(Sys.time(), format = "%Y%m%d_%H%m%S")
+    today <- format(Sys.time(), format = "%Y%m%d_%H%M%S")
     .write_to_excel(
       findings = findings,
       path = paste0(path, "/", table, "_", today, ".xlsx")
@@ -249,30 +294,18 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
       ...
     )
     
-    ## Run save with diffdf or not
-    if (isTRUE(diffdf)) {
-      adm.table_save_diffdf(
-        opal = opal_dst,
-        project = project_dst,
-        table = table_dst[item],
-        datafile = df$datafile,
-        variables = df$variables,
-        categories = df$categories,
-        method = method,
-        path = path,
-        ...
-      )
-    } else {
-      adm.table_save(
-        opal = opal_dst,
-        project = project_dst,
-        table = table_dst[item],
-        datafile = df$datafile,
-        variables = df$variables,
-        categories = df$categories,
-        method = method,
-        ...
-      )
-    }
+    ## Run table save
+    adm.table_save(
+      opal = opal_dst,
+      project = project_dst,
+      table = table_dst[item],
+      datafile = df$datafile,
+      variables = df$variables,
+      categories = df$categories,
+      method = method,
+      diffdf = diffdf,
+      path = path,
+      ...
+    )
   }
 }
