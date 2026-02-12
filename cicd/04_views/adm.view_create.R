@@ -68,3 +68,18 @@ test_that("success", {
     "Updating existing view..."
   )
 })
+
+## Update view, check ready message
+test_that("success", {
+  expect_message(
+    adm.view_create(
+      opal = opal,
+      project = "CNSIM",
+      table = "CNSIM_TEST_VIEW",
+      source = c("CNSIM.CNSIM1"),
+      variables = dict$variables,
+      categories = dict$categories
+    ),
+    " View is ready!"
+  )
+})

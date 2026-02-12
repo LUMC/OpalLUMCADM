@@ -27,7 +27,7 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
   )
   
   if (!view_exists) {
-    message("Creating new view...")
+    message("Creating new view...", appendLF = FALSE)
     ## Create view if it doesn't exist
     opal.table_view_create(
       opal = opal,
@@ -37,7 +37,7 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
       ...
     )
   } else {
-    message("Updating existing view...")
+    message("Updating existing view...", appendLF = FALSE)
   }
   
   ## Set script column as required for views
@@ -49,7 +49,8 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     project = project, 
     table = table,
     variables = variables,
-    categories = categories
+    categories = categories,
+    complete = TRUE
   )
   
   ## Remove own user permissions
@@ -59,4 +60,5 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     table = table,
     subject = opal$username
   )
+  message(" View is ready!")
 }
