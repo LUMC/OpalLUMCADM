@@ -43,7 +43,7 @@ Checks:
     - R CMD INSTALL "$PKG_FILE"
     - Rscript ./cicd/02_checks/create_dataset.R
   script:
-    - Rscript ./cicd/02_checks/check.cat_text_labels.R
+    - Rscript ./cicd/02_checks/check.cat_labels.R
     - Rscript ./cicd/02_checks/check.character_ids.R
     - Rscript ./cicd/02_checks/check.columns_cat.R
     - Rscript ./cicd/02_checks/check.columns_var.R

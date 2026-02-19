@@ -33,7 +33,7 @@ check.run_all <- function(datafile, variables, categories = NULL) {
     logs <- append(logs, .capture_logs(check.duplicated_rows)(...))
     logs <- append(logs, .capture_logs(check.character_ids)(...))
     logs <- append(logs, .capture_logs(check.var_column_datatype)(...))
-    logs <- append(logs, .capture_logs(check.cat_text_labels)(...))
+    logs <- append(logs, .capture_logs(check.cat_labels)(...))
     
     ## Create dataframe from all logs
     logs <- do.call(rbind.data.frame, logs)
@@ -549,9 +549,9 @@ check.character_ids <- function(datafile, id.name = "id", ...) {
 }
 
 
-#' Check Categorical Text Labels Completeness
+#' Check Categorical Labels Completeness
 #'
-#' Ensures that all values in text-based categorical columns are present in the category definitions.
+#' Ensures that all values in categorical columns are present in the category definitions.
 #'
 #' @param datafile A data frame containing the actual data.
 #' @param categories A data frame or list containing category definitions.
@@ -563,13 +563,10 @@ check.character_ids <- function(datafile, id.name = "id", ...) {
 #' 
 #' @export
 
-check.cat_text_labels <- function(datafile, categories, ...) {
+check.cat_labels <- function(datafile, categories, ...) {
   ## Get all character categories
-  columns <- which(sapply(datafile, .map_dtype) == "text")
-  categories <- categories[categories$variable %in% names(columns), ]
-  
-  ## Only check missing is false
-  categories <- categories[categories$missing == FALSE, ]
+  columns <- which(sapply(datafile, .map_dtype) %in% c("text", "integer"))
+  categories <- categories[categories$variable %in% colnames(datafile)[columns], ]
   
   for (x in unique(categories$variable)) {
     cat_value <- categories$name[categories$variable == x]
@@ -579,7 +576,7 @@ check.cat_text_labels <- function(datafile, categories, ...) {
     }
   }
   
-  message(" Checked categorie text labels")
+  message(" Checked categorie labels")
 }
 
 
