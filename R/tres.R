@@ -49,6 +49,11 @@ adm.tres_connection <- function(connection, ...) {
 #' @export
 
 adm.tres_encryption <- function(connection, datafile, columns = NULL, search_image = FALSE, ...) {
+  ## Check if search_image & search_image in connection string are not both TRUE (this results in empty strings)
+  if (connection$search_image == FALSE & search_image == TRUE) {
+    stop("Search Image in connection is FALSE whilst TRUE in function parameter")
+  }
+  
   ## Select all columns if no columns are selected
   if (is.null(columns)) {
     columns <- colnames(datafile)
@@ -63,7 +68,6 @@ adm.tres_encryption <- function(connection, datafile, columns = NULL, search_ima
       datafile[[column]] <- tres_encrypt(
         values = datafile[[column]],
         connection = connection,
-        search_image = search_image,
         ...
       ),
       warning = function(w) {
