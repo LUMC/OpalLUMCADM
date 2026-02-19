@@ -324,8 +324,8 @@ check.encrypted_values <- function(datafile, variables, ...) {
   
   ## Tres options
   tres_values <- list(
-    c("yes", "^3::"),
-    c("SI", "^1:")
+    c("yes", "^3::", ">= 100"),
+    c("SI", "^1:", "== 66")
   )
   
   ## Check for each tres option
@@ -335,14 +335,14 @@ check.encrypted_values <- function(datafile, variables, ...) {
       datafile %>%
         select(variables %>% filter(encrypted == value[1]) %>% pull(name)), 2,
       function(x) {
-        all(grepl(value[2], na.omit(x)))
+        all(grepl(value[2], na.omit(x)) & eval(parse(text = paste0(nchar(na.omit(x)), value[3]))))
       }
     )
     
     ## Check content
     if (FALSE %in% encrypted) {
       stop(
-        paste0("Some columns are not encrypted (encrypted =", value[1], "): "),
+        paste0("Some columns are not encrypted correctly (encrypted = ", value[1], "): "),
         paste(names(encrypted)[encrypted == FALSE], collapse = ", ")
       )
     }
