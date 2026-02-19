@@ -62,9 +62,36 @@ test_that("error", {
   )
 })
 
+## Add 'encrypted' values for error (1:, but to short)
+datafile$LAB_TRIG <- paste0("1:", strrep("a", 60))
+
+## Run test with error
+test_that("error", {
+  expect_error(
+    check.encrypted_values(
+      datafile = datafile, 
+      variables = variables
+    ),
+    "Some columns are not encrypted.*LAB_TRIG"
+  )
+})
+
+## Add 'encrypted' values for error (no 1:, but matching 66 characters)
+datafile$LAB_TRIG <- paste0("TE", strrep("a", 64))
+
+## Run test with error
+test_that("error", {
+  expect_error(
+    check.encrypted_values(
+      datafile = datafile, 
+      variables = variables
+    ),
+    "Some columns are not encrypted.*LAB_TRIG"
+  )
+})
 
 ## Add 'encrypted' values for success
-datafile$LAB_TRIG <- paste0("1:", datafile$LAB_TRIG)
+datafile$LAB_TRIG <- paste0("1:", strrep("a", 64))
 
 ## Run test with success
 test_that("success", {
@@ -92,9 +119,36 @@ test_that("error", {
   )
 })
 
+## Add 'encrypted' values for error (3::, but to short)
+datafile$LAB_TRIG <- paste0("3::", strrep("a", 90))
+
+## Run test with error
+test_that("error", {
+  expect_error(
+    check.encrypted_values(
+      datafile = datafile, 
+      variables = variables
+    ),
+    regexp = "Some columns are not encrypted.*LAB_TRIG"
+  )
+})
+
+## Add 'encrypted' values for error (no 3::, but matching 100+ characters)
+datafile$LAB_TRIG <- paste0("TEE", strrep("a", 97))
+
+## Run test with error
+test_that("error", {
+  expect_error(
+    check.encrypted_values(
+      datafile = datafile, 
+      variables = variables
+    ),
+    regexp = "Some columns are not encrypted.*LAB_TRIG"
+  )
+})
 
 ## Add 'encrypted' values for success
-datafile$LAB_TRIG <- paste0("3::", datafile$LAB_TRIG)
+datafile$LAB_TRIG <- paste0("3::", strrep("a", 97))
 
 ## Run test with success
 test_that("success", {
