@@ -248,10 +248,10 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
   
   ## Save or return output of diffdf
   if (!is.null(path)) {
-    today <- format(Sys.time(), format = "%Y%m%d_%H%M%S")
+    today <- format(Sys.time(), format = "%Y%m%d%H%M%S")
     .write_to_excel(
       findings = findings,
-      path = paste0(path, "/", table, "_", today, ".xlsx")
+      path = paste0(path, "/", project, "_", table, "_", today, ".xlsx")
     )
   } else {
     return(findings)
