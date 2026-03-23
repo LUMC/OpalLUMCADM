@@ -2,22 +2,20 @@
 % Please edit documentation in R/tres.R
 \name{adm.tres_decryption}
 \alias{adm.tres_decryption}
-\title{Decrypt Data Columns Using TRES}
+\title{Decrypt Data Using TRES}
 \usage{
-adm.tres_decryption(connection, datafile, columns = NULL, ...)
+adm.tres_decryption(connection, values, ...)
 }
 \arguments{
 \item{connection}{A connection object used to communicate with the TRES service.}
 
-\item{datafile}{A data frame containing the encrypted data to be decrypted.}
-
-\item{columns}{A character vector specifying which columns to decrypt. If NULL, columns starting with "3::" are selected.}
+\item{values}{Column values to encrypt.}
 
 \item{...}{Additional arguments passed to underlying functions.}
 }
 \value{
-A data frame with decrypted values in the specified columns.
+Result as decrypted values
 }
 \description{
-Decrypts specified columns in a data frame using the TRES decryption service.
+Decrypts data using the TRES decryption service.
 }

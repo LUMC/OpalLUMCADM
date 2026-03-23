@@ -34,103 +34,85 @@ adm.tres_connection <- function(connection, ...) {
 }
 
 
-#' Encrypt Data Columns Using TRES
+#' Encrypt Data Using TRES
 #'
-#' Encrypts specified columns in a data frame using the TRES encryption service.
+#' Encrypts data using the TRES encryption service.
 #'
 #' @param connection A connection object used to communicate with the TRES service.
-#' @param datafile A data frame containing the data to be encrypted.
-#' @param columns A character vector specifying which columns to encrypt. If NULL, all columns are encrypted.
+#' @param values Column values to encrypt.
 #' @param search_image A logical value indicating whether to search for image data after encryption.
 #' @param ... Additional arguments passed to underlying functions.
 #' 
-#' @return A data frame with encrypted values in the specified columns.
+#' @return Result as encrypted values
 #' 
 #' @export
 
-adm.tres_encryption <- function(connection, datafile, columns = NULL, search_image = FALSE, ...) {
+adm.tres_encryption <- function(connection, values, search_image = FALSE, ...) {
   ## Check if search_image & search_image in connection string are not both TRUE (this results in empty strings)
   if (connection$search_image == FALSE & search_image == TRUE) {
     stop("Search Image in connection is FALSE whilst TRUE in function parameter")
   }
   
-  ## Select all columns if no columns are selected
-  if (is.null(columns)) {
-    columns <- colnames(datafile)
-  }
-  
   ## Set warning variable
   warn <- character()
   
-  ## Encrypt for each column
-  for (column in columns) {
-    withCallingHandlers(
-      datafile[[column]] <- tres_encrypt(
-        values = datafile[[column]],
-        connection = connection,
-        ...
-      ),
-      warning = function(w) {
-        warn <<- c(warn, conditionMessage(w))
-        invokeRestart("muffleWarning")
-      }
-    )
-    
-    if(search_image) {
-      datafile[[column]] <- vec_extract_search_image(
-        values = datafile[[column]]
-      )
+  ## Encrypt values
+  result <- withCallingHandlers(
+    tres_encrypt(
+      values = values,
+      connection = connection,
+      ...
+    ),
+    warning = function(w) {
+      warn <<- c(warn, conditionMessage(w))
+      invokeRestart("muffleWarning")
     }
+  )
+  
+  if(search_image) {
+    result <- vec_extract_search_image(
+      values = values
+    )
   }
   
   ## Show warnings
   .tres_response_codes(response = warn)
   
-  return(datafile)
+  return(result)
 }
 
 
-#' Decrypt Data Columns Using TRES
+#' Decrypt Data Using TRES
 #'
-#' Decrypts specified columns in a data frame using the TRES decryption service.
+#' Decrypts data using the TRES decryption service.
 #'
 #' @param connection A connection object used to communicate with the TRES service.
-#' @param datafile A data frame containing the encrypted data to be decrypted.
-#' @param columns A character vector specifying which columns to decrypt. If NULL, columns starting with "3::" are selected.
+#' @param values Column values to encrypt.
 #' @param ... Additional arguments passed to underlying functions.
 #' 
-#' @return A data frame with decrypted values in the specified columns.
+#' @return Result as decrypted values
 #' 
 #' @export
 
-adm.tres_decryption <- function(connection, datafile, columns = NULL, ...) {
-  ## Select all columns if no columns are selected
-  if (is.null(columns)) {
-    columns <- datafile %>% 
-      select(where(~ any(grepl("^3::", .)))) %>%
-      colnames()
-  }
-  
+adm.tres_decryption <- function(connection, values, ...) {
   ## Set warning variable
   warn <- character()
   
-  ## Encrypt for each column
-  for (column in columns) {
-    withCallingHandlers(
-      datafile[[column]] <- tres_decrypt(
-        values = datafile[[column]],
-        connection = connection,
-        ...
-      ),
-      warning = function(w) {
-        warn <<- c(warn, conditionMessage(w))
-        invokeRestart("muffleWarning")
-      }
-    )
-  }
+  ## Decrypt values
+  result <- withCallingHandlers(
+    tres_decrypt(
+      values = values,
+      connection = connection,
+      ...
+    ),
+    warning = function(w) {
+      warn <<- c(warn, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
+  )
   
   ## Show warnings
   .tres_response_codes(response = warn)
   
-  return(datafile)
+  return(result)
 }
