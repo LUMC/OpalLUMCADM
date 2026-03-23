@@ -54,6 +54,14 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     complete = TRUE
   )
   
+  ## Update the table references and/or the entity filter of an existing Opal view
+  opal.table_view_update(
+    opal = opal,
+    project = project,
+    table = table,
+    ...
+  )
+  
   ## Remove own user permissions
   opal.table_perm_delete(
     opal = opal,
