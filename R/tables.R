@@ -137,7 +137,9 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
   method <- .set_method(method = method)
   
   ## Set default entitytype
-  type <- "Participant"
+  if (!exists("type")) {
+    type <- "Participant"
+  }
   
   ## Apply dictionary if variables are present
   if (!is.null(variables)) {
