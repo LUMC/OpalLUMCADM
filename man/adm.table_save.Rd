@@ -11,6 +11,7 @@ adm.table_save(
   datafile,
   variables = NULL,
   categories = NULL,
+  type = "Participant",
   method = "write",
   diffdf = FALSE,
   path = NULL,
@@ -30,6 +31,8 @@ adm.table_save(
 \item{variables}{A list of variable definitions (optional).}
 
 \item{categories}{A list of category definitions (optional).}
+
+\item{type}{Entity type (what the data are about). Default: "'"Participant".}
 
 \item{method}{Character specifying the save method (e.g., "write", "overwrite"). Default: "write".}
 

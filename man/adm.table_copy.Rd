@@ -11,6 +11,7 @@ adm.table_copy(
   project_dst,
   table_src,
   table_dst,
+  type = "Participant",
   method = "write",
   diffdf = FALSE,
   path = NULL,
@@ -29,6 +30,8 @@ adm.table_copy(
 \item{table_src}{A character vector of source table names.}
 
 \item{table_dst}{A character vector of destination table names.}
+
+\item{type}{Entity type (what the data are about). Default: "'"Participant".}
 
 \item{method}{Character specifying save method ("write", "overwrite", etc.) (default: "write").}
 
