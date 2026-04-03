@@ -32,7 +32,7 @@ adm.table_save(
 
 \item{categories}{A list of category definitions (optional).}
 
-\item{type}{Entity type (what the data are about). Default: "'"Participant".}
+\item{type}{Entity type (what the data are about). Default: "Participant".}
 
 \item{method}{Character specifying the save method (e.g., "write", "overwrite"). Default: "write".}
 

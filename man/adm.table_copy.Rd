@@ -31,7 +31,7 @@ adm.table_copy(
 
 \item{table_dst}{A character vector of destination table names.}
 
-\item{type}{Entity type (what the data are about). Default: "'"Participant".}
+\item{type}{Entity type (what the data are about). Default: "Participant".}
 
 \item{method}{Character specifying save method ("write", "overwrite", etc.) (default: "write").}
 
