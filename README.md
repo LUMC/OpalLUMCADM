@@ -25,7 +25,7 @@ remotes::install_git(
 ## Specific version
 remotes::install_git(
   url = "https://git.lumc.nl/adm/r-packages/OpalLUMCADM.git",
-  ref = "v2.0.0", ## Or other tag
+  ref = "v2.0.1", ## Or other tag
   credentials = git2r::cred_user_pass("USERNAME", "GIT_ACCESS_TOKEN")
 )
 

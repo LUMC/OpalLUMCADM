@@ -11,6 +11,7 @@
 #' @param source The source table(s) used to define the view.
 #' @param variables A data frame containing variable definitions (name, type, etc.).
 #' @param categories Optional data frame of category mappings for variables.
+#' @param where The entity filter script. Not modified when NULL (default). To remove the filter, set an empty string.
 #' @param ... Additional arguments passed to underlying functions.
 #' 
 #' @return A logical value indicating whether the view was created or updated.
@@ -19,7 +20,7 @@
 #' 
 #' @export
 
-adm.view_create <- function(opal, project, table, source, variables, categories = NULL, ...) {
+adm.view_create <- function(opal, project, table, source, variables, categories = NULL, where = NULL, ...) {
   ## Check if view already exists
   view_exists <- opal.table_exists(
     opal = opal,
@@ -52,6 +53,15 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     variables = variables,
     categories = categories,
     complete = TRUE
+  )
+  
+  ## Update the table references and/or the entity filter of an existing Opal view
+  opal.table_view_update(
+    opal = opal,
+    project = project,
+    table = table,
+    where = where,
+    ...
   )
   
   ## Remove own user permissions

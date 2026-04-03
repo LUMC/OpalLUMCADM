@@ -407,11 +407,9 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
   
   ## Check format
   if (ncol(get_date) > 0) {
-    is_date <- apply(
-      get_date, 2,
-      function(x) {
-        all(!is.na(as.Date(na.omit(x), format = format)))
-      })
+    is_date <- sapply(get_date, function(x) {
+      all(!is.na(as.Date(na.omit(x), format = format)))
+    })
     
     ## Check content
     if (FALSE %in% is_date) {
@@ -449,11 +447,9 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
   
   ## Check format
   if (ncol(get_datetime) > 0) {
-    is_datetime <- apply(
-      get_datetime, 2,
-      function(x) {
-        all(!is.na(as.POSIXct(na.omit(x), format = format)))
-      })
+    is_datetime <- sapply(get_datetime, function(x) {
+      all(!is.na(as.POSIXct(na.omit(x), format = format)))
+    })
     
     ## Check content
     if (FALSE %in% is_datetime) {

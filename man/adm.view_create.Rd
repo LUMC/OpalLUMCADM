@@ -11,6 +11,7 @@ adm.view_create(
   source,
   variables,
   categories = NULL,
+  where = NULL,
   ...
 )
 }
@@ -26,6 +27,8 @@ adm.view_create(
 \item{variables}{A data frame containing variable definitions (name, type, etc.).}
 
 \item{categories}{Optional data frame of category mappings for variables.}
+
+\item{where}{The entity filter script. Not modified when NULL (default). To remove the filter, set an empty string.}
 
 \item{...}{Additional arguments passed to underlying functions.}
 }

@@ -11,6 +11,7 @@
   datafile,
   variables,
   categories,
+  type,
   method,
   max_retries,
   ...
@@ -28,6 +29,8 @@
 \item{variables}{A list of variable definitions (optional).}
 
 \item{categories}{A list of category definitions (optional).}
+
+\item{type}{Entity type (what the data are about).}
 
 \item{method}{Character specifying the save method (e.g., "write", "overwrite").}
 

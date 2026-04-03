@@ -77,6 +77,7 @@ adm.table_get <- function(opal, project, table, max_retries = 3, ...) {
 #' @param datafile A tibble containing the data to save.
 #' @param variables A list of variable definitions (optional).
 #' @param categories A list of category definitions (optional).
+#' @param type Entity type (what the data are about). Default: "Participant".
 #' @param method Character specifying the save method (e.g., "write", "overwrite"). Default: "write".
 #' @param diffdf Logical indicating whether to perform a diff comparison after saving (default: FALSE).
 #' @param path Character path to save diff findings as an Excel file (if \code{diffdf} is TRUE).
@@ -89,7 +90,7 @@ adm.table_get <- function(opal, project, table, max_retries = 3, ...) {
 #' 
 #' @export
 
-adm.table_save <- function(opal, project, table, datafile, variables = NULL, categories = NULL, method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
+adm.table_save <- function(opal, project, table, datafile, variables = NULL, categories = NULL, type = "Participant", method = "write", diffdf = FALSE, path = NULL, max_retries = 3, ...) {
   ## Set arguments
   args <- list(
     opal = opal,
@@ -101,6 +102,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
     method = method,
     path = path,
     max_retries = max_retries,
+    type = type,
     ...
   )
   
@@ -124,6 +126,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param datafile A tibble containing the data to save.
 #' @param variables A list of variable definitions (optional).
 #' @param categories A list of category definitions (optional).
+#' @param type Entity type (what the data are about).
 #' @param method Character specifying the save method (e.g., "write", "overwrite").
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure.
 #' @param ... Additional arguments passed to underlying functions.
@@ -132,12 +135,9 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' 
 #' @export
 
-.table_save_normal <- function(opal, project, table, datafile, variables, categories, method, max_retries, ...) {
+.table_save_normal <- function(opal, project, table, datafile, variables, categories, type, method, max_retries, ...) {
   ## Set method
   method <- .set_method(method = method)
-  
-  ## Set default entitytype
-  type <- "Participant"
   
   ## Apply dictionary if variables are present
   if (!is.null(variables)) {
@@ -152,10 +152,6 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
       variables = variables,
       categories = categories
     )
-    
-    if ("entityType" %in% colnames(variables)) {
-      type <- unique(variables$entityType)[1]
-    }
   }
   
   ## Save table to Opal with x number of max_retries
@@ -167,9 +163,9 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
         project = project,
         table = table,
         tibble = datafile,
-        type = type,
         force = method["force"],
         overwrite = method["overwrite"],
+        type = type,
         ...
       )
       break
@@ -199,6 +195,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param datafile A tibble containing the data to save.
 #' @param variables A list of variable definitions (optional).
 #' @param categories A list of category definitions (optional).
+#' @param type Entity type (what the data are about).
 #' @param method Character specifying the save method (e.g., "write", "overwrite").
 #' @param path Character path to save diff findings as an Excel file (if specified).
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure.
@@ -210,7 +207,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' 
 #' @export
 
-.table_save_diffdf <- function(opal, project, table, datafile, variables, categories, method, path, max_retries, ...) {
+.table_save_diffdf <- function(opal, project, table, datafile, variables, categories, type, method, path, max_retries, ...) {
   ## Get data from Opal before upload
   datalist1 <- adm.table_get(
     opal = opal,
@@ -227,6 +224,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
     datafile = datafile,
     variables = variables,
     categories = categories,
+    type = type,
     method = method,
     max_retries = max_retries,
     ...
@@ -251,7 +249,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
     today <- format(Sys.time(), format = "%Y%m%d_%H%M%S")
     .write_to_excel(
       findings = findings,
-      path = paste0(path, "/", table, "_", today, ".xlsx")
+      path = paste0(path, "/", project, "_", table, "_", today, ".xlsx")
     )
   } else {
     return(findings)
@@ -270,6 +268,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param project_dst The name of the destination project.
 #' @param table_src A character vector of source table names.
 #' @param table_dst A character vector of destination table names.
+#' @param type Entity type (what the data are about). Default: "Participant".
 #' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
 #' @param diffdf Logical indicating whether to run a diff check after save (default: FALSE).
 #' @param path Character path to save diff findings as Excel file (optional).
@@ -281,7 +280,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #'
 #' @export
 
-adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, method = "write", diffdf = FALSE, path = NULL, ...) {
+adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, type = "Participant", method = "write", diffdf = FALSE, path = NULL, ...) {
   if (length(table_dst) != length(table_src)) {
     stop("Number of tablenames from source not equal to destination!")
   }
@@ -304,6 +303,7 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
       datafile = df$datafile,
       variables = df$variables,
       categories = df$categories,
+      type = type,
       method = method,
       diffdf = diffdf,
       path = path,
