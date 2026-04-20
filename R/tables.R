@@ -58,9 +58,9 @@ adm.table_get <- function(opal, project, table, max_retries = 3, ...) {
   
   ## Combine output
   datalist <- list(
-    datafile = df,
-    variables = dict$variables,
-    categories = dict$categories
+    datafile = as_tibble(df),
+    variables = as_tibble(dict$variables),
+    categories = as_tibble(dict$categories)
   )
   
   return(datalist)
