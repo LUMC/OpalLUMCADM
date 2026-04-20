@@ -61,7 +61,7 @@ adm.complete_diffdf <- function(datalist1, datalist2, ...) {
   findings <- list()
   
   ## Run diffdf for datafile
-  if (!is.null(datalist1$datafile) & !is.null(datalist2$datafile)) {
+  if (nrow(datalist1$datafile) != 0 & nrow(datalist2$datafile) != 0) {
     findings[["datafile"]] <- adm.diffdf(
       datafile1 = datalist1$datafile,
       datafile2 = datalist2$datafile,
@@ -71,7 +71,7 @@ adm.complete_diffdf <- function(datalist1, datalist2, ...) {
   }
   
   ## Run diffdf for variables
-  if (!is.null(datalist1$variables) & !is.null(datalist2$variables)) {
+  if (nrow(datalist1$variables) != 0 & nrow(datalist2$variables) != 0) {
     findings[["variables"]] <- adm.diffdf(
       datafile1 = datalist1$variables,
       datafile2 = datalist2$variables,
@@ -81,7 +81,7 @@ adm.complete_diffdf <- function(datalist1, datalist2, ...) {
   }
   
   ## Run diffdf for categories
-  if (!is.null(datalist1$categories) & !is.null(datalist2$categories)) {
+  if (nrow(datalist1$categories) != 0 & nrow(datalist2$categories) != 0) {
     findings[["categories"]] <- adm.diffdf(
       datafile1 = datalist1$categories,
       datafile2 = datalist2$categories,
