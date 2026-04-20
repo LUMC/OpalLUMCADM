@@ -248,3 +248,34 @@ adm.fix_valuetype <- function(datafile, variables) {
   
   return(datafile)
 }
+
+
+#' Remove haven labels and missing definitions
+#'
+#' Strips all haven-specific attributes from a labelled vector.
+#'
+#' @param x A vector, of class `haven_labelled` or `haven_labelled_spss`.
+#'
+#' @return The input vector with haven-specific attributes and classes removed.
+#'
+#' @export
+
+adm.remove_haven <- function(x) {
+  ## Only applicable with haven-labels
+  if (!inherits(x, c("haven_labelled", "haven_labelled_spss"))) {
+    return(x)
+  }
+  
+  ## Remove haven missing definitions
+  attr(x, "na_values") <- NULL
+  attr(x, "na_range")  <- NULL
+  
+  ## Remove labels
+  attr(x, "labels") <- NULL
+  attr(x, "label")  <- NULL
+  
+  ## Drop haven classes
+  class(x) <- setdiff(class(x), c("haven_labelled_spss", "haven_labelled", "vctrs_vctr"))
+  
+  return(x)
+}
