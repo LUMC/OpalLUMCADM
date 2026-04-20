@@ -65,7 +65,7 @@ adm.complete_diffdf <- function(datalist1, datalist2, ...) {
     findings[["datafile"]] <- adm.diffdf(
       datafile1 = datalist1$datafile,
       datafile2 = datalist2$datafile,
-      keys = colnames(datalist1$datafile)[1],
+      keys = "id",
       ...
     )
   }
