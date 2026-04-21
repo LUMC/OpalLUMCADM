@@ -20,13 +20,12 @@ df <- tibble(
 )
 
 ## Save dataframe
-findings <- adm.table_save(
+adm.table_save(
   opal = opal,
   project = "CNSIM",
   table = "CNSIM_TEST",
   datafile = df,
-  method = "overwrite",
-  diffdf = TRUE
+  method = "overwrite"
 )
 
 ## Run check for success

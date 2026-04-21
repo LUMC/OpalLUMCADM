@@ -565,6 +565,10 @@ check.cat_labels <- function(datafile, categories, ...) {
   categories <- categories[categories$variable %in% colnames(datafile)[columns], ]
   
   for (x in unique(categories$variable)) {
+    missings <- categories |> filter(variable == x) |> pull(missing)
+    if (isFALSE(FALSE %in% missings)) {
+      next
+    }
     cat_value <- categories$name[categories$variable == x]
     data_value <- na.omit(datafile[[x]][!(datafile[[x]] %in% cat_value)])
     if (!is_empty(data_value)) {

@@ -58,9 +58,9 @@ adm.table_get <- function(opal, project, table, max_retries = 3, ...) {
   
   ## Combine output
   datalist <- list(
-    datafile = df,
-    variables = dict$variables,
-    categories = dict$categories
+    datafile = as_tibble(df),
+    variables = as_tibble(dict$variables),
+    categories = as_tibble(dict$categories)
   )
   
   return(datalist)
@@ -268,7 +268,6 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param project_dst The name of the destination project.
 #' @param table_src A character vector of source table names.
 #' @param table_dst A character vector of destination table names.
-#' @param type Entity type (what the data are about). Default: "Participant".
 #' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
 #' @param diffdf Logical indicating whether to run a diff check after save (default: FALSE).
 #' @param path Character path to save diff findings as Excel file (optional).
@@ -280,7 +279,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #'
 #' @export
 
-adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, type = "Participant", method = "write", diffdf = FALSE, path = NULL, ...) {
+adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_src, table_dst, method = "write", diffdf = FALSE, path = NULL, ...) {
   if (length(table_dst) != length(table_src)) {
     stop("Number of tablenames from source not equal to destination!")
   }
@@ -294,6 +293,9 @@ adm.table_copy <- function(opal_src, opal_dst, project_src, project_dst, table_s
       table = table_src[item],
       ...
     )
+    
+    ## Set type
+    type <- unique(df$variables$entityType)[1]
     
     ## Run table save
     adm.table_save(

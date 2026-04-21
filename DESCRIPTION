@@ -1,7 +1,7 @@
 Package: OpalLUMCADM
 Type: Package
 Title: OpalLUMCADM
-Version: 2.0.1
+Version: 2.0.2
 Authors@R:
   person("Lars", "van der Burg", email = "l.l.j.van_der_burg@lumc.nl", role = c("aut", "cre"))
   person("Tom", "Kuipers", email = "t.b.kuipers@lumc.nl", role = c("aut", "cre"))
