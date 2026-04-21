@@ -8,6 +8,13 @@ Currently in development
 - Nothing to report
 
 
+OpalLUMCADM v2.0.2
+---------------------------
+- Add adm.remove_haven() function
+- Return table_get object as tibbles
+- Set entitytype when copying a table
+
+
 OpalLUMCADM v2.0.1
 ---------------------------
 - Update for diffdf functions
