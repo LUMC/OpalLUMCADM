@@ -5,5 +5,4 @@
 .Ruserdata
 .Rbuildignore
 .Rproj.user
-*.xlsx
 temp.R

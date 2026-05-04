@@ -34,7 +34,7 @@ adm.table_copy(
 
 \item{diffdf}{Logical indicating whether to run a diff check after save (default: FALSE).}
 
-\item{path}{Character path to save diff findings as Excel file (optional).}
+\item{path}{Character path to save diff findings as RData file (optional).}
 
 \item{...}{Additional arguments passed to underlying functions.}
 }

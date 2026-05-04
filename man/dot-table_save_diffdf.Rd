@@ -35,7 +35,7 @@
 
 \item{method}{Character specifying the save method (e.g., "write", "overwrite").}
 
-\item{path}{Character path to save diff findings as an Excel file (if specified).}
+\item{path}{Character path to save diff findings as RData file (if specified).}
 
 \item{max_retries}{Integer specifying the maximum number of retry attempts on failure.}
 
