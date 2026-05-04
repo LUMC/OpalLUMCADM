@@ -80,7 +80,7 @@ adm.table_get <- function(opal, project, table, max_retries = 3, ...) {
 #' @param type Entity type (what the data are about). Default: "Participant".
 #' @param method Character specifying the save method (e.g., "write", "overwrite"). Default: "write".
 #' @param diffdf Logical indicating whether to perform a diff comparison after saving (default: FALSE).
-#' @param path Character path to save diff findings as an Excel file (if \code{diffdf} is TRUE).
+#' @param path Character path to save diff findings as RData file (if \code{diffdf} is TRUE).
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure (default: 3).
 #' @param ... Additional arguments passed to underlying functions.
 #' 
@@ -197,7 +197,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param categories A list of category definitions (optional).
 #' @param type Entity type (what the data are about).
 #' @param method Character specifying the save method (e.g., "write", "overwrite").
-#' @param path Character path to save diff findings as an Excel file (if specified).
+#' @param path Character path to save diff findings as RData file (if specified).
 #' @param max_retries Integer specifying the maximum number of retry attempts on failure.
 #' @param ... Additional arguments passed to underlying functions.
 #' 
@@ -247,9 +247,9 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
   ## Save or return output of diffdf
   if (!is.null(path)) {
     today <- format(Sys.time(), format = "%Y%m%d_%H%M%S")
-    .write_to_excel(
+    .write_to_rdata(
       findings = findings,
-      path = paste0(path, "/", project, "_", table, "_", today, ".xlsx")
+      path = paste0(path, "/", project, "_", table, "_", today, ".RData")
     )
   } else {
     return(findings)
@@ -270,7 +270,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
 #' @param table_dst A character vector of destination table names.
 #' @param method Character specifying save method ("write", "overwrite", etc.) (default: "write").
 #' @param diffdf Logical indicating whether to run a diff check after save (default: FALSE).
-#' @param path Character path to save diff findings as Excel file (optional).
+#' @param path Character path to save diff findings as RData file (optional).
 #' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return A list of copied tables (no direct return; operation is side-effect).

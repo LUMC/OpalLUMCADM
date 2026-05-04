@@ -38,7 +38,7 @@ adm.table_save(
 
 \item{diffdf}{Logical indicating whether to perform a diff comparison after saving (default: FALSE).}
 
-\item{path}{Character path to save diff findings as an Excel file (if \code{diffdf} is TRUE).}
+\item{path}{Character path to save diff findings as RData file (if \code{diffdf} is TRUE).}
 
 \item{max_retries}{Integer specifying the maximum number of retry attempts on failure (default: 3).}
 

@@ -42,8 +42,10 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     message("Updating existing view...", appendLF = FALSE)
   }
   
-  ## Set script column as required for views
-  variables$script <- paste0("$('", variables$name, "')")
+  ## Set script column as required for views (only if it doesn't exist yet)
+  if (! "script" %in% colnames(variables)) {
+    variables$script <- paste0("$('", variables$name, "')")
+  }
   
   ## Update dictionary with variables & categories
   opal.table_dictionary_update(

@@ -13,6 +13,7 @@ source("./cicd/01_tables/adm.table_copy.R")
 source("./cicd/01_tables/cleanup.R")
 
 ## 02_checks
+source("./cicd/02_checks/create_dataset.R")
 source("./cicd/02_checks/check.cat_labels.R")
 source("./cicd/02_checks/check.character_ids.R")
 source("./cicd/02_checks/check.columns_cat.R")
@@ -31,6 +32,7 @@ source("./cicd/02_checks/check.var_column_datatype.R")
 source("./cicd/02_checks/check.run_all.R")
 
 ## 03_diffdf
+source("./cicd/03_diffdf/create_dataset.R")
 source("./cicd/03_diffdf/adm.diffdf.R")
 
 ## 04_views
