@@ -5,7 +5,8 @@ Newest changes should be on top.
 
 Currently in development
 ---------------------------
-- Nothing to report
+- Add script column in view (if not already exist)
+- Save diffdf as RData (no more Excel)
 
 
 OpalLUMCADM v2.0.2
