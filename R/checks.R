@@ -201,7 +201,6 @@ check.minmax <- function(datafile, variables, categories = NULL) {
   max_values[max_values == "null"] <- NA
   
   ## Get numeric or integer columns (exclude columns with all NA)
-  datafile <- datafile[, colSums(is.na(datafile)) < nrow(datafile)]
   valuetypes_data <- sapply(datafile, function(x) tail(class(x), n = 1))
   valuetypes_data <- valuetypes_data[valuetypes_data %in% c("numeric", "integer", "double", "POSIXct", "POSIXt", "Date")]
   
@@ -211,6 +210,11 @@ check.minmax <- function(datafile, variables, categories = NULL) {
     if (!is.null(categories)) {
       missing <- categories$name[categories$variable == column & categories$missing == TRUE]
       datafile[[column]][datafile[[column]] %in% missing] <- NA
+    }
+    
+    ## Skip if values are NA
+    if (all(is.na(datafile[[column]]))) {
+      next
     }
     
     ## Get min/max values from datafile & variables objects
