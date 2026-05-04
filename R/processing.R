@@ -137,46 +137,26 @@ adm.fix_valuetype <- function(datafile, variables) {
 }
 
 
-#' Write findings to an Excel workbook
+#' Write findings to RData file
 #'
-#' Creates an Excel workbook and writes each findings object (datafile, variables, categories)
+#' Creates RData file and writes each findings object (datafile, variables, categories)
 #' into separate worksheets. If no issues are found, a placeholder message is written.
 #'
 #' @param findings A list of findings, with keys corresponding to object types (e.g., "datafile", "variables")
-#' @param path The file path where the Excel workbook will be saved
+#' @param path The file path where the RData file will be saved
 #' @param ... Additional arguments passed to underlying functions.
 #'
 #' @return NULL (workbook is saved to path)
 #'
 #' @export
 
-.write_to_excel <- function(findings, path, ...) {
-  ## Create a new workbook
-  wb <- createWorkbook()
+.write_to_rdata <- function(findings, path, ...) {
+  ## Set object name
+  object_name <- gsub(x = basename(path), pattern = ".RData", replacement = "")
+  assign(object_name, findings)
   
-  ## Loop through each findings object (datafile, variables, categories)
-  for (object in names(findings)) {
-    ## Show if no issues were found
-    if (length(findings[[object]]) == 0) {
-      addWorksheet(wb = wb, sheetName = object)
-      writeData(wb = wb, sheet = object, x = "No issues were found!")
-    }
-    
-    ## Loop through each diffdf item in object
-    for (sheetName in names(findings[[object]])) {
-      addWorksheet(wb = wb, sheetName = paste(object, sheetName, sep = "_"))
-      writeData(wb = wb, sheet = paste(object, sheetName, sep = "_"), x = findings[[object]][[sheetName]])
-    }
-  }
-  
-  ## Save workbook (if there are any differences)
-  if (!is_empty(names(wb))) {
-    saveWorkbook(
-      wb = wb,
-      file = path,
-      ...
-    )
-  }
+  ## Save object as RData
+  save(list = object_name, file = path)
 }
 
 
