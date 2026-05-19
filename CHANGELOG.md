@@ -5,7 +5,7 @@ Newest changes should be on top.
 
 Currently in development
 ---------------------------
-- Nothing to report
+- Always return findings of diffdf on table_save
 
 
 OpalLUMCADM v2.0.3
