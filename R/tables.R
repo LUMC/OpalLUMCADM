@@ -241,7 +241,8 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
   ## Run diffdf
   findings <- adm.complete_diffdf(
     datalist1 = datalist1,
-    datalist2 = datalist2
+    datalist2 = datalist2,
+    ...
   )
   
   ## Save or return output of diffdf
