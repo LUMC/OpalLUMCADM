@@ -1,5 +1,6 @@
 # OpalLUMCADM
 R package to interact between Opal and R.
+test github
 
 ## Installation
 1. Install the "remotes" & "git2r" package (if not already installed):
