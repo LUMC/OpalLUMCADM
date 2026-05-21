@@ -8,6 +8,12 @@ Currently in development
 - Nothing to report
 
 
+OpalLUMCADM v2.0.4
+---------------------------
+- Mirror to GitHub
+- Always return findings of diffdf on table_save
+
+
 OpalLUMCADM v2.0.3
 ---------------------------
 - Add script column in view (if not already exist)
