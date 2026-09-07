@@ -269,7 +269,7 @@ check.entitytype <- function(variables, ...) {
 
 #' Check for Required Columns in Variables
 #'
-#' Validates the presence of required columns: 'label', 'entityType', and 'encrypted'.
+#' Validates the presence of required columns: 'label', 'entityType', 'encrypted', and 'valueType'.
 #'
 #' @param variables A data frame or list containing variable definitions.
 #' @param ... Additional arguments passed to underlying functions.
@@ -285,6 +285,7 @@ check.required_columns <- function(variables, ...) {
   col_labels <- str_detect(colnames(variables), "label")
   col_entitytype <- str_detect(colnames(variables), "entityType")
   col_encrypted <- str_detect(colnames(variables), "encrypted")
+  col_valuetype <- str_detect(colnames(variables), "valueType")
   
   ## Show warning if something is missing
   if (!TRUE %in% col_labels) {
@@ -295,6 +296,9 @@ check.required_columns <- function(variables, ...) {
   }
   if (!TRUE %in% col_encrypted) {
     warning("There is no 'encrypted' column in variables object")
+  }
+  if (!TRUE %in% col_valuetype) {
+    warning("There is no 'valueType' column in variables object")
   }
   
   ## Done
