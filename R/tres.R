@@ -71,7 +71,7 @@ adm.tres_encryption <- function(connection, values, search_image = FALSE, ...) {
   
   if(search_image) {
     result <- vec_extract_search_image(
-      values = values
+      values = result
     )
   }
   
