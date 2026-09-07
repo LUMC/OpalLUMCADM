@@ -416,14 +416,15 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
   ## Check format
   if (ncol(get_date) > 0) {
     is_date <- sapply(get_date, function(x) {
-      all(!is.na(as.Date(na.omit(x), format = format)))
+      formatd <- as.POSIXct(na.omit(x), format = format)
+      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == x)
     })
     
     ## Check content
-    if (FALSE %in% is_date) {
+    if (TRUE %in% is_date) {
       warning(
         "Some date columns don't have Date format: `", format, "`: ",
-        paste(names(is_date)[is_date == FALSE], collapse = ", ")
+        paste(names(is_date)[is_date == TRUE], collapse = ", ")
       )
     }
   }
@@ -456,14 +457,15 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
   ## Check format
   if (ncol(get_datetime) > 0) {
     is_datetime <- sapply(get_datetime, function(x) {
-      all(!is.na(as.POSIXct(na.omit(x), format = format)))
+      formatd <- as.POSIXct(na.omit(x), format = format)
+      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == x)
     })
     
     ## Check content
-    if (FALSE %in% is_datetime) {
+    if (TRUE %in% is_datetime) {
       warning(
         "Some datetime columns don't have POSIXct format: `", format, "`: ", 
-        paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
+        paste(names(is_datetime)[is_datetime == TRUE], collapse = ", ")
       )
     }
   }
