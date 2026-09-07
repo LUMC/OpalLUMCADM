@@ -5,7 +5,9 @@ Newest changes should be on top.
 
 Currently in development
 ---------------------------
-- Nothing to report
+- Set new method for checking date/datetime
+- valueType is now required column
+- Fix in tres for search image
 
 
 OpalLUMCADM v2.0.4
