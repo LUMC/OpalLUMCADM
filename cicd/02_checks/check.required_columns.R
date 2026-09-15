@@ -48,7 +48,22 @@ test_that("warning", {
 })
 
 
-## Add label for success
+## Remove valueType for warning
+variables$valueType <- NULL
+
+## Run test with warning
+test_that("warning", {
+  expect_warning(
+    check.required_columns(
+      variables = variables
+    ),
+    "There is no 'label' column in variables object"
+  )
+})
+
+
+## Add label & valueType for success
+variables$valueType <- "test valueType"
 variables$`label:en` <- "test label"
 
 ## Run test with error

@@ -15,5 +15,5 @@ check.required_columns(variables, ...)
 A list of warnings if required columns are missing.
 }
 \description{
-Validates the presence of required columns: 'label', 'entityType', and 'encrypted'.
+Validates the presence of required columns: 'label', 'entityType', 'encrypted', and 'valueType'.
 }

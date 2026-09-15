@@ -269,7 +269,7 @@ check.entitytype <- function(variables, ...) {
 
 #' Check for Required Columns in Variables
 #'
-#' Validates the presence of required columns: 'label', 'entityType', and 'encrypted'.
+#' Validates the presence of required columns: 'label', 'entityType', 'encrypted', and 'valueType'.
 #'
 #' @param variables A data frame or list containing variable definitions.
 #' @param ... Additional arguments passed to underlying functions.
@@ -285,6 +285,7 @@ check.required_columns <- function(variables, ...) {
   col_labels <- str_detect(colnames(variables), "label")
   col_entitytype <- str_detect(colnames(variables), "entityType")
   col_encrypted <- str_detect(colnames(variables), "encrypted")
+  col_valuetype <- str_detect(colnames(variables), "valueType")
   
   ## Show warning if something is missing
   if (!TRUE %in% col_labels) {
@@ -295,6 +296,9 @@ check.required_columns <- function(variables, ...) {
   }
   if (!TRUE %in% col_encrypted) {
     warning("There is no 'encrypted' column in variables object")
+  }
+  if (!TRUE %in% col_valuetype) {
+    warning("There is no 'valueType' column in variables object")
   }
   
   ## Done
@@ -412,14 +416,15 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
   ## Check format
   if (ncol(get_date) > 0) {
     is_date <- sapply(get_date, function(x) {
-      all(!is.na(as.Date(na.omit(x), format = format)))
+      formatd <- as.POSIXct(na.omit(x), format = format)
+      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == x)
     })
     
     ## Check content
-    if (FALSE %in% is_date) {
+    if (TRUE %in% is_date) {
       warning(
         "Some date columns don't have Date format: `", format, "`: ",
-        paste(names(is_date)[is_date == FALSE], collapse = ", ")
+        paste(names(is_date)[is_date == TRUE], collapse = ", ")
       )
     }
   }
@@ -452,14 +457,15 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
   ## Check format
   if (ncol(get_datetime) > 0) {
     is_datetime <- sapply(get_datetime, function(x) {
-      all(!is.na(as.POSIXct(na.omit(x), format = format)))
+      formatd <- as.POSIXct(na.omit(x), format = format)
+      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == x)
     })
     
     ## Check content
-    if (FALSE %in% is_datetime) {
+    if (TRUE %in% is_datetime) {
       warning(
         "Some datetime columns don't have POSIXct format: `", format, "`: ", 
-        paste(names(is_datetime)[is_datetime == FALSE], collapse = ", ")
+        paste(names(is_datetime)[is_datetime == TRUE], collapse = ", ")
       )
     }
   }

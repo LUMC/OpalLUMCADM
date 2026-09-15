@@ -8,6 +8,13 @@ Currently in development
 - Nothing to report
 
 
+OpalLUMCADM v2.0.5
+---------------------------
+- Set new method for checking date/datetime
+- valueType is now required column
+- Fix in tres for search image
+
+
 OpalLUMCADM v2.0.4
 ---------------------------
 - Mirror to GitHub
