@@ -62,6 +62,7 @@ adm.view_create <- function(opal, project, table, source, variables, categories 
     opal = opal,
     project = project,
     table = table,
+    tables = source,
     where = where,
     ...
   )
