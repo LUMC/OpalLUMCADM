@@ -65,7 +65,8 @@ categories <- df$categories
 ## Check dataset
 check.run_all(
   datafile = datafile,
-  variables = variables
+  variables = variables,
+  categories = categories
 ) %>%
   kbl() %>%
   kable_styling()
