@@ -20,6 +20,7 @@ always_allow_html: true
 suppressPackageStartupMessages({
   library(opalr)
   library(OpalLUMCADM)
+  library(kableExtra)
 })
 
 ```
@@ -65,7 +66,9 @@ categories <- df$categories
 check.run_all(
   datafile = datafile,
   variables = variables
-)
+) %>%
+  kbl() %>%
+  kable_styling()
 
 ## Fix problems if warnings/errors are triggered...
 
