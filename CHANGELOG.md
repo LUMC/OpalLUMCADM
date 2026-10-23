@@ -8,6 +8,14 @@ Currently in development
 - Nothing to report
 
 
+OpalLUMCADM v2.0.6
+---------------------------
+- Set source on view update
+- Check for empty categories
+- Update in date/datetime check
+- Remove 316 from ZorgTTP warnings list
+
+
 OpalLUMCADM v2.0.5
 ---------------------------
 - Set new method for checking date/datetime
