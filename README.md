@@ -1,5 +1,5 @@
 # OpalLUMCADM
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20323791.svg?)](https://doi.org/10.5281/zenodo.20323791)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20323791-blue.svg)](https://doi.org/10.5281/zenodo.20323791)
 
 R package to interact between Opal and R.
 
