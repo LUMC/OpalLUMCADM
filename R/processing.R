@@ -196,7 +196,7 @@ adm.fix_valuetype <- function(datafile, variables) {
   )
   
   ## Get unique error codes
-  clean_response <- c(sub(".*\\(E([0-9]+)\\).*", "\\1", response), "316")
+  clean_response <- sub(".*\\(E([0-9]+)\\).*", "\\1", response)
   count_response <- table(clean_response)
   
   ## Print warnings

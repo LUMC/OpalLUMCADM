@@ -417,7 +417,7 @@ check.date <- function(datafile, variables, format = "%Y-%m-%d", ...) {
   if (ncol(get_date) > 0) {
     is_date <- sapply(get_date, function(x) {
       formatd <- as.POSIXct(na.omit(x), format = format)
-      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == x)
+      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == format(na.omit(x)))
     })
     
     ## Check content
@@ -458,7 +458,7 @@ check.datetime <- function(datafile, variables, format = "%Y-%m-%d %H:%M:%OS", .
   if (ncol(get_datetime) > 0) {
     is_datetime <- sapply(get_datetime, function(x) {
       formatd <- as.POSIXct(na.omit(x), format = format)
-      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == x)
+      FALSE %in% (!is.na(formatd) & format(formatd, format = format) == format(na.omit(x)))
     })
     
     ## Check content

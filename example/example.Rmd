@@ -1,6 +1,6 @@
 ---
 title: "Example script"
-author: "Tom Kuipers"
+author: "OpalLUMCADM"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
@@ -20,6 +20,7 @@ always_allow_html: true
 suppressPackageStartupMessages({
   library(opalr)
   library(OpalLUMCADM)
+  library(kableExtra)
 })
 
 ```
@@ -64,8 +65,11 @@ categories <- df$categories
 ## Check dataset
 check.run_all(
   datafile = datafile,
-  variables = variables
-)
+  variables = variables,
+  categories = categories
+) %>%
+  kbl() %>%
+  kable_styling()
 
 ## Fix problems if warnings/errors are triggered...
 

@@ -150,7 +150,7 @@ adm.table_save <- function(opal, project, table, datafile, variables = NULL, cat
     datafile <- dictionary.apply(
       tibble = datafile,
       variables = variables,
-      categories = categories
+      categories = if (nrow(categories) == 0) NULL else categories
     )
   }
   
