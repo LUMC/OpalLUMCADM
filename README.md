@@ -30,4 +30,4 @@ library(OpalLUMCADM)
 Check `example.Rmd` in the example folder
 
 ## Reference
-Based on OBiBa's [OpalR](https://github.com/obiba/opalr/).
+Based on OBiBa's [OpalR](https://github.com/obiba/opalr/)
